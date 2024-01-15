@@ -4,8 +4,75 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4bfc28cc2f313083c4fb08ab88c79b9e",
-    "packages": [],
+    "content-hash": "175f1782a1dae91f87ad80a69aa4ad8a",
+    "packages": [
+        {
+            "name": "siftscience/sift-php",
+            "version": "4.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SiftScience/sift-php.git",
+                "reference": "dd37963ff0cb53275a3b0b6b85ead5d95ab78f68"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SiftScience/sift-php/zipball/dd37963ff0cb53275a3b0b6b85ead5d95ab78f68",
+                "reference": "dd37963ff0cb53275a3b0b6b85ead5d95ab78f68",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=7.1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "7.*"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "lib/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Lopatin"
+                },
+                {
+                    "name": "Yoav Schatzberg"
+                },
+                {
+                    "name": "Jacob Burnim"
+                },
+                {
+                    "name": "Gary Lee"
+                },
+                {
+                    "name": "Mohammed Jouahri"
+                },
+                {
+                    "name": "Alex Paino"
+                }
+            ],
+            "description": "Sift Science PHP library",
+            "homepage": "https://github.com/SiftScience/sift-php",
+            "keywords": [
+                "fraud",
+                "php",
+                "sift",
+                "sift science"
+            ],
+            "support": {
+                "email": "support@siftscience.com",
+                "issues": "https://github.com/SiftScience/sift-php/issues",
+                "source": "https://github.com/SiftScience/sift-php/tree/v4.6.0"
+            },
+            "time": "2023-10-05T14:34:03+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "a8cteam51/team51-configs",
@@ -2072,12 +2139,12 @@
         "wp-coding-standards/wpcs": 20,
         "roave/security-advisories": 20
     },
-    "prefer-stable": true,
+    "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.0",
         "ext-json": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
