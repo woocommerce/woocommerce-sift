@@ -37,6 +37,8 @@ class SiftDecisions {
 		add_action( 'tha_body_top', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Theme Hook Alliance
 		add_action( 'body_top', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // THA Unprefixed
 		add_action( 'wp_footer', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Fallback!
+
+		add_action( 'login_header', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Allow Sift tracking of login page visits.
 	}
 
 	/**
