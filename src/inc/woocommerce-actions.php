@@ -100,12 +100,10 @@ class Events {
 	 */
 	public function link_session_to_user( string $user_id ) {
 		self::add(
+			'$link_session_to_user',
 			array(
-				'event'      => '$link_session_to_user',
-				'properties' => array(
-					'$user_id'    => $user_id,
-					'$session_id' => WC()->session->get_customer_unique_id(),
-				),
+				'$user_id'    => $user_id,
+				'$session_id' => WC()->session->get_customer_unique_id(),
 			)
 		);
 	}
@@ -177,12 +175,19 @@ class Events {
 	/**
 	 * Enqueue an event to send.  This will enable sending them all at shutdown.
 	 *
-	 * @param array $data An associative array, with the `event` and `properties` keys on it.
+	 * @param string $event      The event we're recording -- generally will start with a $.
+	 * @param array  $properties An array of the data we're passing along to Sift.  Keys will generally start with a $.
 	 *
 	 * @return void
 	 */
-	public static function add( array $data ) {
-		array_push( self::$to_send, $data );
+	public static function add( string $event, array $properties ) {
+		array_push(
+			self::$to_send,
+			array(
+				'event'      => $event,
+				'properties' => $properties,
+			)
+		);
 	}
 
 	/**
