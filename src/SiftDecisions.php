@@ -87,5 +87,43 @@ class SiftDecisions {
 		return $instance;
 	}
 
+	/**
+	 * Get the SiftClient instantiated api client.
+	 *
+	 * Store it internally as a static to simplify if needed multiple times.
+	 *
+	 * @return \SiftClient|null
+	 */
+	public static function get_api_client() {
+		static $client = null;
+
+		if ( null === $client ) {
+			$api_key    = get_option( 'wc_sift_decisions_api_key' );
+			$account_id = get_option( 'wc_sift_decisions_account_id' );
+
+			if ( ! $account_id || ! $api_key ) {
+				// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log(
+					PHP_EOL . '[' . gmdate( 'r' ) . '] Attempting to instantiate client, but missing account_id or api_key.',
+					3,
+					get_temp_dir() . 'sift.log'
+				);
+				// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.PHP.DevelopmentFunctions.error_log_error_log
+
+				// If not set, should we maybe return a WP_Error?
+				return null;
+			}
+
+			$client = new \SiftClient(
+				array(
+					'api_key'    => $api_key,
+					'account_id' => $account_id,
+				)
+			);
+		}
+
+		return $client;
+	}
+
 	// endregion
 }
