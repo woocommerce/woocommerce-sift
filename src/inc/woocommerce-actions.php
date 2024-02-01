@@ -59,7 +59,50 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function login_success( string $username, object $user ) {}
+	public static function login_success( string $username, object $user ) {
+		// Taken from core `get_unsafe_client_ip()` method.
+		$client_ip = false;
+
+		// In order of preference, with the best ones for this purpose first.
+		$address_headers = array(
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'REMOTE_ADDR',
+		);
+
+		foreach ( $address_headers as $header ) {
+			if ( array_key_exists( $header, $_SERVER ) ) {
+				/*
+				 * HTTP_X_FORWARDED_FOR can contain a chain of comma-separated
+				 * addresses. The first one is the original client. It can't be
+				 * trusted for authenticity, but we don't need to for this purpose.
+				 */
+				$address_chain = explode( ',', $_SERVER[ $header ] );
+				$client_ip     = trim( $address_chain[0] );
+
+				break;
+			}
+		}
+
+		self::add(
+			'$login',
+			array(
+				'$user_id'       => $user->ID,
+				'$login_status'  => '$failure',
+				'$session_id'    => WC()->session->get_customer_unique_id(),
+				'$user_email'    => $user->email,
+				'$ip'            => $client_ip,
+				'$browser'       => $_SERVER['HTTP_USER_AGENT'], // alternately, `$app` for details of the app if not a browser.
+				'$username'      => $username,
+				'$account_types' => $user->roles,
+				// Other optional data like site_country site_domain etc etc.
+			)
+		);
+	}
 
 	/**
 	 * Adds the login failure event
