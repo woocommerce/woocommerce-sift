@@ -45,6 +45,7 @@ class Events {
 			'$logout',
 			array(
 				'$user_id' => $user_id,
+				'$browser' => $_SERVER['HTTP_USER_AGENT'], // alternately, `$app` for details of the app if not a browser.
 			)
 		);
 	}
