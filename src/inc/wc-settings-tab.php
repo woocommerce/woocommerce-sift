@@ -129,7 +129,7 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 	$return = null;
 
 	if ( 200 === $code ) {
-		$return = __( '<h4>Credentials are valid!</h4>', 'sift-decisions' );
+		$return = sprintf( '<h4>%s</h4>', __( 'Credentials are valid!', 'sift-decisions' ) );
 		// translators: %d: integer.
 		$return .= sprintf( __( '<p>There are presently %d webhooks configured.</p>', 'sift-decisions' ), intval( $data->total_results ) );
 
@@ -138,13 +138,13 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 		$return .= sprintf( __( '<p>The webhook url for this site is: <kbd>%s</kbd></p>', 'sift-decisions' ), esc_html( $webhook_url ) );
 
 		if ( set_url_scheme( $webhook_url, 'https' ) !== $webhook_url ) {
-			$return .= __( '<p><strong class="wp-ui-text-notification">It looks like your site may not be configured to use HTTPS!</strong> Sift requires webhooks to be served over HTTPS urls. <a href="https://wordpress.org/documentation/article/https-for-wordpress/">Learn how to fix this?</a></p>', 'sift-decisions' );
+			$return .= sprintf( '<p>%s</p>', __( '<strong class="wp-ui-text-notification">It looks like your site may not be configured to use HTTPS!</strong> Sift requires webhooks to be served over HTTPS urls. <a href="https://wordpress.org/documentation/article/https-for-wordpress/">Learn how to fix this?</a>', 'sift-decisions' ) );
 		}
 	} elseif ( 401 === $code ) {
-		$return  = __( '<h4 class="wp-ui-text-notification">Error!</h4>', 'sift-decisions' );
-		$return .= __( '<p>The credentials supplied are not valid.</p>', 'sift-decisions' );
+		$return  = sprintf( '<h4 class="wp-ui-text-notification">%s</h4>', __( 'Error!', 'sift-decisions' ) );
+		$return .= sprintf( '<p>%s</p>', __( 'The credentials supplied are not valid.', 'sift-decisions' ) );
 	} else {
-		$return = __( '<h4 class="wp-ui-text-notification">Error!</h4>', 'sift-decisions' );
+		$return = sprintf( '<h4 class="wp-ui-text-notification">%s</h4>', __( 'Error!', 'sift-decisions' ) );
 		// translators: %d: three digit integer
 		$return .= sprintf( __( '<p>API HTTP Code: <strong>%d</strong></p>', 'sift-decisions' ), intval( $code ) );
 		$return .= '<pre>' . esc_html( $json ) . '</pre>';
