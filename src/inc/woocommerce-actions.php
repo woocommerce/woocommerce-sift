@@ -31,7 +31,6 @@ class Events {
 		add_action( 'shutdown', array( static::class, 'send' ) );
 	}
 
-
 	/**
 	 * Adds logout event
 	 *
@@ -41,7 +40,14 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function logout( string $user_id ) {}
+	public static function logout( string $user_id ) {
+		self::add(
+			'$logout',
+			array(
+				'$user_id' => $user_id,
+			)
+		);
+	}
 
 	/**
 	 * Adds the login success event
