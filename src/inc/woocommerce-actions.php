@@ -167,7 +167,39 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function add_to_cart( string $cart_item_key ) {}
+	public static function add_to_cart( string $cart_item_key ) {
+		$cart_item = \WC()->cart->get_cart_item( $cart_item_key );
+		$product   = $cart_item['data'];
+		$user      = wp_get_current_user();
+
+		self::add(
+			'$add_item_to_cart',
+			array(
+				'$user_id'      => $user ? $user->user_id : null,
+				'$user_email'   => $user ? $user->user_email : null,
+				'$session_id'   => \WC()->session->get_customer_unique_id(),
+				'$item'         => array(
+					'$item_id'       => $cart_item_key,
+					'$sku'           => $product->get_sku(),
+					'$product_title' => $product->get_title(),
+					'$price'         => $product->get_price() * 1000000, // $39.99
+					'$currency_code' => get_woocommerce_currency(),
+					'$quantity'      => $cart_item['quantity'],
+					'$category'      => $product->get_categories(),
+					'$tags'          => wp_list_pluck( get_the_terms( $product->ID, 'product_tag' ), 'name' ),
+				),
+				'$browser'      => array(
+					'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
+					'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'],
+					'$content_language' => get_locale(),
+				),
+				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
+				'$site_country' => wc_get_base_location()['country'],
+				'$verification_phone_number'
+								=> $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
+			)
+		);
+	}
 
 	/**
 	 * Adds event for item removed from cart
