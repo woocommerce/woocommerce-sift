@@ -34,7 +34,7 @@ class Events {
 	/**
 	 * Adds logout event
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/logout
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/logout
 	 *
 	 * @param string $user_id User ID.
 	 *
@@ -53,7 +53,7 @@ class Events {
 	/**
 	 * Adds the login success event
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/login
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/login
 	 *
 	 * @param string $username Name of the user.
 	 * @param object $user     User object.
@@ -108,7 +108,7 @@ class Events {
 	/**
 	 * Adds the login failure event
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/login
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/login
 	 *
 	 * @param object $username User object.
 	 *
@@ -119,7 +119,7 @@ class Events {
 	/**
 	 * Adds account creation event
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/create-account
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/create-account
 	 *
 	 * @param string $user_id User ID.
 	 *
@@ -130,7 +130,7 @@ class Events {
 	/**
 	 * Adds event for an account getting updated
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/update-account
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-account
 	 *
 	 * @param string $user_id       User's ID.
 	 * @param array  $old_user_data Old data before change.
@@ -142,7 +142,7 @@ class Events {
 	/**
 	 * Add session data to user data.
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/link-session-to-user
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/link-session-to-user
 	 *
 	 * @param string $user_id User's id.
 	 *
@@ -161,7 +161,7 @@ class Events {
 	/**
 	 * Adds event for item added to cart
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/add-item-to-cart
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/add-item-to-cart
 	 *
 	 * @param string $cart_item_key The Cart Key.
 	 *
@@ -204,7 +204,7 @@ class Events {
 	/**
 	 * Adds event for item removed from cart
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/remove-item-from-cart
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/remove-item-from-cart
 	 *
 	 * @param string $cart_item_key The key of the cart item.
 	 *
@@ -235,7 +235,7 @@ class Events {
 	/**
 	 * Adds the event for the order status update
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/order-status
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/order-status
 	 *
 	 * @param string $order_id Order ID.
 	 *
@@ -246,7 +246,7 @@ class Events {
 	/**
 	 * Adds event for order update
 	 *
-	 * @link https://sift.com/developers/docs/curl/events-api/reserved-events/update-order
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-order
 	 *
 	 * @param string $order_id Order ID.
 	 *
