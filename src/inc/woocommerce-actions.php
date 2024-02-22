@@ -191,11 +191,7 @@ class Events {
 					'$category'      => $product->get_categories(),
 					'$tags'          => wp_list_pluck( get_the_terms( $product->ID, 'product_tag' ), 'name' ),
 				),
-				'$browser'      => array(
-					'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
-					'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'],
-					'$content_language' => get_locale(),
-				),
+				'$browser'      => self::get_client_browser(),
 				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
 				'$site_country' => wc_get_base_location()['country'],
 				'$verification_phone_number'
