@@ -128,7 +128,26 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function create_account( string $user_id ) {}
+	public static function create_account( string $user_id ) {
+		$user = get_user_by( 'id', $user_id );
+
+		self::add(
+			'$create_account',
+			array(
+				'$user_id'          => $user->ID,
+				'$session_id'       => WC()->session->get_customer_unique_id(),
+				'$user_email'       => $user->email,
+				'$name'             => $user->display_name,
+				'$phone'            => $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
+				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
+				'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
+				'$browser'          => self::get_client_browser(),
+				'$account_types'    => $user->roles,
+				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
+				'$site_country'     => wc_get_base_location()['country'],
+			)
+		);
+	}
 
 	/**
 	 * Adds event for an account getting updated
@@ -360,5 +379,41 @@ class Events {
 		);
 
 		return $browser;
+	}
+
+	/**
+	 * Get the address details in the format that Sift expects.
+	 *
+	 * @param integer $user_id The User / Customer ID.
+	 * @param string  $type    Either `billing` or `shipping`.
+	 * @param string  $context Either `view` or `edit`.
+	 *
+	 * @return array|null
+	 */
+	public static function get_customer_address( int $user_id, string $type = 'billing', string $context = 'view' ) {
+		$customer = new \WC_Customer( $user_id );
+
+		switch ( strtolower( $type ) ) {
+			case 'billing':
+				$address = $customer->get_billing( $context );
+				break;
+			case 'shipping':
+				$address = $customer->get_shipping( $context );
+				break;
+			default:
+				return null;
+		}
+
+		// Missing parameters -- company, email (For billing, not shipping)
+		return array(
+			'$name'      => $address['first_name'] . ' ' . $address['last_name'],
+			'$phone'     => $address['phone'],
+			'$address_1' => $address['address_1'],
+			'$address_2' => $address['address_2'],
+			'$city'      => $address['city'],
+			'$region'    => $address['state'],
+			'$country'   => $address['country'],
+			'$zipcode'   => $address['postcode'],
+		);
 	}
 }
