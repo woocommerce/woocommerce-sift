@@ -45,7 +45,7 @@ class Events {
 			'$logout',
 			array(
 				'$user_id' => $user_id,
-				'$browser' => self::_get_client_browser(), // alternately, `$app` for details of the app if not a browser.
+				'$browser' => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 			)
 		);
 	}
@@ -68,8 +68,8 @@ class Events {
 				'$login_status'  => '$success',
 				'$session_id'    => WC()->session->get_customer_unique_id(),
 				'$user_email'    => $user->email,
-				'$ip'            => self::_get_client_ip(),
-				'$browser'       => self::_get_client_browser(), // alternately, `$app` for details of the app if not a browser.
+				'$ip'            => self::get_client_ip(),
+				'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$username'      => $username,
 				'$account_types' => $user->roles,
 				// Other optional data like site_country site_domain etc etc.
@@ -82,8 +82,8 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/login
 	 *
-	 * @param string $username Username.
-	 * @param \WP_Error $error The error indicating why the login failed.
+	 * @param string    $username Username.
+	 * @param \WP_Error $error    The error indicating why the login failed.
 	 *
 	 * @return void
 	 */
@@ -111,8 +111,8 @@ class Events {
 				'$user_id'        => $attempted_user ? $attempted_user->ID : null,
 				'$login_status'   => '$failure',
 				'$session_id'     => WC()->session->get_customer_unique_id(),
-				'$ip'             => self::_get_client_ip(),
-				'$browser'        => self::_get_client_browser(), // alternately, `$app` for details of the app if not a browser.
+				'$ip'             => self::get_client_ip(),
+				'$browser'        => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$username'       => $username,
 				'$failure_reason' => $failure_reason,
 			)
@@ -320,7 +320,7 @@ class Events {
 	 *
 	 * @return string The detected IP address of the user.
 	 */
-	public static function _get_client_ip() {
+	public static function get_client_ip() {
 		$client_ip = false;
 
 		// In order of preference, with the best ones for this purpose first.
@@ -356,7 +356,7 @@ class Events {
 	 *
 	 * @return array The user agent, languages accepted, and current store language.
 	 */
-	public static function _get_client_browser() {
+	public static function get_client_browser() {
 		$browser = array(
 			'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
 			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'],
