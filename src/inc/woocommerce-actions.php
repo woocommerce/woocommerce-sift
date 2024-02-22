@@ -65,7 +65,7 @@ class Events {
 			'$login',
 			array(
 				'$user_id'       => $user->ID,
-				'$login_status'  => '$failure',
+				'$login_status'  => '$success',
 				'$session_id'    => WC()->session->get_customer_unique_id(),
 				'$user_email'    => $user->email,
 				'$ip'            => self::_get_client_ip(),
