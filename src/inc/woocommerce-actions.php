@@ -45,7 +45,7 @@ class Events {
 			'$logout',
 			array(
 				'$user_id' => $user_id,
-				'$browser' => $_SERVER['HTTP_USER_AGENT'], // alternately, `$app` for details of the app if not a browser.
+				'$browser' => self::_get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 			)
 		);
 	}
@@ -61,34 +61,6 @@ class Events {
 	 * @return void
 	 */
 	public static function login_success( string $username, object $user ) {
-		// Taken from core `get_unsafe_client_ip()` method.
-		$client_ip = false;
-
-		// In order of preference, with the best ones for this purpose first.
-		$address_headers = array(
-			'HTTP_CLIENT_IP',
-			'HTTP_X_FORWARDED_FOR',
-			'HTTP_X_FORWARDED',
-			'HTTP_X_CLUSTER_CLIENT_IP',
-			'HTTP_FORWARDED_FOR',
-			'HTTP_FORWARDED',
-			'REMOTE_ADDR',
-		);
-
-		foreach ( $address_headers as $header ) {
-			if ( array_key_exists( $header, $_SERVER ) ) {
-				/*
-				 * HTTP_X_FORWARDED_FOR can contain a chain of comma-separated
-				 * addresses. The first one is the original client. It can't be
-				 * trusted for authenticity, but we don't need to for this purpose.
-				 */
-				$address_chain = explode( ',', $_SERVER[ $header ] );
-				$client_ip     = trim( $address_chain[0] );
-
-				break;
-			}
-		}
-
 		self::add(
 			'$login',
 			array(
@@ -96,8 +68,8 @@ class Events {
 				'$login_status'  => '$failure',
 				'$session_id'    => WC()->session->get_customer_unique_id(),
 				'$user_email'    => $user->email,
-				'$ip'            => $client_ip,
-				'$browser'       => $_SERVER['HTTP_USER_AGENT'], // alternately, `$app` for details of the app if not a browser.
+				'$ip'            => self::_get_client_ip(),
+				'$browser'       => self::_get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$username'      => $username,
 				'$account_types' => $user->roles,
 				// Other optional data like site_country site_domain etc etc.
@@ -310,5 +282,56 @@ class Events {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Taken from core `get_unsafe_client_ip()` method.
+	 *
+	 * @return string The detected IP address of the user.
+	 */
+	public static function _get_client_ip() {
+		$client_ip = false;
+
+		// In order of preference, with the best ones for this purpose first.
+		$address_headers = array(
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
+			'REMOTE_ADDR',
+		);
+
+		foreach ( $address_headers as $header ) {
+			if ( array_key_exists( $header, $_SERVER ) ) {
+				/*
+				 * HTTP_X_FORWARDED_FOR can contain a chain of comma-separated
+				 * addresses. The first one is the original client. It can't be
+				 * trusted for authenticity, but we don't need to for this purpose.
+				 */
+				$address_chain = explode( ',', $_SERVER[ $header ] );
+				$client_ip     = trim( $address_chain[0] );
+
+				break;
+			}
+		}
+
+		return $client_ip;
+	}
+
+	/**
+	 * Output the browser details as specified in Sift API docs.
+	 *
+	 * @return array The user agent, languages accepted, and current store language.
+	 */
+	public static function _get_client_browser() {
+		$browser = array(
+			'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
+			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'],
+			'$content_language' => get_locale(),
+		);
+
+		return $browser;
 	}
 }
