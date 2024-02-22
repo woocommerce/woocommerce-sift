@@ -16,7 +16,7 @@ class Events {
 	public static function hooks() {
 		add_action( 'wp_logout', array( static::class, 'logout' ), 100 );
 		add_action( 'wp_login', array( static::class, 'login_success' ), 100, 2 );
-		add_action( 'wp_login_failed', array( static::class, 'login_failure' ), 100 );
+		add_action( 'wp_login_failed', array( static::class, 'login_failure' ), 100, 2 );
 		add_action( 'user_register', array( static::class, 'create_account' ), 100 );
 		add_action( 'profile_update', array( static::class, 'update_account' ), 100, 2 );
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
@@ -82,11 +82,42 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/login
 	 *
-	 * @param object $username User object.
+	 * @param string $username Username.
+	 * @param \WP_Error $error The error indicating why the login failed.
 	 *
 	 * @return void
 	 */
-	public static function login_failure( object $username ) {}
+	public static function login_failure( string $username, \WP_Error $error ) {
+		$attempted_user = get_user_by( 'login', $username );
+
+		switch ( $error->get_error_code() ) {
+			case 'invalid_email':
+			case 'invalid_username':
+				$failure_reason = '$account_unknown';
+				break;
+			case 'incorrect_password':
+				$failure_reason = '$wrong_password';
+				break;
+			case 'spammer_account':
+				$failure_reason = '$account_disabled';
+				break;
+			default:
+				$failure_reason = '$' . $error->get_error_code();
+		}
+
+		self::add(
+			'$login',
+			array(
+				'$user_id'        => $attempted_user ? $attempted_user->ID : null,
+				'$login_status'   => '$failure',
+				'$session_id'     => WC()->session->get_customer_unique_id(),
+				'$ip'             => self::_get_client_ip(),
+				'$browser'        => self::_get_client_browser(), // alternately, `$app` for details of the app if not a browser.
+				'$username'       => $username,
+				'$failure_reason' => $failure_reason,
+			)
+		);
+	}
 
 	/**
 	 * Adds account creation event
