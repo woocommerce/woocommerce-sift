@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "175f1782a1dae91f87ad80a69aa4ad8a",
+    "content-hash": "50d57f650b056df74fcbc86d914108a6",
     "packages": [
         {
             "name": "siftscience/sift-php",
-            "version": "4.6.0",
+            "version": "4.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SiftScience/sift-php.git",
-                "reference": "dd37963ff0cb53275a3b0b6b85ead5d95ab78f68"
+                "reference": "0fb89904a7dfdedc8be145317b277d489f05635d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SiftScience/sift-php/zipball/dd37963ff0cb53275a3b0b6b85ead5d95ab78f68",
-                "reference": "dd37963ff0cb53275a3b0b6b85ead5d95ab78f68",
+                "url": "https://api.github.com/repos/SiftScience/sift-php/zipball/0fb89904a7dfdedc8be145317b277d489f05635d",
+                "reference": "0fb89904a7dfdedc8be145317b277d489f05635d",
                 "shasum": ""
             },
             "require": {
@@ -68,9 +68,9 @@
             "support": {
                 "email": "support@siftscience.com",
                 "issues": "https://github.com/SiftScience/sift-php/issues",
-                "source": "https://github.com/SiftScience/sift-php/tree/v4.6.0"
+                "source": "https://github.com/SiftScience/sift-php/tree/v4.7.0"
             },
-            "time": "2023-10-05T14:34:03+00:00"
+            "time": "2024-02-22T11:11:54+00:00"
         }
     ],
     "packages-dev": [
@@ -557,24 +557,24 @@
         },
         {
             "name": "johnpbloch/wordpress-core",
-            "version": "6.2.0",
+            "version": "6.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/johnpbloch/wordpress-core.git",
-                "reference": "cec139b6b71913343b68fbf043c468407a921225"
+                "reference": "389a4e72f3e14a995f89fa4bc5a69c7cf75ae2a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/cec139b6b71913343b68fbf043c468407a921225",
-                "reference": "cec139b6b71913343b68fbf043c468407a921225",
+                "url": "https://api.github.com/repos/johnpbloch/wordpress-core/zipball/389a4e72f3e14a995f89fa4bc5a69c7cf75ae2a8",
+                "reference": "389a4e72f3e14a995f89fa4bc5a69c7cf75ae2a8",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=5.6.20"
+                "php": ">=7.0.0"
             },
             "provide": {
-                "wordpress/core-implementation": "6.2.0"
+                "wordpress/core-implementation": "6.4.3"
             },
             "type": "wordpress-core",
             "notification-url": "https://packagist.org/downloads/",
@@ -601,7 +601,7 @@
                 "source": "https://core.trac.wordpress.org/browser",
                 "wiki": "https://codex.wordpress.org/"
             },
-            "time": "2023-03-30T04:14:50+00:00"
+            "time": "2024-01-30T19:31:14+00:00"
         },
         {
             "name": "mck89/peast",
@@ -1805,16 +1805,16 @@
         },
         {
             "name": "wp-cli/i18n-command",
-            "version": "v2.4.3",
+            "version": "v2.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-cli/i18n-command.git",
-                "reference": "203b020318fe2596a218bf52db25adc6b187f42d"
+                "reference": "ca7a44a1f8b09d533621b4006e739974212860ee"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-cli/i18n-command/zipball/203b020318fe2596a218bf52db25adc6b187f42d",
-                "reference": "203b020318fe2596a218bf52db25adc6b187f42d",
+                "url": "https://api.github.com/repos/wp-cli/i18n-command/zipball/ca7a44a1f8b09d533621b4006e739974212860ee",
+                "reference": "ca7a44a1f8b09d533621b4006e739974212860ee",
                 "shasum": ""
             },
             "require": {
@@ -1825,7 +1825,7 @@
             },
             "require-dev": {
                 "wp-cli/scaffold-command": "^1.2 || ^2",
-                "wp-cli/wp-cli-tests": "^3.1"
+                "wp-cli/wp-cli-tests": "^4"
             },
             "suggest": {
                 "ext-json": "Used for reading and generating JSON translation files",
@@ -1842,6 +1842,7 @@
                     "i18n make-pot",
                     "i18n make-json",
                     "i18n make-mo",
+                    "i18n make-php",
                     "i18n update-po"
                 ]
             },
@@ -1867,9 +1868,9 @@
             "homepage": "https://github.com/wp-cli/i18n-command",
             "support": {
                 "issues": "https://github.com/wp-cli/i18n-command/issues",
-                "source": "https://github.com/wp-cli/i18n-command/tree/v2.4.3"
+                "source": "https://github.com/wp-cli/i18n-command/tree/v2.6.0"
             },
-            "time": "2023-03-24T18:15:59+00:00"
+            "time": "2024-02-01T14:25:11+00:00"
         },
         {
             "name": "wp-cli/mustangostang-spyc",
@@ -2115,15 +2116,15 @@
         },
         {
             "name": "wpackagist-plugin/woocommerce",
-            "version": "7.4.1",
+            "version": "8.6.1",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/woocommerce/",
-                "reference": "tags/7.4.1"
+                "reference": "tags/8.6.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/woocommerce.7.4.1.zip"
+                "url": "https://downloads.wordpress.org/plugin/woocommerce.8.6.1.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"

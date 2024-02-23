@@ -29,15 +29,15 @@
   "require": {
     "php": ">=8.0",
     "ext-json": "*",
-    "siftscience/sift-php": "^4.6"
+    "siftscience/sift-php": "^4.7"
   },
   "require-dev": {
     "a8cteam51/team51-configs": "dev-trunk",
 
-    "johnpbloch/wordpress-core": "6.2.*",
-    "wpackagist-plugin/woocommerce": "7.4.*",
+    "johnpbloch/wordpress-core": "^6.4",
+    "wpackagist-plugin/woocommerce": "^8.6",
 
-    "wp-cli/i18n-command": "^2.4",
+    "wp-cli/i18n-command": "^2.6",
 
     "squizlabs/php_codesniffer": "3.*",
     "dealerdirect/phpcodesniffer-composer-installer": "*",
@@ -51,9 +51,7 @@
     "psr-4": {
       "WPCOMSpecialProjects\\Scaffold\\": "src/"
     },
-    "classmap": [
-      "models/"
-    ]
+    "classmap": []
   },
   "autoload-dev": {
 
