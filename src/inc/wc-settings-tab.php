@@ -142,6 +142,14 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 	} elseif ( 401 === $code ) {
 		$return  = sprintf( '<h4 class="wp-ui-text-notification">%s</h4>', __( 'Error!', 'sift-decisions' ) );
 		$return .= sprintf( '<p>%s</p>', __( 'The credentials supplied are not valid.', 'sift-decisions' ) );
+
+		wc_get_logger()->log(
+			'error',
+			'Invalid API Credentials.',
+			array(
+				'source' => 'sift-decisions'
+			)
+		);
 	} else {
 		$return = sprintf( '<h4 class="wp-ui-text-notification">%s</h4>', __( 'Error!', 'sift-decisions' ) );
 		// translators: %d: three digit integer
