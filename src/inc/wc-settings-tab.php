@@ -38,7 +38,17 @@ function update_settings() {
  * @return array
  */
 function get_sift_decisions_settings() {
-	$test_credentials = test_api_credentials_result();
+	$test_credentials = null;
+
+	/**
+	 * Due to how WooCommerce handles updates to options -- posting to itself, rather
+	 * than another url and then redirecting back to the options page -- this test
+	 * could inadvertently cache the prior credentials in a static variable if it's
+	 * fired on this action.
+	 */
+	if ( ! doing_action( 'woocommerce_update_options_sift_decisions' ) ) {
+		$test_credentials = test_api_credentials_result();
+	}
 
 	$settings = array(
 		'section_title'    => array(
@@ -110,28 +120,17 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 
 	// TODO: Maybe find a way to leverage the Sift PHP API Client to fire these requests, rather than ad-hoc'ing together an alternate solution.
 
-	// Use the basic API endpoint of https://sift.com/developers/docs/php/webhooks-api/list to test whether the credentials are accurate.
-	$response = wp_remote_get(
-		sprintf(
-			'https://api.sift.com/v3/accounts/%s/webhooks',
-			$account_id
-		),
-		array(
-			'headers' => array(
-				'Authorization' => 'Basic ' . base64_encode( $api_key ),
-			),
-		)
-	);
+	$client = \WPCOMSpecialProjects\SiftDecisions\SiftDecisions::get_api_client();
+	$response = $client->listAllWebhooks();
 
-	$code   = wp_remote_retrieve_response_code( $response );
-	$json   = wp_remote_retrieve_body( $response );
-	$data   = json_decode( $json );
+	$code   = $response->httpStatusCode;
+	$data   = $response->body;
 	$return = null;
 
 	if ( 200 === $code ) {
 		$return = sprintf( '<h4>%s</h4>', __( 'Credentials are valid!', 'sift-decisions' ) );
 		// translators: %d: integer.
-		$return .= sprintf( __( '<p>There are presently %d webhooks configured.</p>', 'sift-decisions' ), intval( $data->total_results ) );
+		$return .= sprintf( __( '<p>There are presently %d webhooks configured.</p>', 'sift-decisions' ), intval( $data['total_results'] ) );
 
 		$webhook_url = rest_url( 'sift-decisions/v1/decision' );
 		// translators: %s: url
@@ -147,7 +146,7 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 		$return = sprintf( '<h4 class="wp-ui-text-notification">%s</h4>', __( 'Error!', 'sift-decisions' ) );
 		// translators: %d: three digit integer
 		$return .= sprintf( __( '<p>API HTTP Code: <strong>%d</strong></p>', 'sift-decisions' ), intval( $code ) );
-		$return .= '<pre>' . esc_html( $json ) . '</pre>';
+		$return .= '<pre>' . esc_html( $response->rawResponse ) . '</pre>';
 	}
 
 	return $return;
