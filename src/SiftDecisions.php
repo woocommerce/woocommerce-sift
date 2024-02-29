@@ -103,13 +103,13 @@ class SiftDecisions {
 			$account_id = get_option( 'wc_sift_decisions_account_id' );
 
 			if ( ! $account_id || ! $api_key ) {
-				// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.PHP.DevelopmentFunctions.error_log_error_log
-				error_log(
-					PHP_EOL . '[' . gmdate( 'r' ) . '] Attempting to instantiate client, but missing account_id or api_key.',
-					3,
-					get_temp_dir() . 'sift.log'
+				wc_get_logger()->log(
+					'error',
+					'Attempting to instantiate Sift API client, but missing `account_id` or `api_key`.',
+					array(
+						'source' => 'sift-decisions'
+					)
 				);
-				// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 				// If not set, should we maybe return a WP_Error?
 				return null;

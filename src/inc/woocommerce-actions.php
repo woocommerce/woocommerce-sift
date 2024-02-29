@@ -313,13 +313,13 @@ class Events {
 
 				$client->track( $entry['event'], $entry['properties'] );
 
-				// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.PHP.DevelopmentFunctions.error_log_error_log
-				error_log(
-					PHP_EOL . '[' . gmdate( 'r' ) . '] Sent data: ' . wp_json_encode( $entry ),
-					3,
-					get_temp_dir() . 'sift.log'
+				wc_get_logger()->log(
+					'debug',
+					'Sent data: `' . wp_json_encode( $entry ) . '`',
+					array(
+						'source' => 'sift-decisions'
+					)
 				);
-				// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.PHP.DevelopmentFunctions.error_log_error_log
 			}
 
 			// Now that it's sent, clear the $to_send static in case it was run manually.
