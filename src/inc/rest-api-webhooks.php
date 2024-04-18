@@ -33,6 +33,14 @@ function decision_webhook_auth( \WP_REST_Request $request ) {
 		return true;
 	}
 
+	wc_get_logger()->log(
+		'debug',
+		'Unauthorized Sift Decision Request. Bad key: `' . $key . '`',
+		array(
+			'source' => 'sift-decisions'
+		)
+	);
+
 	return false;
 }
 
@@ -48,14 +56,14 @@ function decision_webhook_auth( \WP_REST_Request $request ) {
 function decision_webhook( \WP_REST_Request $request ) {
 	$json = $request->get_json_params();
 
-	// Enable logging of all received webhooks.  Depending on environment, may want to log elsewhere than the filesystem.
-	// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.PHP.DevelopmentFunctions.error_log_error_log
-	error_log(
-		sprintf( '[ %1$s ] Received Sift Decision: %2$s', gmdate( 'c' ), wp_json_encode( $json ) ) . PHP_EOL,
-		3,
-		get_temp_dir() . 'sift-decisions.log'
+	// Enable logging of all received webhooks.
+	wc_get_logger()->log(
+		'info',
+		'Received Sift Decision: ' . wp_json_encode( $json ),
+		array(
+			'source' => 'sift-decisions'
+		)
 	);
-	// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_file_put_contents, WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 	/**
 	 * This filter will pass in `null` which can be modified to determine the return data sent to Sift in response to the webhook.
