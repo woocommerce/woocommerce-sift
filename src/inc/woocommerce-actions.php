@@ -46,6 +46,8 @@ class Events {
 			array(
 				'$user_id' => $user_id,
 				'$browser' => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
+				'$ip'      => self::get_client_ip(),
+				'$time'    => intval( 1000 * microtime( true ) ),
 			)
 		);
 	}
@@ -72,6 +74,8 @@ class Events {
 				'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$username'      => $username,
 				'$account_types' => $user->roles,
+				'$ip'            => self::get_client_ip(),
+				'$time'          => intval( 1000 * microtime( true ) ),
 				// Other optional data like site_country site_domain etc etc.
 			)
 		);
@@ -115,6 +119,8 @@ class Events {
 				'$browser'        => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$username'       => $username,
 				'$failure_reason' => $failure_reason,
+				'$ip'            => self::get_client_ip(),
+				'$time'          => intval( 1000 * microtime( true ) ),
 			)
 		);
 	}
@@ -145,6 +151,8 @@ class Events {
 				'$account_types'    => $user->roles,
 				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
 				'$site_country'     => wc_get_base_location()['country'],
+				'$ip'               => self::get_client_ip(),
+				'$time'             => intval( 1000 * microtime( true ) ),
 			)
 		);
 	}
@@ -176,6 +184,8 @@ class Events {
 			array(
 				'$user_id'    => $user_id,
 				'$session_id' => WC()->session->get_customer_unique_id(),
+				'$ip'         => self::get_client_ip(),
+				'$time'       => intval( 1000 * microtime( true ) ),
 			)
 		);
 	}
@@ -215,6 +225,8 @@ class Events {
 				'$site_country' => wc_get_base_location()['country'],
 				'$verification_phone_number'
 								=> $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
+				'$ip'           => self::get_client_ip(),
+				'$time'         => intval( 1000 * microtime( true ) ),
 			)
 		);
 	}
