@@ -70,7 +70,6 @@ class Events {
 				'$login_status'  => '$success',
 				'$session_id'    => WC()->session->get_customer_unique_id(),
 				'$user_email'    => $user->email,
-				'$ip'            => self::get_client_ip(),
 				'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$username'      => $username,
 				'$account_types' => $user->roles,
@@ -115,7 +114,6 @@ class Events {
 				'$user_id'        => $attempted_user ? $attempted_user->ID : null,
 				'$login_status'   => '$failure',
 				'$session_id'     => WC()->session->get_customer_unique_id(),
-				'$ip'             => self::get_client_ip(),
 				'$browser'        => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$username'       => $username,
 				'$failure_reason' => $failure_reason,
