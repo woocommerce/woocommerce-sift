@@ -27,6 +27,12 @@ class Events {
 		add_action( 'woocommerce_order_status_changed', array( static::class, 'change_order_status' ), 100 );
 		add_action( 'post_updated', array( static::class, 'update_order' ), 100 );
 
+		/**
+		 * This action merged in to WooCommerce and shipped via 8.8.0
+		 * https://github.com/woocommerce/woocommerce/pull/45146
+		 */
+		add_action( 'woocommerce_guest_session_to_user_id', array( static::class, 'link_session_to_user' ), 10, 2 );
+
 		// On shutdown, send any queued events.
 		add_action( 'shutdown', array( static::class, 'send' ) );
 	}
@@ -168,20 +174,21 @@ class Events {
 	public static function update_account( string $user_id, array $old_user_data ) {}
 
 	/**
-	 * Add session data to user data.
+	 * Transition from the prior session id to the user's customer id.
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/link-session-to-user
 	 *
-	 * @param string $user_id User's id.
+	 * @param string $session_id User's former session id.
+	 * @param string $user_id    User's id.
 	 *
 	 * @return void
 	 */
-	public function link_session_to_user( string $user_id ) {
+	public function link_session_to_user( string $session_id, string $user_id ) {
 		self::add(
 			'$link_session_to_user',
 			array(
 				'$user_id'    => $user_id,
-				'$session_id' => WC()->session->get_customer_unique_id(),
+				'$session_id' => $session_id,
 				'$ip'         => self::get_client_ip(),
 				'$time'       => intval( 1000 * microtime( true ) ),
 			)
