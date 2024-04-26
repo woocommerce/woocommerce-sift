@@ -23,7 +23,7 @@ class Events {
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
 
-		add_action( 'woocommerce_checkout_order_processed', array( static::class, 'create_order' ), 100 );
+		add_action( 'woocommerce_checkout_order_processed', array( static::class, 'create_order' ), 100, 3 );
 		add_action( 'woocommerce_new_order', array( static::class, 'add_session_info' ), 100 );
 		add_action( 'woocommerce_order_status_changed', array( static::class, 'change_order_status' ), 100 );
 		add_action( 'post_updated', array( static::class, 'update_order' ), 100 );
@@ -338,11 +338,56 @@ class Events {
 	/**
 	 * Adds event for order creation
 	 *
-	 * @param string $order_id Order id.
+	 * @param string    $order_id    Order id.
+	 * @param array     $posted_data The data posted from the checkout form.
+	 * @param \WC_Order $order       The Order object.
 	 *
 	 * @return void
 	 */
-	public static function create_order( string $order_id ) {}
+	public static function create_order( string $order_id, array $posted_data, \WC_Order $order ) {
+		$data = $order->get_data();
+		$user = wp_get_current_user();
+
+		$items = array();
+		foreach ( $order->get_items( 'line_item' ) as $item ) {
+			$items[] = array(
+				'$item_id'       => null,
+				'$sku'           => null,
+				'$product_title' => null,
+				'$price'         => null * 1000000, // $39.99
+				'$currency_code' => null,
+				'$quantity'      => null,
+				'$category'      => null,
+				'$tags'          => null,
+			);
+		}
+
+		self::add(
+			'$create_order',
+			array(
+				'$user_id'          => $user ? $user->user_id : null,
+				'$user_email'       => $order->get_billing_email(), // pulling the billing email for the order, NOT customer email
+				'$session_id'       => \WC()->session->get_customer_unique_id(),
+				'$order_id'         => $order_id,
+				'$verification_phone_number'
+								    => $order->get_billing_phone(),
+				'$amount'           => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
+				'$currency_code'    => get_woocommerce_currency(),
+				'$billing_address'  => self::get_order_address( $user->ID, 'billing' ),
+			//	'$payment_methods'  => array(),
+				'$shipping_address' => self::get_order_address( $user->ID, 'shipping' ),
+				'$items'            => $items,
+
+				// More fields not yet input
+
+				'$browser'          => self::get_client_browser(),
+				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
+				'$site_country'     => wc_get_base_location()['country'],
+				'$ip'               => self::get_client_ip(),
+				'$time'             => intval( 1000 * microtime( true ) ),
+			)
+		);
+	}
 
 	/**
 	 * Adds session info to the order.
@@ -504,6 +549,43 @@ class Events {
 				break;
 			case 'shipping':
 				$address = $customer->get_shipping( $context );
+				break;
+			default:
+				return null;
+		}
+
+		// Missing parameters -- company, email (For billing, not shipping)
+		return array(
+			'$name'      => $address['first_name'] . ' ' . $address['last_name'],
+			'$phone'     => $address['phone'],
+			'$address_1' => $address['address_1'],
+			'$address_2' => $address['address_2'],
+			'$city'      => $address['city'],
+			'$region'    => $address['state'],
+			'$country'   => $address['country'],
+			'$zipcode'   => $address['postcode'],
+		);
+	}
+
+	/**
+	 * Get the address details in the format that Sift expects.
+	 *
+	 * @param integer $user_id The User / Customer ID.
+	 * @param string  $type    Either `billing` or `shipping`.
+	 *
+	 * @return array|null
+	 */
+	public static function get_order_address( int $order_id, string $type = 'billing' ) {
+		$order = wc_get_order( $order_id );
+
+		switch ( strtolower( $type ) ) {
+			// WC_Order doesn't have the same `->get_billing` and `->get_shipping()` that the Customer object
+			// has, so we call this way instead.  It also assumes `view` context.
+			case 'billing':
+				$address = $order->get_address( 'billing' );
+				break;
+			case 'shipping':
+				$address = $order->get_address( 'shipping' );
 				break;
 			default:
 				return null;
