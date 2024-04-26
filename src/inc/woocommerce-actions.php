@@ -20,7 +20,7 @@ class Events {
 		add_action( 'user_register', array( static::class, 'create_account' ), 100 );
 		add_action( 'profile_update', array( static::class, 'update_account' ), 100, 2 );
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
-		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100 );
+		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
 
 		add_action( 'woocommerce_checkout_order_processed', array( static::class, 'create_order' ), 100 );
 		add_action( 'woocommerce_new_order', array( static::class, 'add_session_info' ), 100 );
@@ -242,10 +242,41 @@ class Events {
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/remove-item-from-cart
 	 *
 	 * @param string $cart_item_key The key of the cart item.
+	 * @param \WC_Cart $cart The WC_Cart object.
 	 *
 	 * @return void
 	 */
-	public static function remove_from_cart( string $cart_item_key ) {}
+	public static function remove_from_cart( string $cart_item_key, \WC_Cart $cart ) {
+		$cart_item = $cart->get_cart_item( $cart_item_key );
+		$product   = $cart_item['data'];
+		$user      = wp_get_current_user();
+
+		self::add(
+			'$remove_item_from_cart',
+			array(
+				'$user_id'      => $user ? $user->user_id : null,
+				'$user_email'   => $user ? $user->user_email : null,
+				'$session_id'   => \WC()->session->get_customer_unique_id(),
+				'$item'         => array(
+					'$item_id'       => $cart_item_key,
+					'$sku'           => $product->get_sku(),
+					'$product_title' => $product->get_title(),
+					'$price'         => $product->get_price() * 1000000, // $39.99
+					'$currency_code' => get_woocommerce_currency(),
+					'$quantity'      => $cart_item['quantity'],
+					'$category'      => $product->get_categories(),
+					'$tags'          => wp_list_pluck( get_the_terms( $product->ID, 'product_tag' ), 'name' ),
+				),
+				'$browser'      => self::get_client_browser(),
+				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
+				'$site_country' => wc_get_base_location()['country'],
+				'$verification_phone_number'
+								=> $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
+				'$ip'           => self::get_client_ip(),
+				'$time'         => intval( 1000 * microtime( true ) ),
+			)
+		);
+	}
 
 	/**
 	 * Adds event for order creation
