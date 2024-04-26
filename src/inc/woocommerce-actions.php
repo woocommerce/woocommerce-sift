@@ -19,6 +19,7 @@ class Events {
 		add_action( 'wp_login_failed', array( static::class, 'login_failure' ), 100, 2 );
 		add_action( 'user_register', array( static::class, 'create_account' ), 100 );
 		add_action( 'profile_update', array( static::class, 'update_account' ), 100, 2 );
+		add_action( 'wp_set_password', array( static::class, 'update_password' ), 100, 2 );
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
 
@@ -149,6 +150,8 @@ class Events {
 				'$user_email'       => $user->email,
 				'$name'             => $user->display_name,
 				'$phone'            => $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
+			//	'$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
+			//	'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
 				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 				'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
 				'$browser'          => self::get_client_browser(),
@@ -171,7 +174,61 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function update_account( string $user_id, array $old_user_data ) {}
+	public static function update_account( string $user_id, array $old_user_data ) {
+		$user = get_user_by( 'id', $user_id );
+
+		self::add(
+			'$update_account',
+			array(
+				'$user_id'          => $user->ID,
+				'$user_email'       => $user->email,
+				'$name'             => $user->display_name,
+				'$phone'            => $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
+			//	'$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
+			//	'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
+				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
+				'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
+				'$browser'          => self::get_client_browser(),
+				'$account_types'    => $user->roles,
+				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
+				'$site_country'     => wc_get_base_location()['country'],
+				'$ip'               => self::get_client_ip(),
+				'$time'             => intval( 1000 * microtime( true ) ),
+			)
+		);
+	}
+
+	/**
+	 * Notification of a password change.
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-password
+	 *
+	 * @param array  $new_password The new password in plaintext. Do not use this.
+	 * @param string $user_id      User's ID.
+	 *
+	 * @return void
+	 */
+	public static function update_password( string $new_password, string $user_id ) {
+		// We are immediately setting this to null, so that it is not inadvertently shared or disclosed.
+		$new_password = null;
+
+		$user = get_user_by( 'id', $user_id );
+
+		self::add(
+			'$update_password',
+			array(
+				'$user_id'      => $user->ID,
+				'$session_id'   => WC()->session->get_customer_unique_id(),
+				'$reason'       => '$user_update', // Can alternately be `$forgot_password` or `$forced_reset` -- no real way to set those yet.
+				'$status'       => '$success', // This action only fires after the change is done.
+				'$browser'      => self::get_client_browser(),
+				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
+				'$site_country' => wc_get_base_location()['country'],
+				'$ip'           => self::get_client_ip(),
+				'$time'         => intval( 1000 * microtime( true ) ),
+			)
+		);
+	}
 
 	/**
 	 * Transition from the prior session id to the user's customer id.
@@ -463,5 +520,29 @@ class Events {
 			'$country'   => $address['country'],
 			'$zipcode'   => $address['postcode'],
 		);
+	}
+
+	/**
+	 * Get an array of the customer's payment methods.
+	 *
+	 * Return data should conform to the expected format described here:
+	 * https://developers.sift.com/docs/curl/events-api/complex-field-types/payment-method
+	 *
+	 * @param integer $user_id The User / Customer ID.
+	 *
+	 * @return array|null
+	 */
+	public static function get_customer_payment_methods( int $user_id ) {
+		$payment_methods = array();
+
+		/**
+		 * Include a filter here for unexpected payment providers to be able to add their results in as well.
+		 *
+		 * @param array   $payment_methods An array of payment methods.
+		 * @param integer $user_id         The User / Customer ID.
+		 */
+		$payment_methods = apply_filters( 'sift_get_customer_payment_methods', $payment_methods, $user_id );
+
+		return $payment_methods ?? null;
 	}
 }
