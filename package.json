@@ -51,6 +51,6 @@
     "packages-update": "wp-scripts packages-update --dist-tag=wp-6.2",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
-    "start": "npm-run-all --parallel start:**",
+    "start": "npm-run-all --parallel start:**"
   }
 }
