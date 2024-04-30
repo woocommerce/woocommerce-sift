@@ -315,7 +315,7 @@ class Events {
 				'$user_email'   => $user ? $user->user_email : null,
 				'$session_id'   => \WC()->session->get_customer_unique_id(),
 				'$item'         => array(
-					'$item_id'       => $cart_item_key,
+					'$item_id'       => $product->get_id(),
 					'$sku'           => $product->get_sku(),
 					'$product_title' => $product->get_title(),
 					'$price'         => $product->get_price() * 1000000, // $39.99
@@ -338,6 +338,8 @@ class Events {
 	/**
 	 * Adds event for order creation
 	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/create-order
+	 *
 	 * @param string    $order_id    Order id.
 	 * @param array     $posted_data The data posted from the checkout form.
 	 * @param \WC_Order $order       The Order object.
@@ -348,18 +350,26 @@ class Events {
 		$data = $order->get_data();
 		$user = wp_get_current_user();
 
+		$physical_or_electronic = '$electronic';
 		$items = array();
 		foreach ( $order->get_items( 'line_item' ) as $item ) {
+			// Most of this we're basing off return value from `WC_Order_Item_Product::get_product()` as it will return the correct variation.
+			$product = $item->get_product();
+
 			$items[] = array(
-				'$item_id'       => null,
-				'$sku'           => null,
-				'$product_title' => null,
-				'$price'         => null * 1000000, // $39.99
-				'$currency_code' => null,
-				'$quantity'      => null,
-				'$category'      => null,
-				'$tags'          => null,
+				'$item_id'       => $product->get_id(),
+				'$sku'           => $product->get_sku(),
+				'$product_title' => $product->get_name(),
+				'$price'         => $product->get_price() * 1000000, // $39.99
+				'$currency_code' => $order->get_currency(), // For the order specifically, not the whole store.
+				'$quantity'      => $item->get_quantity(),
+				'$category'      => $product->get_categories(),
+				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			);
+
+			if ( ! $product->is_virtual() ) {
+				$physical_or_electronic = '$physical';
+			}
 		}
 
 		self::add(
@@ -377,9 +387,7 @@ class Events {
 			//	'$payment_methods'  => array(),
 				'$shipping_address' => self::get_order_address( $user->ID, 'shipping' ),
 				'$items'            => $items,
-
-				// More fields not yet input
-
+				'$shipping_method'  => $physical_or_electronic,
 				'$browser'          => self::get_client_browser(),
 				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
 				'$site_country'     => wc_get_base_location()['country'],
