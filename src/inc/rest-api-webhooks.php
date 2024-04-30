@@ -37,7 +37,7 @@ function decision_webhook_auth( \WP_REST_Request $request ) {
 		'debug',
 		'Unauthorized Sift Decision Request. Bad key: `' . $key . '`',
 		array(
-			'source' => 'sift-decisions'
+			'source' => 'sift-decisions',
 		)
 	);
 
@@ -61,7 +61,7 @@ function decision_webhook( \WP_REST_Request $request ) {
 		'info',
 		'Received Sift Decision: ' . wp_json_encode( $json ),
 		array(
-			'source' => 'sift-decisions'
+			'source' => 'sift-decisions',
 		)
 	);
 

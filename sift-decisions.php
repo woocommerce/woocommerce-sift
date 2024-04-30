@@ -30,7 +30,7 @@ defined( 'ABSPATH' ) || exit;
 // Load plugin translations so they are available even for the error admin notices.
 add_action(
 	'init',
-	static function() {
+	static function () {
 		load_plugin_textdomain(
 			'sift-decisions',
 			false,
@@ -43,7 +43,7 @@ add_action(
 if ( ! is_file( __DIR__ . '/vendor/autoload.php' ) ) {
 	add_action(
 		'admin_notices',
-		static function() {
+		static function () {
 			$message      = __( 'It seems like <strong>Sift Decisions</strong> is corrupted. Please reinstall!', 'sift-decisions' );
 			$html_message = wp_sprintf( '<div class="error notice wpcomsp-scaffold-error">%s</div>', wpautop( $message ) );
 			echo wp_kses_post( $html_message );
@@ -53,7 +53,6 @@ if ( ! is_file( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 require_once __DIR__ . '/vendor/autoload.php';
 
-require_once __DIR__ . '/src/SiftDecisions.php';
+require_once __DIR__ . '/src/sift-decisions.php';
 
 \WPCOMSpecialProjects\SiftDecisions\SiftDecisions::get_instance();
-

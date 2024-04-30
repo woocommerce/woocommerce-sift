@@ -147,7 +147,7 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 			'error',
 			'Invalid API Credentials.',
 			array(
-				'source' => 'sift-decisions'
+				'source' => 'sift-decisions',
 			)
 		);
 	} else {

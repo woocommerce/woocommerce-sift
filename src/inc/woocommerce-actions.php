@@ -124,8 +124,8 @@ class Events {
 				'$browser'        => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$username'       => $username,
 				'$failure_reason' => $failure_reason,
-				'$ip'            => self::get_client_ip(),
-				'$time'          => intval( 1000 * microtime( true ) ),
+				'$ip'             => self::get_client_ip(),
+				'$time'           => intval( 1000 * microtime( true ) ),
 			)
 		);
 	}
@@ -150,8 +150,8 @@ class Events {
 				'$user_email'       => $user->email,
 				'$name'             => $user->display_name,
 				'$phone'            => $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
-			//	'$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-			//	'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
+				// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
+				// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
 				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 				'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
 				'$browser'          => self::get_client_browser(),
@@ -184,8 +184,8 @@ class Events {
 				'$user_email'       => $user->email,
 				'$name'             => $user->display_name,
 				'$phone'            => $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
-			//	'$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-			//	'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
+				// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
+				// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
 				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 				'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
 				'$browser'          => self::get_client_browser(),
@@ -380,11 +380,11 @@ class Events {
 				'$session_id'       => \WC()->session->get_customer_unique_id(),
 				'$order_id'         => $order_id,
 				'$verification_phone_number'
-								    => $order->get_billing_phone(),
+				                    => $order->get_billing_phone(),
 				'$amount'           => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
 				'$currency_code'    => get_woocommerce_currency(),
 				'$billing_address'  => self::get_order_address( $user->ID, 'billing' ),
-			//	'$payment_methods'  => array(),
+				// '$payment_methods' => array(),
 				'$shipping_address' => self::get_order_address( $user->ID, 'shipping' ),
 				'$items'            => $items,
 				'$shipping_method'  => $physical_or_electronic,
@@ -475,7 +475,7 @@ class Events {
 					'debug',
 					'Sent data: `' . wp_json_encode( $entry ) . '`',
 					array(
-						'source' => 'sift-decisions'
+						'source' => 'sift-decisions',
 					)
 				);
 			}

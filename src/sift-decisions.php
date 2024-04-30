@@ -107,7 +107,7 @@ class SiftDecisions {
 					'error',
 					'Attempting to instantiate Sift API client, but missing `account_id` or `api_key`.',
 					array(
-						'source' => 'sift-decisions'
+						'source' => 'sift-decisions',
 					)
 				);
 
