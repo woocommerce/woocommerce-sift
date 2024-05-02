@@ -471,9 +471,17 @@ class Events {
 
 				$response = $client->track( $entry['event'], $entry['properties'] );
 
+				$log_type  = 'debug';
+				$log_title = sprintf( 'Sent `%s`', $entry['event'] );
+
+				if ( $response->httpStatusCode !== 200 ) {
+					$log_type = 'error';
+					$log_title .= sprintf( ', Error %d: %s', $response->apiStatus, $response->apiErrorMessage );
+				}
+
 				wc_get_logger()->log(
-					'debug',
-					'Sent data: `' . $entry['event'] . '`',
+					$log_type,
+					$log_title,
 					array(
 						'source'     => 'sift-decisions',
 						'properties' => $entry['properties'],
