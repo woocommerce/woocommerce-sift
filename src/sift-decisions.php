@@ -40,6 +40,8 @@ class SiftDecisions {
 		add_action( 'wp_footer', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Fallback!
 
 		add_action( 'login_header', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Allow Sift tracking of login page visits.
+
+		\WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions\Events::hooks();
 	}
 
 	/**
