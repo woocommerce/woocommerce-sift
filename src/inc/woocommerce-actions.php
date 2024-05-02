@@ -149,7 +149,7 @@ class Events {
 				'$session_id'       => WC()->session->get_customer_unique_id(),
 				'$user_email'       => $user->email,
 				'$name'             => $user->display_name,
-				'$phone'            => $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
+				'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 				// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
 				// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
 				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
@@ -183,7 +183,7 @@ class Events {
 				'$user_id'          => $user->ID,
 				'$user_email'       => $user->email,
 				'$name'             => $user->display_name,
-				'$phone'            => $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
+				'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 				// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
 				// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
 				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
@@ -269,7 +269,7 @@ class Events {
 		self::add(
 			'$add_item_to_cart',
 			array(
-				'$user_id'      => $user ? $user->user_id : null,
+				'$user_id'      => $user ? $user->ID : null,
 				'$user_email'   => $user ? $user->user_email : null,
 				'$session_id'   => \WC()->session->get_customer_unique_id(),
 				'$item'         => array(
@@ -311,7 +311,7 @@ class Events {
 		self::add(
 			'$remove_item_from_cart',
 			array(
-				'$user_id'      => $user ? $user->user_id : null,
+				'$user_id'      => $user ? $user->ID : null,
 				'$user_email'   => $user ? $user->user_email : null,
 				'$session_id'   => \WC()->session->get_customer_unique_id(),
 				'$item'         => array(
@@ -328,7 +328,7 @@ class Events {
 				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
 				'$site_country' => wc_get_base_location()['country'],
 				'$verification_phone_number'
-								=> $user ? get_user_meta( $user->user_id, 'billing_phone', true ) : null,
+								=> $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 				'$ip'           => self::get_client_ip(),
 				'$time'         => intval( 1000 * microtime( true ) ),
 			)
@@ -375,7 +375,7 @@ class Events {
 		self::add(
 			'$create_order',
 			array(
-				'$user_id'          => $user ? $user->user_id : null,
+				'$user_id'          => $user ? $user->ID : null,
 				'$user_email'       => $order->get_billing_email(), // pulling the billing email for the order, NOT customer email
 				'$session_id'       => \WC()->session->get_customer_unique_id(),
 				'$order_id'         => $order_id,
