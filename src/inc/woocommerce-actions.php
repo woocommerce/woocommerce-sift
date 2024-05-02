@@ -469,13 +469,15 @@ class Events {
 			foreach ( self::$to_send as $entry ) {
 				// Add in API calls / batching here.
 
-				$client->track( $entry['event'], $entry['properties'] );
+				$response = $client->track( $entry['event'], $entry['properties'] );
 
 				wc_get_logger()->log(
 					'debug',
-					'Sent data: `' . wp_json_encode( $entry ) . '`',
+					'Sent data: `' . $entry['event'] . '`',
 					array(
-						'source' => 'sift-decisions',
+						'source'     => 'sift-decisions',
+						'properties' => $entry['properties'],
+						'response'   => $response,
 					)
 				);
 			}
