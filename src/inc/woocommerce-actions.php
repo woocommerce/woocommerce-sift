@@ -76,7 +76,7 @@ class Events {
 				'$user_id'       => $user->ID,
 				'$login_status'  => '$success',
 				'$session_id'    => WC()->session->get_customer_unique_id(),
-				'$user_email'    => $user->email,
+				'$user_email'    => $user->user_email ? $user->user_email : null,
 				'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$username'      => $username,
 				'$account_types' => $user->roles,
@@ -118,7 +118,7 @@ class Events {
 		self::add(
 			'$login',
 			array(
-				'$user_id'        => $attempted_user ? $attempted_user->ID : null,
+				'$user_id'        => $attempted_user->ID ? $attempted_user->ID : null,
 				'$login_status'   => '$failure',
 				'$session_id'     => WC()->session->get_customer_unique_id(),
 				'$browser'        => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
@@ -147,7 +147,7 @@ class Events {
 			array(
 				'$user_id'          => $user->ID,
 				'$session_id'       => WC()->session->get_customer_unique_id(),
-				'$user_email'       => $user->email,
+				'$user_email'       => $user->user_email ? $user->user_email : null,
 				'$name'             => $user->display_name,
 				'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 				// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
@@ -181,7 +181,7 @@ class Events {
 			'$update_account',
 			array(
 				'$user_id'          => $user->ID,
-				'$user_email'       => $user->email,
+				'$user_email'       => $user->user_email ? $user->user_email : null,
 				'$name'             => $user->display_name,
 				'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 				// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
@@ -269,8 +269,8 @@ class Events {
 		self::add(
 			'$add_item_to_cart',
 			array(
-				'$user_id'      => $user ? $user->ID : null,
-				'$user_email'   => $user ? $user->user_email : null,
+				'$user_id'      => $user->ID ? $user->ID : null,
+				'$user_email'   => $user->user_email ? $user->user_email : null,
 				'$session_id'   => \WC()->session->get_customer_unique_id(),
 				'$item'         => array(
 					'$item_id'       => $cart_item_key,
@@ -309,8 +309,8 @@ class Events {
 		self::add(
 			'$remove_item_from_cart',
 			array(
-				'$user_id'      => $user ? $user->ID : null,
-				'$user_email'   => $user ? $user->user_email : null,
+				'$user_id'      => $user->ID ? $user->ID : null,
+				'$user_email'   => $user->user_email ? $user->user_email : null,
 				'$session_id'   => \WC()->session->get_customer_unique_id(),
 				'$item'         => array(
 					'$item_id'       => $product->get_id(),
@@ -371,8 +371,8 @@ class Events {
 		self::add(
 			'$create_order',
 			array(
-				'$user_id'          => $user ? $user->ID : null,
-				'$user_email'       => $order->get_billing_email(), // pulling the billing email for the order, NOT customer email
+				'$user_id'          => $user->ID ? $user->ID : null,
+				'$user_email'       => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
 				'$session_id'       => \WC()->session->get_customer_unique_id(),
 				'$order_id'         => $order_id,
 				'$verification_phone_number'
