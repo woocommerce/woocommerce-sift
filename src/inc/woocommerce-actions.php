@@ -240,7 +240,7 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public function link_session_to_user( string $session_id, string $user_id ) {
+	public static function link_session_to_user( string $session_id, string $user_id ) {
 		self::add(
 			'$link_session_to_user',
 			array(
