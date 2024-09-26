@@ -654,8 +654,8 @@ class Events {
 
 		$gateway_id = $order->get_payment_method();
 		$order_payment_methods[] = array(
-			'$payment_type'    => Payment_Method::get_payment_type_string( $gateway_id, $gateway_payment_type ),
-			'$payment_gateway' => Payment_Method::get_payment_gateway_string( $gateway_id ),
+			'$payment_type'    => Payment_Method::normalize_payment_type_string( $gateway_id, $gateway_payment_type ),
+			'$payment_gateway' => Payment_Method::normalize_payment_gateway_string( $gateway_id ),
 		);
 
 		return $order_payment_methods;
