@@ -651,13 +651,46 @@ class Events {
 
 	public static function get_order_payment_methods( \WC_Order $order ): array {
 		$order_payment_methods = array();
+		$gateway_payment_type = null;
 
 		$gateway_id = $order->get_payment_method();
+
+		$payment_method_details = Payment_Method::get_payment_method_details_from_order( $gateway_id, $order );
+		$charge_details = Payment_Method::get_charge_details_from_order( $gateway_id, $order );
+
 		$order_payment_methods[] = array(
-			'$payment_type'    => Payment_Method::normalize_payment_type_string( $gateway_id, $gateway_payment_type ),
-			'$payment_gateway' => Payment_Method::normalize_payment_gateway_string( $gateway_id ),
+			'$payment_type'    => Payment_Method::get_payment_type_string( $gateway_id, $gateway_payment_type ),
+			'$payment_gateway' => Payment_Method::get_payment_gateway_string( $gateway_id ),
+			'$card_bin' => Payment_Method::get_card_bin( $gateway_id, $payment_method_details ),
+			'$card_last4' => Payment_Method::get_card_last4( $gateway_id, $payment_method_details ),
+			'$avs_result_code' => Payment_Method::get_avs_result_code( $gateway_id, $charge_details ),
+			'$cvv_result_code' => Payment_Method::get_cvv_result_code( $gateway_id, $charge_details ),
+			'$verification_status' => Payment_Method::get_verification_status( $gateway_id, $charge_details ),
+			'$routing_number' => Payment_Method::get_routing_number( $gateway_id, $charge_details ),
+			'$shortened_iban_first6' => Payment_Method::get_shortened_iban_first6( $gateway_id, $charge_details ),
+			'$shortened_iban_last4' => Payment_Method::get_shortened_iban_last4( $gateway_id, $charge_details ),
+			'$sepa_direct_debit_mandate' => Payment_Method::get_sepa_direct_debit_mandate( $gateway_id, $charge_details ),
+			'$decline_reason_code' => Payment_Method::get_decline_reason_code( $gateway_id, $charge_details ),
+			'$wallet_address' => Payment_Method::get_wallet_address( $gateway_id, $charge_details ),
+			'$wallet_type' => Payment_Method::get_wallet_type( $gateway_id, $charge_details ),
+			'$paypal_payer_id' => Payment_Method::get_paypal_payer_id( $gateway_id, $charge_details ),
+			'$paypal_payer_email' => Payment_Method::get_paypal_payer_email( $gateway_id, $charge_details ),
+			'$paypal_payer_status' => Payment_Method::get_paypal_payer_status( $gateway_id, $charge_details ),
+			'$paypal_address_status' => Payment_Method::get_paypal_address_status( $gateway_id, $charge_details ),
+			'$paypal_protection_eligibility' => Payment_Method::get_paypal_protection_eligibility( $gateway_id, $charge_details ),
+			'$paypal_payment_status' => Payment_Method::get_paypal_payment_status( $gateway_id, $charge_details ),
+			'$stripe_cvc_check' => Payment_Method::get_stripe_cvc_check( $gateway_id, $charge_details ),
+			'$stripe_address_line1_check' => Payment_Method::get_stripe_address_line1_check( $gateway_id, $charge_details ),
+			'$stripe_address_line2_check' => Payment_Method::get_stripe_address_line2_check( $gateway_id, $charge_details ),
+			'$stripe_address_zip_check' => Payment_Method::get_stripe_address_zip_check( $gateway_id, $charge_details ),
+			'$stripe_funding' => Payment_Method::get_stripe_funding( $gateway_id, $charge_details ),
+			'$stripe_brand' => Payment_Method::get_stripe_brand( $gateway_id, $charge_details ),
+			'$account_holder_name' => Payment_Method::get_account_holder_name( $gateway_id, $charge_details ),
+			'$account_number_last5' => Payment_Method::get_account_number_last5( $gateway_id, $charge_details ),
+			'$bank_name' => Payment_Method::get_bank_name( $gateway_id, $charge_details ),
+			'$bank_country' => Payment_Method::get_bank_country( $gateway_id, $charge_details ),
 		);
 
-		return $order_payment_methods;
+		return array_filter( $order_payment_methods, fn( $val ) => ! empty( $val ) );
 	}
 }
