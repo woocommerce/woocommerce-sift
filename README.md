@@ -22,3 +22,11 @@ sift-decisions/
 ## Documentation
 
 As you develop your plugin, update the README.md file with detailed information about your plugin's features, usage, installation, and any other pertinent information.
+
+## Local Development
+
+Use [`wp-env`](https://github.com/WordPress/gutenberg/tree/HEAD/packages/env#readme) to run a local development environment.
+
+```bash
+wp-env start
+```
