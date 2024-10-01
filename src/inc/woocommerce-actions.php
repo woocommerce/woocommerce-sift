@@ -434,7 +434,7 @@ class Events {
 	 * @return void
 	 */
 	public static function add( string $event, array $properties ) {
-		if ( 'localhost' === $properties['$site_domain'] ) {
+		if ( 'localhost' === ( $properties['$site_domain'] ?? '' ) ) {
 			$properties['$site_domain'] = 'george-test-local.woocommerce.com';
 		}
 
@@ -464,6 +464,9 @@ class Events {
 	public static function send() {
 		if ( self::count() > 0 ) {
 			$client = \WPCOMSpecialProjects\SiftDecisions\SiftDecisions::get_api_client();
+			if ( empty( $client ) ) {
+				return false;
+			}
 
 			foreach ( self::$to_send as $entry ) {
 				// Add in API calls / batching here.
@@ -595,6 +598,10 @@ class Events {
 	 */
 	public static function get_order_address( int $order_id, string $type = 'billing' ) {
 		$order = wc_get_order( $order_id );
+
+		if ( empty( $order ) ) {
+			return null;
+		}
 
 		switch ( strtolower( $type ) ) {
 			// WC_Order doesn't have the same `->get_billing` and `->get_shipping()` that the Customer object
