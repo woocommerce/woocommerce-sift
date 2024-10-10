@@ -7,10 +7,12 @@ add_action(
 
 		foreach ( $gateways as $gateway ) {
 			switch ( $gateway ) {
-				case 'woocommerce-gateway-stripe':
+				case 'stripe':
+					require_once __DIR__ . '/lib/stripe.php';
 					require_once __DIR__ . '/stripe.php';
 					break;
-				case 'woopay':
+				case 'woocommerce_payments':
+					require_once __DIR__ . '/lib/stripe.php';
 					require_once __DIR__ . '/woopay.php';
 					break;
 			}

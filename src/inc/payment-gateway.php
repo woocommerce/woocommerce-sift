@@ -10,6 +10,10 @@ class Payment_Gateway {
 		$this->sift_slug = static::normalize_payment_gateway_string( $this->woo_gateway_id );
 	}
 
+	public function get_woo_gateway_id() {
+		return $this->woo_gateway_id;
+	}
+
 	public static function normalize_payment_gateway_string( string $gateway_id ): string {
 		$payment_gateway = apply_filters( sprintf( 'wc_sift_decisions_%s_payment_gateway_string', $gateway_id ), '' );
 		if ( static::is_valid_sift_slug( $payment_gateway ) ) {
