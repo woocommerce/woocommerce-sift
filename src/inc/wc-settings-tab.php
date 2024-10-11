@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
 namespace WPCOMSpecialProjects\SiftDecisions\WC_Settings_Tab;
 
 /**
@@ -120,7 +122,7 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 
 	// TODO: Maybe find a way to leverage the Sift PHP API Client to fire these requests, rather than ad-hoc'ing together an alternate solution.
 
-	$client = \WPCOMSpecialProjects\SiftDecisions\SiftDecisions::get_api_client();
+	$client   = \WPCOMSpecialProjects\SiftDecisions\SiftDecisions::get_api_client();
 	$response = $client->listAllWebhooks();
 
 	$code   = $response->httpStatusCode;
@@ -130,11 +132,11 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 	if ( 200 === $code ) {
 		$return = sprintf( '<h4>%s</h4>', __( 'Credentials are valid!', 'sift-decisions' ) );
 		// translators: %d: integer.
-		$return .= sprintf( __( '<p>There are presently %d webhooks configured.</p>', 'sift-decisions' ), intval( $data['total_results'] ) );
+		$return .= '<p>' . sprintf( __( 'There are presently %d webhooks configured.', 'sift-decisions' ), intval( $data['total_results'] ) ) . '</p>';
 
 		$webhook_url = rest_url( 'sift-decisions/v1/decision' );
 		// translators: %s: url
-		$return .= sprintf( __( '<p>The webhook url for this site is: <kbd>%s</kbd></p>', 'sift-decisions' ), esc_html( $webhook_url ) );
+		$return .= '<p>' . sprintf( __( 'The webhook url for this site is: <kbd>%s</kbd>', 'sift-decisions' ), esc_html( $webhook_url ) ) . '</p>';
 
 		if ( set_url_scheme( $webhook_url, 'https' ) !== $webhook_url ) {
 			$return .= sprintf( '<p>%s</p>', __( '<strong class="wp-ui-text-notification">It looks like your site may not be configured to use HTTPS!</strong> Sift requires webhooks to be served over HTTPS urls. <a href="https://wordpress.org/documentation/article/https-for-wordpress/">Learn how to fix this?</a>', 'sift-decisions' ) );
@@ -153,7 +155,7 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 	} else {
 		$return = sprintf( '<h4 class="wp-ui-text-notification">%s</h4>', __( 'Error!', 'sift-decisions' ) );
 		// translators: %d: three digit integer
-		$return .= sprintf( __( '<p>API HTTP Code: <strong>%d</strong></p>', 'sift-decisions' ), intval( $code ) );
+		$return .= '<p>' . sprintf( __( 'API HTTP Code: <strong>%d</strong>', 'sift-decisions' ), intval( $code ) ) . '</p>';
 		$return .= '<pre>' . esc_html( $response->rawResponse ) . '</pre>';
 	}
 

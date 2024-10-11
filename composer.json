@@ -44,7 +44,9 @@
     "phpcompatibility/phpcompatibility-wp": "*",
     "wp-coding-standards/wpcs": "dev-develop",
 
-    "roave/security-advisories": "dev-latest"
+    "roave/security-advisories": "dev-latest",
+    "phpunit/phpunit": "^9.6",
+    "yoast/phpunit-polyfills": "^3.0"
   },
 
   "autoload": {

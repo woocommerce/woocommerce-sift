@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+
 namespace WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions;
 
 /**
@@ -169,7 +171,7 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-account
 	 *
-	 * @param string $user_id       User's ID.
+	 * @param string $user_id User's ID.
 	 *
 	 * @return void
 	 */
@@ -202,7 +204,7 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-password
 	 *
-	 * @param array  $new_password The new password in plaintext. Do not use this.
+	 * @param string $new_password The new password in plaintext. Do not use this.
 	 * @param string $user_id      User's ID.
 	 *
 	 * @return void
@@ -295,8 +297,8 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/remove-item-from-cart
 	 *
-	 * @param string $cart_item_key The key of the cart item.
-	 * @param \WC_Cart $cart The WC_Cart object.
+	 * @param string   $cart_item_key The key of the cart item.
+	 * @param \WC_Cart $cart          The WC_Cart object.
 	 *
 	 * @return void
 	 */
@@ -346,7 +348,7 @@ class Events {
 		$user = wp_get_current_user();
 
 		$physical_or_electronic = '$electronic';
-		$items = array();
+		$items                  = array();
 		foreach ( $order->get_items( 'line_item' ) as $item ) {
 			// Most of this we're basing off return value from `WC_Order_Item_Product::get_product()` as it will return the correct variation.
 			$product = $item->get_product();
@@ -375,10 +377,11 @@ class Events {
 				'$session_id'       => \WC()->session->get_customer_unique_id(),
 				'$order_id'         => $order_id,
 				'$verification_phone_number'
-				                    => $order->get_billing_phone(),
+									=> $order->get_billing_phone(),
 				'$amount'           => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
 				'$currency_code'    => get_woocommerce_currency(),
 				'$billing_address'  => self::get_order_address( $user->ID, 'billing' ),
+				// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
 				// '$payment_methods' => array(),
 				'$shipping_address' => self::get_order_address( $user->ID, 'shipping' ),
 				'$items'            => $items,
@@ -476,8 +479,8 @@ class Events {
 				$log_type  = 'debug';
 				$log_title = sprintf( 'Sent `%s`', $entry['event'] );
 
-				if ( $response->httpStatusCode !== 200 ) {
-					$log_type = 'error';
+				if ( 200 !== $response->httpStatusCode ) {
+					$log_type   = 'error';
 					$log_title .= sprintf( ', Error %d: %s', $response->apiStatus, $response->apiErrorMessage );
 				}
 
@@ -591,8 +594,8 @@ class Events {
 	/**
 	 * Get the address details in the format that Sift expects.
 	 *
-	 * @param integer $user_id The User / Customer ID.
-	 * @param string  $type    Either `billing` or `shipping`.
+	 * @param integer $order_id The User / Customer ID.
+	 * @param string  $type     Either `billing` or `shipping`.
 	 *
 	 * @return array|null
 	 */
@@ -649,7 +652,7 @@ class Events {
 		 * @param array   $payment_methods An array of payment methods.
 		 * @param integer $user_id         The User / Customer ID.
 		 */
-		$payment_methods = apply_filters( 'sift_get_customer_payment_methods', $payment_methods, $user_id );
+		$payment_methods = apply_filters( 'sift_decisions_get_customer_payment_methods', $payment_methods, $user_id );
 
 		return $payment_methods ?? null;
 	}
