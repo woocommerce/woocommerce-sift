@@ -1,17 +1,25 @@
 <?php declare( strict_types=1 );
 
-class Payment_Type {
+class Payment_Type extends Sift_Property {
 
-	public static function normalize_payment_type_string( string $gateway_id ): string {
-		$payment_type = apply_filters( sprintf( 'wc_sift_decisions_%s_payment_type_string', $gateway_id ), '' );
-		if ( self::is_valid_payment_type( $payment_type ) ) {
-			return $payment_type;
-		}
+	private Payment_Gateway $gateway;
+
+	public function __construct( $gateway, $payment_type ) {
+		$this->gateway      = $gateway;
+		$this->sift_slug    = static::normalize_payment_type_string( $this->gateway, $payment_type );
 	}
 
-	public static function is_valid_sift_slug( $payment_type ): bool {
+	public static function normalize_payment_type_string( Payment_Gateway $gateway, string $payment_type ): ?string {
+		$sift_slug = apply_filters( sprintf( 'wc_sift_decisions_%s_payment_type_string', $gateway->get_woo_gateway_id() ), $payment_type );
+		if ( static::is_valid_sift_slug( $sift_slug ) ) {
+			return $sift_slug;
+		}
+		return null;
+	}
+
+	public static function is_valid_sift_slug( ?string $sift_slug ): bool {
 		return in_array(
-			$payment_type, 
+			$sift_slug,
 			array(
 				'$cash',
 				'$check',

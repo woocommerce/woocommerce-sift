@@ -1,7 +1,7 @@
 <?php declare( strict_types=1 );
 
 add_action(
-	'init',
+	'woocommerce_loaded',
 	function() {
 		$gateways = \WC()->payment_gateways->get_available_payment_gateways();
 

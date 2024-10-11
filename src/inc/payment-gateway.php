@@ -1,9 +1,8 @@
 <?php declare( strict_types=1 );
 
-class Payment_Gateway {
+class Payment_Gateway extends Sift_Property {
 
 	private string $woo_gateway_id;
-	private string $sift_slug;
 
 	public function __construct( $woo_gateway_id ) {
 		$this->woo_gateway_id = $woo_gateway_id;
@@ -14,21 +13,15 @@ class Payment_Gateway {
 		return $this->woo_gateway_id;
 	}
 
-	public static function normalize_payment_gateway_string( string $gateway_id ): string {
+	public static function normalize_payment_gateway_string( string $gateway_id ): ?string {
 		$payment_gateway = apply_filters( sprintf( 'wc_sift_decisions_%s_payment_gateway_string', $gateway_id ), '' );
 		if ( static::is_valid_sift_slug( $payment_gateway ) ) {
 			return $payment_gateway;
 		}
+		return null;
 	}
 
-	public static function normalize_payment_type_string( string $gateway_id ): string {
-		$payment_type = apply_filters( sprintf( 'wc_sift_decisions_%s_payment_type_string', $gateway_id ), '' );
-		if ( self::is_valid_payment_type( $payment_type ) ) {
-			return $payment_type;
-		}
-	}
-
-	public static function is_valid_sift_slug( $sift_slug ): bool {
+	public static function is_valid_sift_slug( ?string $sift_slug ): bool {
 		return in_array(
 			$sift_slug,
 			array(
@@ -644,13 +637,4 @@ class Payment_Gateway {
 			)
 		);
 	}
-
-	public function is_valid() {
-		return static::is_valid_sift_slug( $this->sift_slug );
-	}
-
-	public function to_string() {
-		return $this->sift_slug;
-	}
-
 }
