@@ -25,8 +25,8 @@ As you develop your plugin, update the README.md file with detailed information 
 
 ## Local Development
 
-Use [`wp-env`](https://github.com/WordPress/gutenberg/tree/HEAD/packages/env#readme) to run a local development environment.
+1. `npm install`
+2. `composer install`
+3. `npx wp-env start` -- This starts a local WordPress environment available at <http://localhost:8888>
+4. `npm test`
 
-```bash
-wp-env start
-```

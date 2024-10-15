@@ -4,6 +4,8 @@
 
 namespace WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions;
 
+use WC_Order_Item_Product;
+
 /**
  * Class Events
  */
@@ -264,14 +266,18 @@ class Events {
 	 */
 	public static function add_to_cart( string $cart_item_key ) {
 		$cart_item = \WC()->cart->get_cart_item( $cart_item_key );
-		$product   = $cart_item['data'];
+		$product   = $cart_item['data'] ?? null;
 		$user      = wp_get_current_user();
+
+		if ( ! $product ) {
+			return;
+		}
 
 		self::add(
 			'$add_item_to_cart',
 			array(
-				'$user_id'      => $user->ID ? $user->ID : null,
-				'$user_email'   => $user->user_email ? $user->user_email : null,
+				'$user_id'      => $user->ID ?? null,
+				'$user_email'   => $user->user_email ?? null,
 				'$session_id'   => \WC()->session->get_customer_unique_id(),
 				'$item'         => array(
 					'$item_id'       => $cart_item_key,
@@ -350,6 +356,11 @@ class Events {
 		$physical_or_electronic = '$electronic';
 		$items                  = array();
 		foreach ( $order->get_items( 'line_item' ) as $item ) {
+			if ( ! $item instanceof WC_Order_Item_Product ) {
+				// log an error...
+				wc_get_logger()->error( 'Item not Product Item.' );
+				continue;
+			}
 			// Most of this we're basing off return value from `WC_Order_Item_Product::get_product()` as it will return the correct variation.
 			$product = $item->get_product();
 
