@@ -266,12 +266,22 @@ class Events {
 	 */
 	public static function add_to_cart( string $cart_item_key ) {
 		$cart_item = \WC()->cart->get_cart_item( $cart_item_key );
+		/** @var \WC_Abstract_Legacy_Product $product */
 		$product   = $cart_item['data'] ?? null;
 		$user      = wp_get_current_user();
 
 		if ( ! $product ) {
 			return;
 		}
+
+		// Generate the category from the product category ids.
+		// - SIFT wants a single string so we'll sort them and implode them.
+		$categories = array();
+		foreach ( $product->get_category_ids() as $category_id ) {
+			$categories[] = get_term( $category_id )->name;
+		}
+		sort( $categories, SORT_STRING );
+		$category = implode( ', ', $categories );
 
 		self::add(
 			'$add_item_to_cart',
@@ -286,8 +296,8 @@ class Events {
 					'$price'         => $product->get_price() * 1000000, // $39.99
 					'$currency_code' => get_woocommerce_currency(),
 					'$quantity'      => $cart_item['quantity'],
-					'$category'      => $product->get_categories(),
-					'$tags'          => wp_list_pluck( get_the_terms( $product->ID, 'product_tag' ), 'name' ),
+					'$category'      => $category,
+					'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 				),
 				'$browser'      => self::get_client_browser(),
 				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
