@@ -22,7 +22,7 @@ class AddsItemToCartEventTest extends EventTest {
 	 */
 	public function test_adds_item_to_cart() {
 		\WC()->cart->add_to_cart( static::$product_id );
-		$this->assertAddsItemToCart();
+		$this->assertAddsItemToCartEventTriggered();
 	}
 
 	/**
@@ -32,7 +32,7 @@ class AddsItemToCartEventTest extends EventTest {
 	 *
 	 * @return void
 	 */
-	public static function assertAddsItemToCart( $product_id = null ) {
+	public static function assertAddsItemToCartEventTriggered( $product_id = null ) {
 		$product = wc_get_product( $product_id ?? static::$product_id );
 		$events  = static::filter_events( [ '$add_item_to_cart' ] );
 		static::assertGreaterThanOrEqual( 1, count( $events ) );
