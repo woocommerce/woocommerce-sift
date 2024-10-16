@@ -276,12 +276,9 @@ class Events {
 
 		// Generate the category from the product category ids.
 		// - SIFT wants a single string so we'll sort them and implode them.
-		$categories = array();
-		foreach ( $product->get_category_ids() as $category_id ) {
-			$categories[] = get_term( $category_id )->name;
-		}
+		$categories = wp_list_pluck( get_the_terms( $product->get_id(), 'product_cat' ), 'name' );
 		sort( $categories, SORT_STRING );
-		$category = implode( ', ', $categories );
+		$category   = implode( ', ', $categories );
 
 		self::add(
 			'$add_item_to_cart',
