@@ -254,80 +254,134 @@ function display_sgdc_error( $message = '' ) {
  */
 function process_sift_decision_received( $return, $decision_id, $entity_type, $entity_id, $time ) {
 
-    // Purchase Block Data Store: Manage via Role / Usermeta managing a meta or role
-    //  that loops into the `woocommerce_add_to_cart_validation` filter hook
-
-    // When they try to make a purchase, display a SGDC Error (code to support to recognize it's a fraud block)
-
-    // Nice To Have: Apply to WPCOM account -- ??? depends if user is linked, probably v2.
-
     switch( $decision_id ) {
         case 'trust_list_payment_abuse':
             // ✅ -- users
             /**
-             * Need to have
+             * Need to have:
              *  Remove any purchasing block.
-             * Nice to have
+             */
+            unblock_user_from_purchases( $entity_id );
+
+            /**
+             * Nice to have:
              *  Apply the same Sift decision to the associated WordPress.com account.
              */
             break;
+
         case 'looks_good_payment_abuse':
             // ✅ -- users
             /**
-             * Need to have
+             * Need to have:
              *  Remove any purchasing block.
-             * Nice to have
+             */
+            unblock_user_from_purchases( $entity_id );
+
+            /**
+             * Nice to have:
              *  Apply the same Sift decision to the associated WordPress.com account.
              */
             break;
+
         case 'not_likely_fraud_payment_abuse':
             // ⚠️ -- users
             /**
-             * Need to have
+             * Need to have:
              *  Remove any purchasing block.
-             * Nice to have
+             */
+            unblock_user_from_purchases( $entity_id );
+
+            /**
+             * Nice to have:
              *  Apply the same Sift decision to the associated WordPress.com account.
              */
             break;
+
         case 'likely_fraud_refundno_renew_payment_abuse':
             // 🚫 -- users
             /**
-             * Need to have
+             * Need to have:
              *  Block future purchases.
-             *  Remove subscriptions, licenses and product keys and refund.
-             *  If a blocked user tries to make a purchase, display the “SGDC error” to the user.
-             * Nice to have
+             */
+            update_user_meta( $entity_id, 'is_blocked_from_purchases', true );
+
+            /**
+             *  Remove subscriptions, licenses and product keys, and refund.
+             */
+            void_and_refund_user_orders( $entity_id );
+            cancel_and_remove_user_subscriptions( $entity_id );
+            remove_user_licenses_and_product_keys( $entity_id ); // Suggested new function
+
+            /**
+             * If a blocked user tries to make a purchase, display the “SGDC error” to the user.
+             */
+            display_sgdc_error( 'You are blocked from making purchases due to a recent fraud review. SGDC Error OYBPXRQ' );
+
+            /**
+             * Nice to have:
              *  Apply the same Sift decision to the associated WordPress.com account.
              */
             break;
+
         case 'likely_fraud_keep_purchases_payment_abuse':
             // 🚫 -- users
             /**
-             * Need to have
+             * Need to have:
              *  Block future purchases.
-             *  If a blocked user tries to make a purchase, display the “SGDC error” to the user.
-             * Nice to have
+             */
+            update_user_meta( $entity_id, 'is_blocked_from_purchases', true );
+
+            /**
+             * If a blocked user tries to make a purchase, display the “SGDC error” to the user.
+             */
+            display_sgdc_error( 'You are blocked from making purchases due to a recent fraud review. SGDC Error OYBPXRQ' );
+
+            /**
+             * Nice to have:
              *  Apply the same Sift decision to the associated WordPress.com account.
              */
             break;
+
         case 'fraud_payment_abuse':
             // 🚫 -- users
             /**
-             * Need to have
+             * Need to have:
              *  Block future purchases.
-             *  Remove subscriptions, licenses and product keys and refund.
-             *  If a blocked user tries to make a purchase, display an error message to the user. When they contact Woo support to appeal their account block, support will identify the specific error code and escalate to Fraudsquad. “SGDC error” can be used to identify a Woo.com account block specifically.
-             * Nice to have
+             */
+            update_user_meta( $entity_id, 'is_blocked_from_purchases', true );
+
+            /**
+             *  Remove subscriptions, licenses and product keys, and refund.
+             */
+            void_and_refund_user_orders( $entity_id );
+            cancel_and_remove_user_subscriptions( $entity_id );
+            remove_user_licenses_and_product_keys( $entity_id ); // Suggested new function
+
+            /**
+             * If a blocked user tries to make a purchase, display an error message to the user.
+             * When they contact Woo support to appeal their account block, support will identify the specific error code and escalate to Fraudsquad.
+             * “SGDC error” can be used to identify a Woo.com account block specifically.
+             */
+            display_sgdc_error( 'You are blocked from making purchases due to fraudulent activity. SGDC Error OYBPXRQ' );
+
+            /**
+             * Nice to have:
              *  Apply the same Sift decision to the associated WordPress.com account.
              *  Log the user out of their Woo.com account and prevent further access.
              */
+            force_user_logout( $entity_id );
             break;
+
         case 'block_wo_review_payment_abuse':
             // 🚫 -- users
             /**
-             * Need to have
+             * Need to have:
              *  Block future purchases.
-             * Nice to have
+             */
+            update_user_meta( $entity_id, 'is_blocked_from_purchases', true );
+
+            /**
+             * Nice to have:
              *  Apply the same Sift decision to the associated WordPress.com account.
              */
             break;
