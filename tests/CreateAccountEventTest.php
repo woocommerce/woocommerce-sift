@@ -29,7 +29,7 @@ class CreateAccountEventTest extends EventTest {
 	}
 
 	/**
-	 * Test that the $add_item_to_cart event is triggered.
+	 * Test that the $create_account event is triggered.
 	 *
 	 * @return void
 	 */
