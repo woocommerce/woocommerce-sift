@@ -60,6 +60,28 @@ abstract class EventTest extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Flatten an array to dot notation.
+	 *
+	 * E.g. ['key' => ['subkey' => 'value']] => ['key.subkey' => 'value']
+	 *
+	 * @param mixed $multidimensional_array Arbitrary array (most likely a SIFT event).
+	 *
+	 * @return array
+	 */
+	private static function array_dot( mixed $multidimensional_array ) {
+		$flat = [];
+		$it   = new RecursiveIteratorIterator( new RecursiveArrayIterator( $multidimensional_array ) );
+		foreach ( $it as $leaf ) {
+			$keys = [];
+			foreach ( range( 0, $it->getDepth() ) as $depth ) {
+				$keys[] = $it->getSubIterator( $depth )->key();
+			}
+			$flat[ implode( '.', $keys ) ] = $leaf;
+		}
+		return $flat;
+	}
+
+	/**
 	 * Set up the test case.
 	 *
 	 * @return void
@@ -83,11 +105,35 @@ abstract class EventTest extends WP_UnitTestCase {
 	/**
 	 * Filter events by event type.
 	 *
-	 * @param array $event_types Event types to filter by.
+	 * @param array $filters Associative array for filtering.
+	 *
+	 * @return generator
+	 */
+	public static function filter_events_gen( $filters = [] ) {
+		foreach ( Events::$to_send as $event ) {
+			$match = true;
+			// flatten the keys to dot notation (e.g. 'key.subkey.subsubkey' => 'value')
+			$event = self::array_dot( $event );
+			foreach ( $filters as $key => $value ) {
+				if ( ! isset( $event[ $key ] ) || $event[ $key ] !== $value ) {
+					$match = false;
+					break;
+				}
+			}
+			if ( $match ) {
+				yield $event;
+			}
+		}
+	}
+
+	/**
+	 * Filter events by event type.
+	 *
+	 * @param array $filters Associative array for filtering.
 	 *
 	 * @return array
 	 */
-	public static function filter_events( $event_types = [] ) {
-		return array_filter( Events::$to_send, fn ( $event ) => in_array( $event['event'], $event_types, true ) );
+	public static function filter_events( $filters = [] ) {
+		return iterator_to_array( static::filter_events_gen( $filters ) );
 	}
 }

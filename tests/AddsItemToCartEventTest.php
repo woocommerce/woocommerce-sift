@@ -16,7 +16,7 @@ use WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions\Events;
  */
 class AddsItemToCartEventTest extends EventTest {
 	/**
-	 * Test that the add_to_cart event is triggered.
+	 * Test that the $add_item_to_cart event is triggered.
 	 *
 	 * @return void
 	 */
@@ -26,7 +26,7 @@ class AddsItemToCartEventTest extends EventTest {
 	}
 
 	/**
-	 * Test that the $add_item_to_cart event is triggered.
+	 * Assert $add_item_to_cart event is triggered.
 	 *
 	 * @param integer $product_id Product ID.
 	 *
@@ -34,13 +34,12 @@ class AddsItemToCartEventTest extends EventTest {
 	 */
 	public static function assertAddsItemToCartEventTriggered( $product_id = null ) {
 		$product = wc_get_product( $product_id ?? static::$product_id );
-		$events  = static::filter_events( [ '$add_item_to_cart' ] );
-		static::assertGreaterThanOrEqual( 1, count( $events ) );
-		foreach ( $events as $event ) {
-			if ( $event['properties']['$item']['$sku'] === $product->get_sku() ) {
-				return;
-			}
-		}
-		static::fail( 'No $add_item_to_cart event found.' );
+		$events  = static::filter_events(
+			[
+				'event'                 => '$add_item_to_cart',
+				'properties.$item.$sku' => $product->get_sku(),
+			]
+		);
+		static::assertGreaterThanOrEqual( 1, count( $events ), 'No $add_item_to_cart event found.' );
 	}
 }

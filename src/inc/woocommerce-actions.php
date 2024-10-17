@@ -116,22 +116,24 @@ class Events {
 				$failure_reason = '$account_disabled';
 				break;
 			default:
-				$failure_reason = '$' . $error->get_error_code();
+				// Only other accepted failure reason is $account_suspended... We shouldn't set the failure reason.
+				$failure_reason = null;
+		}
+		$properties = array(
+			'$user_id'      => $attempted_user->ID ? $attempted_user->ID : null,
+			'$login_status' => '$failure',
+			'$session_id'   => WC()->session->get_customer_unique_id(),
+			'$browser'      => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
+			'$username'     => $username,
+			'$ip'           => self::get_client_ip(),
+			'$time'         => intval( 1000 * microtime( true ) ),
+		);
+
+		if ( ! empty( $failure_reason ) ) {
+			$properties['$failure_reason'] = $failure_reason;
 		}
 
-		self::add(
-			'$login',
-			array(
-				'$user_id'        => $attempted_user->ID ? $attempted_user->ID : null,
-				'$login_status'   => '$failure',
-				'$session_id'     => WC()->session->get_customer_unique_id(),
-				'$browser'        => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
-				'$username'       => $username,
-				'$failure_reason' => $failure_reason,
-				'$ip'             => self::get_client_ip(),
-				'$time'           => intval( 1000 * microtime( true ) ),
-			)
-		);
+		self::add( '$login', $properties );
 	}
 
 	/**

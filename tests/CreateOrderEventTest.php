@@ -16,7 +16,7 @@ use WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions\Events;
  */
 class CreateOrderEventTest extends EventTest {
 	/**
-	 * Test that the create account event is triggered.
+	 * Test that the $create_order event is triggered.
 	 *
 	 * @return void
 	 */
@@ -36,12 +36,12 @@ class CreateOrderEventTest extends EventTest {
 	}
 
 	/**
-	 * Test that the $create_order event is triggered.
+	 * Assert $create_order event is triggered.
 	 *
 	 * @return void
 	 */
 	public static function assertCreateOrderEventTriggered() {
-		$events = static::filter_events( [ '$create_order' ] );
+		$events = static::filter_events( [ 'event' => '$create_order' ] );
 		static::assertGreaterThanOrEqual( 1, count( $events ), 'No $create_order event found' );
 	}
 }

@@ -16,7 +16,7 @@ use WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions\Events;
  */
 class CreateAccountEventTest extends EventTest {
 	/**
-	 * Test that the create account event is triggered.
+	 * Test that the $create_account event is triggered.
 	 *
 	 * @return void
 	 */
@@ -29,12 +29,12 @@ class CreateAccountEventTest extends EventTest {
 	}
 
 	/**
-	 * Test that the $create_account event is triggered.
+	 * Assert $create_account event is triggered.
 	 *
 	 * @return void
 	 */
 	public static function assertCreateAccountEventTriggered() {
-		$events = static::filter_events( [ '$create_account' ] );
+		$events = static::filter_events( [ 'event' => '$create_account' ] );
 		static::assertGreaterThanOrEqual( 1, count( $events ) );
 	}
 }

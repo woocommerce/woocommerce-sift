@@ -16,7 +16,7 @@ use WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions\Events;
  */
 class LinkSessionToUserEventTest extends EventTest {
 	/**
-	 * Test that the create account event is triggered.
+	 * Test that the $link_session_to_user event is triggered.
 	 *
 	 * @return void
 	 */
@@ -26,7 +26,7 @@ class LinkSessionToUserEventTest extends EventTest {
 		$user_id = $this->factory()->user->create();
 		wp_set_current_user( $user_id );
 		// We'll trap the cookie and set it manually
-		$f = function ( $enabled, $name, $value) {
+		$f = function ( $enabled, $name, $value ) {
 			$_COOKIE[ $name ] = $value;
 			return false;
 		};
@@ -47,14 +47,14 @@ class LinkSessionToUserEventTest extends EventTest {
 	}
 
 	/**
-	 * Test that the $link_session_to_user event is triggered.
+	 * Assert $link_session_to_user event is triggered.
 	 *
 	 * @param integer $user_id User ID.
 	 *
 	 * @return void
 	 */
 	public static function assertLinkSessionToUserEvent( $user_id ) {
-		$events = static::filter_events( [ '$link_session_to_user' ] );
+		$events = static::filter_events( [ 'event' => '$link_session_to_user' ] );
 		static::assertGreaterThanOrEqual( 1, count( $events ), 'No $link_session_to_user event found' );
 	}
 }
