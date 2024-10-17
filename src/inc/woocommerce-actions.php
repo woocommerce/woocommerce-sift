@@ -329,8 +329,8 @@ class Events {
 					'$price'         => $product->get_price() * 1000000, // $39.99
 					'$currency_code' => get_woocommerce_currency(),
 					'$quantity'      => $cart_item['quantity'],
-					'$category'      => $product->get_categories(),
-					'$tags'          => wp_list_pluck( get_the_terms( $product->ID, 'product_tag' ), 'name' ),
+					'$category'      => wc_get_product_category_list( $product->get_id() ),
+					'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 				),
 				'$browser'      => self::get_client_browser(),
 				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
