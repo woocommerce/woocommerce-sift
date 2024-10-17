@@ -76,6 +76,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	 */
 	public function tear_down() {
 		Events::$to_send = [];
+		WC()->cart->empty_cart();
 		parent::tear_down();
 	}
 

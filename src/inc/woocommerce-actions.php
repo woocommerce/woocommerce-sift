@@ -267,18 +267,12 @@ class Events {
 	public static function add_to_cart( string $cart_item_key ) {
 		$cart_item = \WC()->cart->get_cart_item( $cart_item_key );
 		/** @var \WC_Abstract_Legacy_Product $product */
-		$product   = $cart_item['data'] ?? null;
-		$user      = wp_get_current_user();
+		$product = $cart_item['data'] ?? null;
+		$user    = wp_get_current_user();
 
 		if ( ! $product ) {
 			return;
 		}
-
-		// Generate the category from the product category ids.
-		// - SIFT wants a single string so we'll sort them and implode them.
-		$categories = wp_list_pluck( get_the_terms( $product->get_id(), 'product_cat' ), 'name' );
-		sort( $categories, SORT_STRING );
-		$category   = implode( ', ', $categories );
 
 		self::add(
 			'$add_item_to_cart',
@@ -293,7 +287,7 @@ class Events {
 					'$price'         => $product->get_price() * 1000000, // $39.99
 					'$currency_code' => get_woocommerce_currency(),
 					'$quantity'      => $cart_item['quantity'],
-					'$category'      => $category,
+					'$category'      => wc_get_product_category_list( $product->get_id() ),
 					'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 				),
 				'$browser'      => self::get_client_browser(),
@@ -365,11 +359,16 @@ class Events {
 		foreach ( $order->get_items( 'line_item' ) as $item ) {
 			if ( ! $item instanceof WC_Order_Item_Product ) {
 				// log an error...
-				wc_get_logger()->error( 'Item not Product Item.' );
+				wc_get_logger()->error( sprintf( 'Item not Item Product (order: %d).', $order->get_id() ) );
 				continue;
 			}
 			// Most of this we're basing off return value from `WC_Order_Item_Product::get_product()` as it will return the correct variation.
 			$product = $item->get_product();
+			if ( empty( $product ) ) {
+				// log an error...
+				wc_get_logger()->error( sprintf( 'Product not found for order %d.', $order->get_id() ) );
+				continue;
+			}
 
 			$items[] = array(
 				'$item_id'       => $product->get_id(),
@@ -378,7 +377,7 @@ class Events {
 				'$price'         => $product->get_price() * 1000000, // $39.99
 				'$currency_code' => $order->get_currency(), // For the order specifically, not the whole store.
 				'$quantity'      => $item->get_quantity(),
-				'$category'      => $product->get_categories(),
+				'$category'      => wc_get_product_category_list( $product->get_id() ),
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			);
 
