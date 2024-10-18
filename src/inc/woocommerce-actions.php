@@ -22,7 +22,7 @@ class Events {
 		add_action( 'wp_login', array( static::class, 'login_success' ), 100, 2 );
 		add_action( 'wp_login_failed', array( static::class, 'login_failure' ), 100, 2 );
 		add_action( 'user_register', array( static::class, 'create_account' ), 100 );
-		add_action( 'profile_update', array( static::class, 'update_account' ), 100 );
+		add_action( 'profile_update', array( static::class, 'update_account' ), 100, 3 );
 		add_action( 'wp_set_password', array( static::class, 'update_password' ), 100, 2 );
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
@@ -175,12 +175,19 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-account
 	 *
-	 * @param string $user_id User's ID.
+	 * @param string   $user_id       User's ID.
+	 * @param \WP_User $old_user_data The old user data.
+	 * @param array    $new_user_data The new user data.
 	 *
 	 * @return void
 	 */
-	public static function update_account( string $user_id ) {
+	public static function update_account( string $user_id, ?\WP_User $old_user_data = null, ?array $new_user_data = null ) {
 		$user = get_user_by( 'id', $user_id );
+
+		// check if the password changed
+		if ( ! empty( $new_user_data['user_pass'] ) && $old_user_data->user_pass !== $new_user_data['user_pass'] ) {
+			self::update_password( '', $user_id );
+		}
 
 		self::add(
 			'$update_account',

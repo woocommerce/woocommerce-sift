@@ -59,4 +59,22 @@ class UpdateAccountEventTest extends EventTest {
 		);
 		static::assertGreaterThanOrEqual( 1, count( $events ), 'No $update_account event found' );
 	}
+
+
+	/**
+	 * Assert $update_account event is not triggered.
+	 *
+	 * @param integer $user_id User ID.
+	 *
+	 * @return void
+	 */
+	public static function assertNoUpdateAccountEvent( $user_id ) {
+		$events = static::filter_events(
+			[
+				'event'               => '$update_account',
+				'properties.$user_id' => $user_id,
+			]
+		);
+		static::assertEquals( 0, count( $events ), '$update_account event found' );
+	}
 }
