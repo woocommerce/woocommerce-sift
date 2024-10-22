@@ -32,7 +32,7 @@ jobs:
 
       # get the node version from the .nvmrc file
       - name: Read .nvmrc
-        run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+        run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_OUTPUT
         id: nvm
 
       # setup node based on the version from the .nvmrc file, fetched in the previous step
