@@ -37,8 +37,6 @@ jobs:
       # run composer install
       - name: Composer Install
         uses: php-actions/composer@v6
-        with:
-          args: install
 
       # get the node version from the .nvmrc file
       - name: Read .nvmrc
