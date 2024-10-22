@@ -5,6 +5,7 @@
 namespace WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions;
 
 use WC_Order_Item_Product;
+use WPCOMSpecialProjects\SiftDecisions\Events\Add_Item_To_Cart;
 
 /**
  * Class Events
@@ -283,10 +284,14 @@ class Events {
 			return;
 		}
 
-		self::add(
-			'$add_item_to_cart',
+		// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
+		$category = wc_get_product_category_list( $product->get_id() );
+		if ( is_wp_error( $category ) || ! is_string( $category ) ) {
+			$category = '';
+		}
+		$properties = Add_Item_To_Cart::from_array(
 			array(
-				'$user_id'      => $user->ID ?? null,
+				'$user_id'      => (string) $user->ID,
 				'$user_email'   => $user->user_email ?? null,
 				'$session_id'   => \WC()->session->get_customer_unique_id(),
 				'$item'         => array(
@@ -296,7 +301,7 @@ class Events {
 					'$price'         => $product->get_price() * 1000000, // $39.99
 					'$currency_code' => get_woocommerce_currency(),
 					'$quantity'      => $cart_item['quantity'],
-					'$category'      => wc_get_product_category_list( $product->get_id() ),
+					'$category'      => $category,
 					'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 				),
 				'$browser'      => self::get_client_browser(),
@@ -305,6 +310,11 @@ class Events {
 				'$ip'           => self::get_client_ip(),
 				'$time'         => intval( 1000 * microtime( true ) ),
 			)
+		)->to_array();
+
+		self::add(
+			'$add_item_to_cart',
+			$properties
 		);
 	}
 

@@ -1,7 +1,5 @@
 {
 
-	"$type"       : "$add_item_to_cart",
-	"$api_key"           : "YOUR_API_KEY",
 	"$user_id"           : "billy_jones_301",
 
 	"$session_id" : "gigtleqddo84l8cm15qe4il",

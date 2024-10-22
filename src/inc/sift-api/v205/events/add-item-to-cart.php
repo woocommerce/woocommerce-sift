@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Add Item To Cart Event.
  */
 final class Add_Item_To_Cart extends SiftEvent {
-	protected string $type;
-	protected string $api_key;
 	protected string $session_id;
 	protected ?string $user_id;
 	protected ?Item $item;
