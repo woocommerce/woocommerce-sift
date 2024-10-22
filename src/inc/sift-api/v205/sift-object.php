@@ -80,7 +80,7 @@ abstract class SiftObject implements \JsonSerializable {
 			$property_name = $property->getName();
 			$property_key  = '$' . $property_name;
 			$type          = $property->getType();
-			if ( null === $this->$property_name ) {
+			if ( empty( $this->$property_name ?? null ) ) {
 				continue;
 			}
 			if ( is_scalar( $this->$property_name ) || is_array( $this->$property_name ) ) {
@@ -88,11 +88,39 @@ abstract class SiftObject implements \JsonSerializable {
 			} elseif ( $this->$property_name instanceof SiftObject ) {
 				$array[ $property_key ] = $this->$property_name->to_array();
 			} else {
-				throw new \Exception( 'Unsupported property type: ' . esc_html( $type->getName() ) );
+				throw new \Exception( 'Unsupported property type: ' . esc_html( $property->getType()->getName() ) );
 			}
 		}
 		return $array;
 	}
+
+	///**
+	// * Compare two objects.
+	// *
+	// * @param mixed $obj The object to compare.
+	// *
+	// * @return boolean
+	// */
+	//public function equals( $obj ) {
+	//	if ( ! is_a( $obj, get_class( $this ) ) ) {
+	//		return false;
+	//	}
+	//	$reflection = new \ReflectionClass( $this );
+	//	$properties = $reflection->getProperties();
+	//	foreach ( $properties as $property ) {
+	//		$property_name = $property->getName();
+	//		if ( ! isset( $this->$property_name ) || ! isset( $obj->$property_name ) ) {
+	//			return false;
+	//		} elseif ( is_subclass_of( $property->getType()->getName(), self::class ) ) {
+	//			if ( ! $this->$property_name->equals( $obj->$property_name ) ) {
+	//				return false;
+	//			}
+	//		} elseif ( $this->$property_name !== $obj->$property_name ) {
+	//			return false;
+	//		}
+	//	}
+	//	return true;
+	//}
 
 	/**
 	 * Return Add_Item_To_Cart as object to be converted by json_encode().
