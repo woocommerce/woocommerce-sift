@@ -1,0 +1,76 @@
+# This is a basic workflow to help you get started with Actions
+
+name: PHPUnit
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the trunk branch
+on:
+  pull_request:
+    branches: [ trunk ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "phpunit"
+  phpunit:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # get and output the composer cache directory
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      # setup the composer cache (vendor) with github actions cache and the cache dir defined in the previous step
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      # run composer install
+      - name: Composer Install
+        uses: php-actions/composer@v6
+        with:
+          args: install
+
+      # get the node version from the .nvmrc file
+      - name: Read .nvmrc
+        run: echo "##[set-output name=NVMRC;]$(cat .nvmrc)"
+        id: nvm
+
+      # setup node based on the version from the .nvmrc file, fetched in the previous step
+      - name: Setup Node.js (.nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+
+      # setup the node cache (node_modules) with github actions cache
+      - name: Cache Node - npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-cache-
+
+      # run the ci equivalent of npm install
+      - name: npm ci
+        run: |
+          npm ci
+
+      # run the wp-env setup command (wp-env start)
+      - name: setup wp env
+        run: |
+          npm run wp-env start
+
+      # Run the PHPUnit tests
+      - name: run PHPUnit
+        run: |
+          npm run test
