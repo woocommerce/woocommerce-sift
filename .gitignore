@@ -384,3 +384,4 @@ $RECYCLE.BIN/
 
 *.code-workspace
 .phpunit.result.cache
+coverage.xml

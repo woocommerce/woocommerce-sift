@@ -275,7 +275,8 @@ class Events {
 	 */
 	public static function add_to_cart( string $cart_item_key ) {
 		$cart_item = \WC()->cart->get_cart_item( $cart_item_key );
-		/** @var \WC_Abstract_Legacy_Product $product */
+		// phpcs:ignore
+		/** @var \WC_Product $product */
 		$product = $cart_item['data'] ?? null;
 		$user    = wp_get_current_user();
 
