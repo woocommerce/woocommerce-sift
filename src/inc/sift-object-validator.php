@@ -11,6 +11,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class SiftObjectValidator {
 
+	/**
+	 * This is the main validation function.
+	 *
+	 * It takes an array of data and a map of validators. (The map is an array of key => callable pairs.)
+	 *
+	 * @param array $data          The data to validate.
+	 * @param array $validator_map The map of validators (key => callable pairs).
+	 *
+	 * @return true
+	 * @throws \Exception If the data is invalid.
+	 */
 	protected static function validate( $data, array $validator_map ) {
 		$default_validators = array(
 			'$ip'   => array( __CLASS__, 'validate_ip' ),
@@ -35,14 +46,36 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate an IP address.
+	 *
+	 * @param string $value The IP address to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the IP address is invalid.
+	 */
 	public static function validate_ip( $value ) {
+		if ( ! empty( $value ) && ! is_string( $value ) ) {
+			throw new \Exception( 'must be a string' );
+		}
 		if ( ! empty( $value ) && ! filter_var( $value, FILTER_VALIDATE_IP ) ) {
 			throw new \Exception( 'must be a valid IPv4 or IPv6 address' );
 		}
 		return true;
 	}
 
+	/**
+	 * Validate an ID.
+	 *
+	 * @param string $value The ID to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the ID is invalid.
+	 */
 	public static function validate_id( $value ) {
+		if ( ! empty( $value ) && ! is_string( $value ) ) {
+			throw new \Exception( 'must be a string' );
+		}
 		// The id's are limited to a-z,A-Z,0-9,=, ., -, _, +, @, :, &, ^, %, !, $
 		if ( ! empty( $value ) && ! preg_match( '/^[a-zA-Z0-9=.\-_+@:&^%!$]+$/', $value ) ) {
 			throw new \Exception( 'must be limited to a-z,A-Z,0-9,=, ., -, _, +, @, :, &, ^, %, !, $' );
@@ -50,7 +83,18 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate a currency code.
+	 *
+	 * @param string $value The currency code to validate.
+	 *
+	 * @return true
+	 * @throws \InvalidArgumentException If the currency code is invalid.
+	 */
 	public static function validate_currency_code( $value ) {
+		if ( ! empty( $value ) && ! is_string( $value ) ) {
+			throw new \Exception( 'must be a string' );
+		}
 		// ISO-4217 currency code.
 		if ( ! empty( $value ) && ! preg_match( '/^[A-Z]{3}$/', $value ) ) {
 			throw new \InvalidArgumentException( 'invalid ISO-4217 currency code' );
@@ -58,13 +102,20 @@ class SiftObjectValidator {
 		return true;
 	}
 
-	public static function validate_array_fn( $callable ) {
-		return function ( $value ) use ( $callable ) {
+	/**
+	 * Validate an array with a function.
+	 *
+	 * @param callable $callable_function The function to validate the array items.
+	 *
+	 * @return callable The usable validation function.
+	 */
+	public static function validate_array_fn( $callable_function ) {
+		return function ( $value ) use ( $callable_function ) {
 			if ( ! is_array( $value ) ) {
 				throw new \Exception( 'invalid array' );
 			}
 			foreach ( $value as $item ) {
-				if ( true !== $callable( $item ) ) {
+				if ( true !== $callable_function( $item ) ) {
 					throw new \Exception( 'invalid array item' );
 				}
 			}
@@ -72,6 +123,14 @@ class SiftObjectValidator {
 		};
 	}
 
+	/**
+	 * Validate an item.
+	 *
+	 * @param array $value The item to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the item is invalid.
+	 */
 	public static function validate_item( $value ) {
 		$validator_map = array(
 			'$item_id'       => array( __CLASS__, 'validate_id' ),
@@ -90,7 +149,7 @@ class SiftObjectValidator {
 			'$size'          => 'is_string',
 		);
 		try {
-			// Required fields: $item_id, $product_title, $price
+			// check required fields: $item_id, $product_title, $price
 			if ( empty( $value['$item_id'] ) || empty( $value['$product_title'] ) || empty( $value['$price'] ) ) {
 				throw new \Exception( 'missing required fields' );
 			}
@@ -101,6 +160,14 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate a browser.
+	 *
+	 * @param array $value The browser to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the browser is invalid.
+	 */
 	public static function validate_browser( $value ) {
 		$validator_map = array(
 			'$user_agent'       => 'is_string',
@@ -115,7 +182,15 @@ class SiftObjectValidator {
 		return true;
 	}
 
-	public static function validate_ISO3166_language( $value ) {
+	/**
+	 * Validate an ISO 3166 language code.
+	 *
+	 * @param string $value The ISO 3166 language code to validate.
+	 *
+	 * @return true
+	 * @throws \InvalidArgumentException If the ISO 3166 language code is invalid.
+	 */
+	public static function validate_ISO3166_language( $value ) { //phpcs:ignore
 		// ISO 3166 language code.
 		if ( ! empty( $value ) && ! preg_match( '/^[a-z]{2}-[A-Z]{2}$/', $value ) ) {
 			throw new \InvalidArgumentException( 'must be valid ISO-3166 format' );
@@ -123,6 +198,14 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate an app.
+	 *
+	 * @param array $value The app to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the app is invalid.
+	 */
 	public static function validate_app( $value ) {
 		$validator_map = array(
 			'$os'                  => 'is_string',
@@ -142,13 +225,32 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate an email address.
+	 *
+	 * @param string $value The email address to validate.
+	 *
+	 * @return true
+	 * @throws \InvalidArgumentException If the email address is invalid.
+	 */
 	public static function validate_email( $value ) {
+		if ( ! empty( $value ) && ! is_string( $value ) ) {
+			throw new \Exception( 'must be a string' );
+		}
 		if ( ! empty( $value ) && ! filter_var( $value, FILTER_VALIDATE_EMAIL ) ) {
 			throw new \Exception( 'invalid email address' );
 		}
 		return true;
 	}
 
+	/**
+	 * Validate a phone number.
+	 *
+	 * @param string $value The phone number to validate.
+	 *
+	 * @return true
+	 * @throws \InvalidArgumentException If the phone number is invalid.
+	 */
 	public static function validate_phone_number( $value ) {
 		// This one is tricky so we'll just check if it's a string and doesn't contain any letters.
 		if ( ! empty( $value ) && ( ! is_string( $value ) || preg_match( '/[a-zA-Z]/', $value ) ) ) {
@@ -157,7 +259,18 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate a country code.
+	 *
+	 * @param string $value The country code to validate.
+	 *
+	 * @return true
+	 * @throws \InvalidArgumentException If the country code is invalid.
+	 */
 	public static function validate_country_code( $value ) {
+		if ( ! empty( $value ) && ! is_string( $value ) ) {
+			throw new \Exception( 'must be a string' );
+		}
 		// ISO 3166 country code.
 		if ( ! empty( $value ) && ! preg_match( '/^[A-Z]{2}$/', $value ) ) {
 			throw new \Exception( 'must be an ISO 3166 country code' );
@@ -165,6 +278,14 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate an add item to cart event.
+	 *
+	 * @param array $data The data to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the data is invalid.
+	 */
 	public static function validate_add_item_to_cart( $data ) {
 		$validator_map = array(
 			'$session_id'                => array( __CLASS__, 'validate_id' ),

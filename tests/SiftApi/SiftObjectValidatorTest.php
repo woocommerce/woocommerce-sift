@@ -1,6 +1,10 @@
 <?php declare( strict_types = 1 );
 
+// phpcs:disable
+
 namespace SiftApi;
+
+use WPCOMSpecialProjects\SiftDecisions\Sift\SiftObjectValidator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,7 +48,7 @@ abstract class SiftObjectValidatorTest extends \WP_UnitTestCase {
 			}
 			return $data;
 		};
-		$data = $recursively_fix( $data, $change_data );
+		$data            = $recursively_fix( $data, $change_data );
 		return $data;
 	}
 
@@ -60,6 +64,19 @@ abstract class SiftObjectValidatorTest extends \WP_UnitTestCase {
 			// compare the error message to ensure it contains the expected message
 			static::assertStringContainsString( $message, $e->getMessage() );
 		}
+	}
 
+	/**
+	 * Validate event data.
+	 *
+	 * @return void
+	 */
+	public function test_validate_event() {
+		$data = static::modify_data( [] );
+		try {
+			$this->assertTrue( static::validator( $data ) );
+		} catch ( \Exception $e ) {
+			$this->fail( $e->getMessage() );
+		}
 	}
 }

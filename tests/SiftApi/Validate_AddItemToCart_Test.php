@@ -1,5 +1,7 @@
 <?php declare( strict_types = 1 );
 
+// phpcs:disable
+
 namespace SiftApi;
 
 use WPCOMSpecialProjects\SiftDecisions\Sift\SiftObjectValidator;
@@ -15,20 +17,6 @@ class Validate_AddItemToCart_Test extends SiftObjectValidatorTest {
 
 	protected static function validator( $data ) {
 		return SiftObjectValidator::validate_add_item_to_cart( $data );
-	}
-
-	/**
-	 * Validate $add_item_to_cart event data.
-	 * TODO: make this generic and move up... (test that it's run that way...)
-	 * @return void
-	 */
-	public function test_validate_add_item_to_cart_event() {
-		$data = static::modify_data( [] );
-		try {
-			$this->assertTrue( SiftObjectValidator::validate_add_item_to_cart( $data ) );
-		} catch ( \Exception $e ) {
-			$this->fail( $e->getMessage() );
-		}
 	}
 
 	public function test_app_browser_set() {
