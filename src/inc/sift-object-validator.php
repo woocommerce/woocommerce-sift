@@ -11,6 +11,681 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class SiftObjectValidator {
 
+	const PAYMENT_TYPES = array(
+		'$cash',
+		'$check',
+		'$credit_card',
+		'$crypto_currency',
+		'$debit_card',
+		'$digital_wallet',
+		'$electronic_fund_transfer',
+		'$financing',
+		'$gift_card',
+		'$invoice',
+		'$in_app_purchase',
+		'$money_order',
+		'$points',
+		'$prepaid_card',
+		'$store_credit',
+		'$third_party_processor',
+		'$voucher',
+		'$sepa_credit',
+		'$sepa_instant_credit',
+		'$sepa_direct_debit',
+		'$ach_credit',
+		'$ach_debit',
+		'$wire_credit',
+		'$wire_debit',
+	);
+
+	const PAYMENT_GATEWAY = array(
+		'$abra',
+		'$acapture',
+		'$accpet_blue',
+		'$adyen',
+		'$aeropay',
+		'$afex',
+		'$affinipay',
+		'$affipay',
+		'$affirm',
+		'$afrivoucher',
+		'$afterpay',
+		'$airpay',
+		'$airwallex',
+		'$alipay',
+		'$alipay_hk',
+		'$allpago',
+		'$altapay',
+		'$amazon_payments',
+		'$ambank_fpx',
+		'$amex_checkout',
+		'$android_iap',
+		'$android_pay',
+		'$apg',
+		'$aplazo',
+		'$apple_iap',
+		'$apple_pay',
+		'$argus',
+		'$asiabill',
+		'$astropay',
+		'$atome',
+		'$atrium',
+		'$au_kantan',
+		'$authorizenet',
+		'$avangate',
+		'$balanced',
+		'$bancodobrasil',
+		'$bancontact',
+		'$bancoplural',
+		'$banorte',
+		'$banrisul',
+		'$banwire',
+		'$barclays',
+		'$bayanpay',
+		'$bbcn',
+		'$bcb',
+		'$beanstream',
+		'$belfius',
+		'$best_inc',
+		'$billdesk',
+		'$billpocket',
+		'$bitcash',
+		'$bitgo',
+		'$bitpay',
+		'$bizum',
+		'$blackhawk',
+		'$blik',
+		'$blinc',
+		'$blockchain',
+		'$bluepay',
+		'$bluesnap',
+		'$bnpparibas',
+		'$boacompra',
+		'$bob',
+		'$boku',
+		'$bold',
+		'$boletobancario',
+		'$boltpay',
+		'$bpay',
+		'$bradesco',
+		'$braintree',
+		'$bread',
+		'$bridgepay',
+		'$brite',
+		'$buckaroo',
+		'$buckzy',
+		'$cadc',
+		'$cardconnect',
+		'$cardknox',
+		'$cashapp',
+		'$cashfree',
+		'$cashlesso',
+		'$cashlib',
+		'$catchball',
+		'$ccbill',
+		'$ccavenue',
+		'$ceevo',
+		'$cellulant',
+		'$cepbank',
+		'$chain_commerce',
+		'$chase_paymentech',
+		'$checkalt',
+		'$checkoutcom',
+		'$cielo',
+		'$circle',
+		'$citi',
+		'$citizen',
+		'$citrus_pay',
+		'$clear_junction',
+		'$clearbridge',
+		'$clearsettle',
+		'$clearcommerce',
+		'$cleverbridge',
+		'$close_brothers',
+		'$cloudpayments',
+		'$codi',
+		'$cofinoga',
+		'$coinbase',
+		'$coindirect',
+		'$coinpayments',
+		'$collector',
+		'$community_bank_transfer',
+		'$commweb',
+		'$compropago',
+		'$concardis',
+		'$conekta',
+		'$copo',
+		'$credit_union_atlantic',
+		'$credorax',
+		'$credsystem',
+		'$cross_river',
+		'$cuentadigital',
+		'$culqi',
+		'$cybersource',
+		'$cryptocapital',
+		'$cryptopay',
+		'$currencycloud',
+		'$customers_bank',
+		'$d_barai',
+		'$dana',
+		'$daopay',
+		'$datacash',
+		'$dbs_paylah',
+		'$dcbank',
+		'$decta',
+		'$debitway',
+		'$deltec',
+		'$democracy_engine',
+		'$deutsche_bank',
+		'$dibs',
+		'$digital_river',
+		'$digitalpay',
+		'$dinero_services',
+		'$directa24',
+		'$dlocal',
+		'$docomo',
+		'$doku',
+		'$dospara',
+		'$dotpay',
+		'$dragonpay',
+		'$dreftorpay',
+		'$dwarkesh',
+		'$dwolla',
+		'$ebanx',
+		'$ecommpay',
+		'$ecopayz',
+		'$edenred',
+		'$edgil_payway',
+		'$efecty',
+		'$eft',
+		'$elavon',
+		'$elipa',
+		'$emerchantpay',
+		'$empcorp',
+		'$enets',
+		'$epay',
+		'$epayeu',
+		'$epoch',
+		'$epospay',
+		'$eprocessing_network',
+		'$eps',
+		'$esitef',
+		'$etana',
+		'$euteller',
+		'$everypay',
+		'$eway',
+		'$e_xact',
+		'$fastnetwork',
+		'$fat_zebra',
+		'$fidor',
+		'$finix',
+		'$finmo',
+		'$fintola',
+		'$fiserv',
+		'$first_atlantic_commerce',
+		'$first_data',
+		'$flexepin',
+		'$flexiti',
+		'$fluidpay',
+		'$flutterwave',
+		'$fpx',
+		'$frick',
+		'$fxpaygate',
+		'$g2apay',
+		'$galileo',
+		'$gcash',
+		'$geoswift',
+		'$getnet',
+		'$gigadat',
+		'$giropay',
+		'$globalcollect',
+		'$global_payments',
+		'$global_payways',
+		'$gmo',
+		'$gmopg',
+		'$gocardless',
+		'$gocoin',
+		'$google_pay',
+		'$google_wallet',
+		'$grabpay',
+		'$hanmi',
+		'$happy_money',
+		'$hayhay',
+		'$hdfc_fssnet',
+		'$heidelpay',
+		'$hipay',
+		'$humm',
+		'$hyperpay',
+		'$i2c',
+		'$ibok',
+		'$ideal',
+		'$ifthenpay',
+		'$ikajo',
+		'$incomm',
+		'$incore',
+		'$ingenico',
+		'$inghomepay',
+		'$inovapay',
+		'$inovio',
+		'$instamojo',
+		'$interac',
+		'$internetsecure',
+		'$interswitch',
+		'$intuit_quickbooks_payments',
+		'$ipay',
+		'$ipay88',
+		'$isignthis',
+		'$itau',
+		'$itelebill',
+		'$iugu',
+		'$ixopay',
+		'$iyzico',
+		'$izettle',
+		'$jabong',
+		'$januar',
+		'$jatis',
+		'$jeton',
+		'$jnfx',
+		'$juspay',
+		'$kakaopay',
+		'$kash',
+		'$kbc',
+		'$kddi',
+		'$kevin',
+		'$khipu',
+		'$klarna',
+		'$knet',
+		'$komoju',
+		'$konbini',
+		'$kopay',
+		'$korapay',
+		'$kushki',
+		'$latamgateway',
+		'$latampass',
+		'$laybuy',
+		'$lean',
+		'$lemonway',
+		'$letzpay',
+		'$lifemiles',
+		'$limelight',
+		'$linepay',
+		'$link4pay',
+		'$logon',
+		'$mada',
+		'$mangopay',
+		'$mastercard_payment_gateway',
+		'$masterpass',
+		'$matera',
+		'$maxipago',
+		'$maxpay',
+		'$maybank',
+		'$mcb',
+		'$meikopay',
+		'$mercadopago',
+		'$merchant_esolutions',
+		'$merpay',
+		'$mfs',
+		'$midtrans',
+		'$minerva',
+		'$mirjeh',
+		'$mobile_money',
+		'$mockpay',
+		'$modo',
+		'$moip',
+		'$mollie',
+		'$momopay',
+		'$moneris_solutions',
+		'$moneygram',
+		'$monoova',
+		'$moyasar',
+		'$mpesa',
+		'$muchbetter',
+		'$multibanco',
+		'$multicaja',
+		'$multiplus',
+		'$mvb',
+		'$mybank',
+		'$myfatoorah',
+		'$nanaco',
+		'$nanoplazo',
+		'$naranja',
+		'$naverpay',
+		'$neosurf',
+		'$net_cash',
+		'$netbilling',
+		'$netregistry',
+		'$neteller',
+		'$network_for_good',
+		'$nhn_kcp',
+		'$nicepay',
+		'$ngenius',
+		'$nmcryptgate',
+		'$nmi',
+		'$noble',
+		'$noon_payments',
+		'$nupay',
+		'$ocean',
+		'$ogone',
+		'$okpay',
+		'$omcp',
+		'$omise',
+		'$onebip',
+		'$oneio',
+		'$opay',
+		'$openpay',
+		'$openpaymx',
+		'$optile',
+		'$optimal_payments',
+		'$ovo',
+		'$oxxo',
+		'$pacypay',
+		'$paddle',
+		'$pagar_me',
+		'$pago_efectivo',
+		'$pagoefectivo',
+		'$pagofacil',
+		'$pagseguro',
+		'$paidy',
+		'$papara',
+		'$paxum',
+		'$pay_garden',
+		'$pay_zone',
+		'$pay4fun',
+		'$paybright',
+		'$paycase',
+		'$paycash',
+		'$payco',
+		'$paycell',
+		'$paydo',
+		'$paydoo',
+		'$payease',
+		'$payeasy',
+		'$payeer',
+		'$payeezy',
+		'$payfast',
+		'$payfix',
+		'$payflow',
+		'$payfort',
+		'$paygarden',
+		'$paygate',
+		'$paygent',
+		'$pago24',
+		'$pagsmile',
+		'$pay2',
+		'$payaid',
+		'$payfun',
+		'$payix',
+		'$payjp',
+		'$payjunction',
+		'$paykun',
+		'$paykwik',
+		'$paylike',
+		'$paymaya',
+		'$paymee',
+		'$paymentez',
+		'$paymentos',
+		'$paymentwall',
+		'$payment_express',
+		'$paymill',
+		'$paynl',
+		'$payone',
+		'$payoneer',
+		'$payop',
+		'$paypal',
+		'$paypal_express',
+		'$paypay',
+		'$payper',
+		'$paypost',
+		'$paysafe',
+		'$paysafecard',
+		'$paysera',
+		'$paysimple',
+		'$payssion',
+		'$paystack',
+		'$paystation',
+		'$paystrax',
+		'$paytabs',
+		'$paytm',
+		'$paytrace',
+		'$paytrail',
+		'$paystrust',
+		'$paytrust',
+		'$payture',
+		'$payway',
+		'$payu',
+		'$payulatam',
+		'$payvalida',
+		'$payvector',
+		'$payza',
+		'$payzen',
+		'$peach_payments',
+		'pep',
+		'$perfect_money',
+		'$perla_terminals',
+		'$picpay',
+		'$pinpayments',
+		'$pivotal_payments',
+		'$pix',
+		'$plaid',
+		'$planet_payment',
+		'$plugandplay',
+		'$poli',
+		'$posconnect',
+		'$ppro',
+		'$primetrust',
+		'$princeton_payment_solutions',
+		'$prisma',
+		'$prismpay',
+		'$processing',
+		'$przelewy24',
+		'$psigate',
+		'$pubali_bank',
+		'$pulse',
+		'$pwmb',
+		'$qiwi',
+		'$qr_code_bt',
+		'$quadpay',
+		'$quaife',
+		'$quickpay',
+		'$quickstream',
+		'$quikipay',
+		'$raberil',
+		'$radial',
+		'$railsbank',
+		'$rakbank',
+		'$rakuten_checkout',
+		'$rapid_payments',
+		'$rapipago',
+		'$rappipay',
+		'$rapyd',
+		'$ratepay',
+		'$ravepay',
+		'$razorpay',
+		'$rbkmoney',
+		'$reach',
+		'$recurly',
+		'$red_dot_payment',
+		'$rede',
+		'$redpagos',
+		'$redsys',
+		'$revolut',
+		'$rewardspay',
+		'$rietumu',
+		'$ripple',
+		'$rocketgate',
+		'$safecharge',
+		'$safetypay',
+		'$safexpay',
+		'$sagepay',
+		'$saltedge',
+		'$samsung_pay',
+		'$santander',
+		'$sbi',
+		'$sbpayments',
+		'$secure_trading',
+		'$securepay',
+		'$securionpay',
+		'$sentbe',
+		'$sepa',
+		'$sermepa',
+		'$servipag',
+		'$sezzle',
+		'$shopify_payments',
+		'$sightline',
+		'$signature',
+		'$signet',
+		'$silvergate',
+		'$simpaisa',
+		'$simplify_commerce',
+		'$skrill',
+		'$smart2pay',
+		'$smartcoin',
+		'$smartpayments',
+		'$smbc',
+		'$snapscan',
+		'$sofort',
+		'$softbank_matomete',
+		'$solanapay',
+		'$splash_payments',
+		'$splitit',
+		'$spotii',
+		'$sps_decidir',
+		'$square',
+		'$starkbank',
+		'$starpayment',
+		'$stcpay',
+		'$sticpay',
+		'$stitch',
+		'$stone',
+		'$stp',
+		'$stripe',
+		'$surepay',
+		'$swedbank',
+		'$synapsepay',
+		'$tabapay',
+		'$tabby',
+		'$tamara',
+		'$tapcompany',
+		'$tdcanada',
+		'$telerecargas',
+		'$tfm',
+		'$tink',
+		'$tipalti',
+		'$tnspay',
+		'$todopago',
+		'$toss',
+		'$touchngo',
+		'$towah',
+		'$tpaga',
+		'$transact_pro',
+		'$transactive',
+		'$transactworld',
+		'$transfirst',
+		'$transpay',
+		'$truelayer',
+		'$truemoney',
+		'$trust',
+		'$trustcommerce',
+		'$trustly',
+		'$trustpay',
+		'$tsys_sierra',
+		'$tsys_transit',
+		'$tu_compra',
+		'$twoc2p',
+		'$twocheckout',
+		'$undostres',
+		'$unlimint',
+		'$unionpay',
+		'$upay',
+		'$usa_epay',
+		'$usafill',
+		'$utrust',
+		'$vantiv',
+		'$vapulus',
+		'$venmo',
+		'$veritrans',
+		'$versapay',
+		'$verve',
+		'$vesta',
+		'$viabaloto',
+		'$vindicia',
+		'$vip_preferred',
+		'$virtual_card_services',
+		'$virtualpay',
+		'$visa',
+		'$vme',
+		'$vogogo',
+		'$volt',
+		'$vpos',
+		'$watchman',
+		'$web_money',
+		'$webbilling',
+		'$webmoney',
+		'$webpay',
+		'$webpay_oneclick',
+		'$wechat',
+		'$wepay',
+		'$western_union',
+		'$wirecard',
+		'$worldpay',
+		'$worldspan',
+		'$wompi',
+		'$wp_cnpapi',
+		'$wyre',
+		'$xendit',
+		'$xfers',
+		'$xipay',
+		'$yandex_money',
+		'$yapily',
+		'$yapstone',
+		'$zapper',
+		'$zenrise',
+		'$zer0pay',
+		'$zeus',
+		'$zgold',
+		'$zimpler',
+		'$zip',
+		'$zipmoney',
+		'$zoop',
+		'$zotapay',
+		'$zooz_paymentsos',
+		'$zuora',
+		'$2c2p',
+	);
+
+	const VERIFICATION_STATUSES = array(
+		'$success',
+		'$failure',
+		'$pending',
+	);
+
+	const WALLET_TYPES = array(
+		'$crypto',
+		'$digital',
+		'$fiat',
+	);
+
+	const FAILURE_REASONS = array(
+		'$already_used',
+		'$invalid_code',
+		'$not_applicable',
+		'$expired',
+	);
+
+	const SOCIAL_SIGN_ON_TYPES = array(
+		'$facebook',
+		'$google',
+		'$linkedin',
+		'$twitter',
+		'$yahoo',
+		'$microsoft',
+		'$amazon',
+		'$apple',
+		'$wechat',
+		'$github',
+		'$other',
+	);
+
 	/**
 	 * This is the main validation function.
 	 *
@@ -32,7 +707,7 @@ class SiftObjectValidator {
 			if ( ! isset( $validator_map[ $key ] ) && '$' === $key[0] ) {
 				throw new \Exception( esc_html( "Unknown key: $key" ) );
 			}
-			$validator = $validator_map[ $key ];
+			$validator = $validator_map[ $key ] ?? null;
 			if ( is_callable( $validator ) ) {
 				try {
 					if ( true !== $validator( $value ) ) {
@@ -41,8 +716,17 @@ class SiftObjectValidator {
 				} catch ( \Exception $e ) {
 					throw new \Exception( esc_html( "$key: " . $e->getMessage() ) );
 				}
+			} elseif ( is_array( $validator ) ) {
+				if ( ! in_array( $value, $validator, true ) ) {
+					throw new \Exception( esc_html( "invalid value for $key" ) );
+				}
 			}
 		}
+
+		if ( ! empty( $data['$app'] ) && ! empty( $data['$browser'] ) ) {
+			throw new \Exception( 'Cannot have both $app and $browser' );
+		}
+
 		return true;
 	}
 
@@ -305,11 +989,222 @@ class SiftObjectValidator {
 			if ( ! isset( $data['$user_id'] ) && empty( $data['$session_id'] ) ) {
 				throw new \Exception( 'missing $session_id' );
 			}
-			if ( ! empty( $data['$app'] ) && ! empty( $data['$browser'] ) ) {
-				throw new \Exception( 'Cannot have both $app and $browser' );
-			}
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Failed to validate $add_item_to_cart event: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+
+	public static function validate_card_bin( $value ) {
+		// The card bin is the first 6 or 8 digits of the card number.
+		if ( ! empty( $value ) ) {
+			if ( ! is_string( $value ) ) {
+				throw new \Exception( 'must be a string' );
+			}
+			if ( ! preg_match( '/^[0-9]{6,8}$/', $value ) ) {
+				throw new \Exception( 'invalid card bin' );
+			}
+			if ( 6 !== strlen( $value ) && 8 !== strlen( $value ) ) {
+				throw new \Exception( 'invalid card bin' );
+			}
+		}
+		return true;
+	}
+
+	public static function validate_card_last4( $value ) {
+		if (
+			! empty( $value )
+			&& ! is_string( $value )
+			&& ! preg_match( '/^[0-9]{4}$/', $value )
+		) {
+			throw new \Exception( 'not 4 numbers' );
+		}
+		return true;
+	}
+
+	/**
+	 * Validate a payment method.
+	 *
+	 * @param array $data The payment method to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the payment method is invalid.
+	 */
+	public static function validate_payment_method( $data ) {
+		$validator_map = array(
+			'$payment_type'               => self::PAYMENT_TYPES,
+			'$payment_gateway'            => self::PAYMENT_GATEWAY,
+			'$card_bin'                   => array( __CLASS__, 'validate_card_bin' ),
+			'$card_last4'                 => array( __CLASS__, 'validate_card_last4' ),
+			'$avs_result_code'            => 'is_string',
+			'$cvv_result_code'            => 'is_string',
+			'$verification_status'        => self::VERIFICATION_STATUSES,
+			'$routing_number'             => 'is_string',
+			'$shortened_iban_first6'      => array( __CLASS__, 'validate_iban' ),
+			'$shortened_iban_last4'       => array( __CLASS__, 'validate_iban' ),
+			'$sepa_direct_debit_mandate'  => array( true, false ),
+			'$decline_reason_code'        => 'is_string',
+			'$wallet_address'             => 'is_string',
+			'$wallet_type'                => self::WALLET_TYPES,
+			'$paypal_payer_id'            => 'is_string',
+			'$paypal_payer_email'         => array( __CLASS__, 'validate_email' ),
+			'$paypal_payer_status'        => 'is_string',
+			'$stripe_cvc_check'           => 'is_string',
+			'$stripe_address_line1_check' => 'is_string',
+			'$stripe_address_line2_check' => 'is_string',
+			'$stripe_address_zip_check'   => 'is_string',
+			'$stripe_funding'             => 'is_string',
+			'$stripe_brand'               => 'is_string',
+			'$account_holder_name'        => array( __CLASS__, 'validate_name' ),
+			'$account_number_last5'       => array( __CLASS__, 'validate_card_last5' ),
+			'$bank_name'                  => 'is_string',
+			'$bank_country'               => array( __CLASS__, 'validate_country_code' ),
+		);
+		try {
+			static::validate( $data, $validator_map );
+			// Account holder name, account number last 5, bank name and bank country are required for
+			// certain payment types...
+			$additional_info_payment_types = array(
+				'$electronic_fund_transfer',
+				'$sepa_credit',
+				'$sepa_instant_credit',
+				'$sepa_debit',
+				'$ach_credit',
+				'$ach_debit',
+				'$wire_credit',
+				'$wire_debit',
+			);
+			if ( ! empty( $data['$payment_type'] ) && in_array( $data['$payment_type'], $additional_info_payment_types, true ) ) {
+				if (
+					empty( $data['$account_holder_name'] )
+					|| empty( $data['$account_number_last5'] )
+					|| empty( $data['$bank_name'] )
+					|| empty( $data['$bank_country'] )
+				) {
+					throw new \Exception( 'missing required fields' );
+				}
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'invalid payment method: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+
+	public static function validate_credit_point( $data ) {
+		$validator_map = array(
+			'$amount'            => 'is_int',
+			'$credit_point_type' => 'is_string',
+		);
+		try {
+			static::validate( $data, $validator_map );
+			// both fields are required
+			if ( empty( $data['$amount'] ) || empty( $data['$credit_point_type'] ) ) {
+				throw new \Exception( 'missing required fields' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'invalid credit point: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+
+	public static function validate_discount( $data ) {
+		$validator_map = array(
+			'$percentage_off'          => 'is_float',
+			'$amount'                  => 'is_int',
+			'$currency_code'           => array( __CLASS__, 'validate_currency_code' ),
+			'$minimum_purchase_amount' => 'is_int',
+		);
+		try {
+			static::validate( $data, $validator_map );
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'invalid discount: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+
+	/**
+	 * Validate Promotion.
+	 *
+	 * @param array $data The promotion to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the promotion is invalid.
+	 */
+	public static function validate_promotion( $data ) {
+		$validator_map = array(
+			'$promotion_id'     => array( __CLASS__, 'validate_id' ),
+			'$status'           => array( '$success', '$failure' ),
+			'$failure_reason'   => self::FAILURE_REASONS,
+			'$description'      => 'is_string',
+			'$referrer_user_id' => array( __CLASS__, 'validate_id' ),
+			'$discount'         => array( __CLASS__, 'validate_discount' ),
+			'$credit_point'     => array( __CLASS__, 'validate_credit_point' ),
+		);
+		try {
+			static::validate( $data, $validator_map );
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'invalid promotion: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+
+	public static function validate_address( $value ) {
+		$validator_map = array(
+			'$name'      => 'is_string',
+			'$address_1' => 'is_string',
+			'$address_2' => 'is_string',
+			'$city'      => 'is_string',
+			'$region'    => 'is_string',
+			'$country'   => array( __CLASS__, 'validate_country_code' ),
+			'$zipcode'   => 'is_string',
+			'$phone'     => array( __CLASS__, 'validate_phone_number' ),
+		);
+		try {
+			static::validate( $value, $validator_map );
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'invalid address: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+
+	/**
+	 * Validate the create account event.
+	 *
+	 * @param array $data The event to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the event is invalid.
+	 */
+	public static function validate_create_account( $data ) {
+		$validator_map = array(
+			'$user_id'                   => array( __CLASS__, 'validate_id' ),
+			'$session_id'                => array( __CLASS__, 'validate_id' ),
+			'$user_email'                => array( __CLASS__, 'validate_email' ),
+			'$verification_phone_number' => array( __CLASS__, 'validate_phone_number' ),
+			'$name'                      => 'is_string',
+			'$phone'                     => array( __CLASS__, 'validate_phone_number' ),
+			'$referrer_user_id'          => array( __CLASS__, 'validate_id' ),
+			'$payment_methods'           => static::validate_array_fn( array( __CLASS__, 'validate_payment_method' ) ),
+			'$billing_address'           => array( __CLASS__, 'validate_address' ),
+			'$shipping_address'          => array( __CLASS__, 'validate_address' ),
+			'$promotions'                => static::validate_array_fn( array( __CLASS__, 'validate_promotion' ) ),
+			'$social_sign_on_type'       => self::SOCIAL_SIGN_ON_TYPES,
+			'$browser'                   => array( __CLASS__, 'validate_browser' ),
+			'$app'                       => array( __CLASS__, 'validate_app' ),
+			'$account_types'             => static::validate_array_fn( 'is_string' ),
+			'$brand_name'                => 'is_string',
+			'$site_country'              => array( __CLASS__, 'validate_country_code' ),
+			'$site_domain'               => 'is_string',
+			'$merchant_profile'          => array( __CLASS__, 'validate_merchant_profile' ),
+		);
+		try {
+			static::validate( $data, $validator_map );
+			// required field: $user_id
+			if ( empty( $data['$user_id'] ) ) {
+				throw new \Exception( 'missing $user_id' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Failed to validate $create_account event: ' . esc_html( $e->getMessage() ) );
 		}
 		return true;
 	}
