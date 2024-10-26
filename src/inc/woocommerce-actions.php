@@ -149,25 +149,34 @@ class Events {
 	public static function create_account( string $user_id ) {
 		$user = get_user_by( 'id', $user_id );
 
+		$properties = array(
+			'$user_id'          => (string) $user->ID,
+			'$session_id'       => WC()->session->get_customer_unique_id(),
+			'$user_email'       => $user->user_email ? $user->user_email : null,
+			'$name'             => $user->display_name,
+			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
+			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
+			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
+			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
+			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
+			'$browser'          => self::get_client_browser(),
+			'$account_types'    => $user->roles,
+			'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
+			'$site_country'     => wc_get_base_location()['country'],
+			'$ip'               => self::get_client_ip(),
+			'$time'             => intval( 1000 * microtime( true ) ),
+		);
+
+		try {
+			SiftObjectValidator::validate_create_account( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
 		self::add(
 			'$create_account',
-			array(
-				'$user_id'          => $user->ID,
-				'$session_id'       => WC()->session->get_customer_unique_id(),
-				'$user_email'       => $user->user_email ? $user->user_email : null,
-				'$name'             => $user->display_name,
-				'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
-				// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-				// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
-				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
-				'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
-				'$browser'          => self::get_client_browser(),
-				'$account_types'    => $user->roles,
-				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
-				'$site_country'     => wc_get_base_location()['country'],
-				'$ip'               => self::get_client_ip(),
-				'$time'             => intval( 1000 * microtime( true ) ),
-			)
+			$properties
 		);
 	}
 

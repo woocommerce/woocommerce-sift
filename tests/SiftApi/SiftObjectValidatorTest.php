@@ -11,7 +11,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class SiftObjectValidatorTest extends \WP_UnitTestCase {
-	private static \ArrayObject $data;
+	/**
+	 * Fixture data.
+	 *
+	 * @var \ArrayObject[] $data Cached fixture data.
+	 */
+	private static array $data;
 
 	protected static ?string $fixture_name = null;
 
@@ -24,15 +29,15 @@ abstract class SiftObjectValidatorTest extends \WP_UnitTestCase {
 	 */
 	public static function load_json( $name = null ) {
 		$name = $name ?? static::$fixture_name ?? '';
-		if ( empty( static::$data ) ) {
+		if ( empty( static::$data ) || empty( static::$data[ $name ] ) ) {
 			$json = file_get_contents( __DIR__ . '/fixtures/' . $name );
 			if ( false === $json ) {
 				throw new \RuntimeException( 'Failed to load fixture: ' . $name );
 			}
-			static::$data = new \ArrayObject( json_decode( $json, true ) );
+			static::$data[ $name ] = new \ArrayObject( json_decode( $json, true ) );
 		}
 		// Return a copy of static::$data to prevent modification
-		return static::$data->getArrayCopy();
+		return static::$data[$name]->getArrayCopy();
 	}
 
 	public static function modify_data( $change_data ) {
