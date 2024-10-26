@@ -42,7 +42,6 @@ class LinkSessionToUserEventTest extends EventTest {
 
 		// Clean up
 		remove_filter( 'woocommerce_set_cookie_enabled', $f );
-		//wp_logout();
 		wp_set_current_user( 0 );
 		wp_delete_user( $user_id );
 	}

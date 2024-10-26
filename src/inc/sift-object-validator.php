@@ -995,6 +995,16 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate the "card_bin" field.
+	 *
+	 * The card bin is the first 6 or 8 digits of the card number.
+	 *
+	 * @param string $value The card bin to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the card bin is invalid.
+	 */
 	public static function validate_card_bin( $value ) {
 		// The card bin is the first 6 or 8 digits of the card number.
 		if ( ! empty( $value ) ) {
@@ -1005,12 +1015,20 @@ class SiftObjectValidator {
 				throw new \Exception( 'invalid card bin' );
 			}
 			if ( 6 !== strlen( $value ) && 8 !== strlen( $value ) ) {
-				throw new \Exception( 'invalid card bin' );
+				throw new \Exception( 'invalid card bin length' );
 			}
 		}
 		return true;
 	}
 
+	/**
+	 * Validate the "card_last4" field.
+	 *
+	 * @param string $value The card last4 to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the card last4 is invalid.
+	 */
 	public static function validate_card_last4( $value ) {
 		if (
 			! empty( $value )
@@ -1090,6 +1108,14 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate a "credit_point" field.
+	 *
+	 * @param array $data The credit point to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the credit point is invalid.
+	 */
 	public static function validate_credit_point( $data ) {
 		$validator_map = array(
 			'$amount'            => 'is_int',
@@ -1107,6 +1133,14 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate a "discount" field.
+	 *
+	 * @param array $data The discount to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the discount is invalid.
+	 */
 	public static function validate_discount( $data ) {
 		$validator_map = array(
 			'$percentage_off'          => 'is_float',
@@ -1148,6 +1182,14 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate an address.
+	 *
+	 * @param array $value The address to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the address is invalid.
+	 */
 	public static function validate_address( $value ) {
 		$validator_map = array(
 			'$name'      => 'is_string',
