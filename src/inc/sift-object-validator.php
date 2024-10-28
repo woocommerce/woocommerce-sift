@@ -1388,4 +1388,41 @@ class SiftObjectValidator {
 		}
 		return true;
 	}
+
+	/**
+	 * Validate a $login event.
+	 *
+	 * @param array $data The event to validate.
+	 *
+	 * @return mixed
+	 * @throws \Exception If the event is invalid.
+	 */
+	public static function validate_login( $data ) {
+		$validator_map = array(
+			'$user_id'                   => array( __CLASS__, 'validate_id' ),
+			'$session_id'                => 'is_string',
+			'$login_status'              => array( '$success', '$failure' ),
+			'$user_email'                => array( __CLASS__, 'validate_email' ),
+			'$verification_phone_number' => array( __CLASS__, 'validate_phone_number' ),
+			'$browser'                   => array( __CLASS__, 'validate_browser' ),
+			'$app'                       => array( __CLASS__, 'validate_app' ),
+			'$failure_reason'            => array( '$account_unknown', '$account_suspended', '$account_disabled', '$wrong_password' ),
+			'$username'                  => 'is_string',
+			'$social_sign_on_type'       => self::SOCIAL_SIGN_ON_TYPES,
+			'$account_types'             => static::validate_array_fn( 'is_string' ),
+			'$brand_name'                => 'is_string',
+			'$site_country'              => array( __CLASS__, 'validate_country_code' ),
+			'$site_domain'               => 'is_string',
+		);
+		try {
+			static::validate( $data, $validator_map );
+			// required field: $user_id
+			if ( empty( $data['$user_id'] ) ) {
+				throw new \Exception( 'missing $user_id' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Invalid $login event: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
 }

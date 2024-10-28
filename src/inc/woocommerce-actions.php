@@ -75,21 +75,26 @@ class Events {
 	 * @return void
 	 */
 	public static function login_success( string $username, object $user ) {
-		self::add(
-			'$login',
-			array(
-				'$user_id'       => $user->ID,
-				'$login_status'  => '$success',
-				'$session_id'    => WC()->session->get_customer_unique_id(),
-				'$user_email'    => $user->user_email ? $user->user_email : null,
-				'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
-				'$username'      => $username,
-				'$account_types' => $user->roles,
-				'$ip'            => self::get_client_ip(),
-				'$time'          => intval( 1000 * microtime( true ) ),
-				// Other optional data like site_country site_domain etc etc.
-			)
+		$properties = array(
+			'$user_id'       => (string) $user->ID,
+			'$login_status'  => '$success',
+			'$session_id'    => WC()->session->get_customer_unique_id(),
+			'$user_email'    => $user->user_email ? $user->user_email : null,
+			'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
+			'$username'      => $username,
+			'$account_types' => $user->roles,
+			'$ip'            => self::get_client_ip(),
+			'$time'          => intval( 1000 * microtime( true ) ),
 		);
+
+		try {
+			SiftObjectValidator::validate_login( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( '$login', $properties );
 	}
 
 	/**
@@ -121,7 +126,7 @@ class Events {
 				$failure_reason = null;
 		}
 		$properties = array(
-			'$user_id'      => $attempted_user->ID ? $attempted_user->ID : null,
+			'$user_id'      => (string) $attempted_user->ID ?? null,
 			'$login_status' => '$failure',
 			'$session_id'   => WC()->session->get_customer_unique_id(),
 			'$browser'      => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
@@ -129,6 +134,13 @@ class Events {
 			'$ip'           => self::get_client_ip(),
 			'$time'         => intval( 1000 * microtime( true ) ),
 		);
+
+		try {
+			SiftObjectValidator::validate_login( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
 
 		if ( ! empty( $failure_reason ) ) {
 			$properties['$failure_reason'] = $failure_reason;
