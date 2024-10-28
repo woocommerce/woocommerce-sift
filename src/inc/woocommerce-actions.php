@@ -263,15 +263,21 @@ class Events {
 	 * @return void
 	 */
 	public static function link_session_to_user( string $session_id, string $user_id ) {
-		self::add(
-			'$link_session_to_user',
-			array(
-				'$user_id'    => $user_id,
-				'$session_id' => $session_id,
-				'$ip'         => self::get_client_ip(),
-				'$time'       => intval( 1000 * microtime( true ) ),
-			)
+		$properties = array(
+			'$user_id'    => $user_id,
+			'$session_id' => $session_id,
+			'$ip'         => self::get_client_ip(),
+			'$time'       => intval( 1000 * microtime( true ) ),
 		);
+
+		try {
+			SiftObjectValidator::validate_link_session_to_user( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( '$link_session_to_user', $properties );
 	}
 
 	/**

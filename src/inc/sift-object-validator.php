@@ -1326,7 +1326,7 @@ class SiftObjectValidator {
 	public static function validate_create_order( $data ) {
 		$validator_map = array(
 			'$user_id'                   => array( __CLASS__, 'validate_id' ),
-			'$session_id'                => array( __CLASS__, 'validate_id' ),
+			'$session_id'                => 'is_string',
 			'$order_id'                  => 'is_string',
 			'$user_email'                => array( __CLASS__, 'validate_email' ),
 			'$verification_phone_number' => array( __CLASS__, 'validate_phone_number' ),
@@ -1360,6 +1360,31 @@ class SiftObjectValidator {
 			}
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Failed to validate $create_order event: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+
+	/**
+	 * Validate a $link_session_to_user event.
+	 *
+	 * @param array $data The event to validate.
+	 *
+	 * @return mixed
+	 * @throws \Exception If the event is invalid.
+	 */
+	public static function validate_link_session_to_user( $data ) {
+		$validator_map = array(
+			'$user_id'    => array( __CLASS__, 'validate_id' ),
+			'$session_id' => 'is_string',
+		);
+		try {
+			static::validate( $data, $validator_map );
+			// required field: $user_id, $session_id
+			if ( empty( $data['$user_id'] ) || empty( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $user_id or $session_id' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Invalid $link_session_to_user event: ' . esc_html( $e->getMessage() ) );
 		}
 		return true;
 	}
