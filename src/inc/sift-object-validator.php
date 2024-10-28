@@ -1250,4 +1250,85 @@ class SiftObjectValidator {
 		}
 		return true;
 	}
+
+	public static function validate_ordered_from( $data ) {
+		$validator_map = array(
+			'$store_id'      => 'is_string',
+			'$store_address' => array( __CLASS__, 'validate_address' ),
+		);
+
+		try {
+			static::validate( $data, $validator_map );
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'invalid ordered_from: ' . esc_html( $e->getMessage() ) );
+		}
+
+		return true;
+	}
+
+	public static function validate_merchant_profile( $data ) {
+		$validator_map = array(
+			'$merchant_id'            => 'is_string',
+			'$merchant_category_code' => 'is_string',
+			'$merchant_name'          => 'is_string',
+			'$merchant_address'       => array( __CLASS__, 'validate_address' ),
+		);
+
+		try {
+			static::validate( $data, $validator_map );
+			// required: merchant_id, merchant_name
+			if ( empty( $data['$merchant_id'] ) || empty( $data['$merchant_name'] ) ) {
+				throw new \Exception( 'missing a required field (id, name)' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'invalid merchant_profile: ' . esc_html( $e->getMessage() ) );
+		}
+
+		return true;
+	}
+
+	public static function validate_booking( $data ) {
+		throw new \Exception( 'Not implemented' );
+	}
+
+	public static function validate_create_order( $data ) {
+		$validator_map = array(
+			'$user_id'                   => array( __CLASS__, 'validate_id' ),
+			'$session_id'                => array( __CLASS__, 'validate_id' ),
+			'$order_id'                  => 'is_string',
+			'$user_email'                => array( __CLASS__, 'validate_email' ),
+			'$verification_phone_number' => array( __CLASS__, 'validate_phone_number' ),
+			'$amount'                    => 'is_int',
+			'$currency_code'             => array( __CLASS__, 'validate_currency_code' ),
+			'$billing_address'           => array( __CLASS__, 'validate_address' ),
+			'$payment_methods'           => static::validate_array_fn( array( __CLASS__, 'validate_payment_method' ) ),
+			'$shipping_address'          => array( __CLASS__, 'validate_address' ),
+			'$expedited_shipping'        => array( true, false ),
+			'$items'                     => static::validate_array_fn( array( __CLASS__, 'validate_item' ) ),
+			'$bookings'                  => static::validate_array_fn( array( __CLASS__, 'validate_booking' ) ),
+			'$seller_user_id'            => array( __CLASS__, 'validate_id' ),
+			'$promotions'                => static::validate_array_fn( array( __CLASS__, 'validate_promotion' ) ),
+			'$shipping_method'           => array( '$electronic', '$physical' ),
+			'$shipping_carrier'          => 'is_string',
+			'$shipping_tracking_numbers' => static::validate_array_fn( 'is_string' ),
+			'$ordered_from'              => array( __CLASS__, 'validate_ordered_from' ),
+			'$browser'                   => array( __CLASS__, 'validate_browser' ),
+			'$app'                       => array( __CLASS__, 'validate_app' ),
+			'$brand_name'                => 'is_string',
+			'$site_country'              => array( __CLASS__, 'validate_country_code' ),
+			'$site_domain'               => 'is_string',
+			'$merchant_profile'          => array( __CLASS__, 'validate_merchant_profile' ),
+			'$digital_orders'            => static::validate_array_fn( array( __CLASS__, 'validate_digital_order' ) ),
+		);
+		try {
+			static::validate( $data, $validator_map );
+			// required field: $user_id
+			if ( empty( $data['$user_id'] ) ) {
+				throw new \Exception( 'missing $user_id' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Failed to validate $create_order event: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
 }

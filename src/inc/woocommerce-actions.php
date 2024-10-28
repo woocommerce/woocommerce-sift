@@ -300,7 +300,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'      => $user->ID ?? null,
+			'$user_id'      => (string) $user->ID ?? null,
 			'$user_email'   => $user->user_email ?? null,
 			'$session_id'   => \WC()->session->get_customer_unique_id(),
 			'$item'         => array(
@@ -404,14 +404,20 @@ class Events {
 				continue;
 			}
 
+			// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
+			$category = wc_get_product_category_list( $product->get_id() );
+			if ( is_wp_error( $category ) || ! is_string( $category ) ) {
+				$category = '';
+			}
+
 			$items[] = array(
-				'$item_id'       => $product->get_id(),
+				'$item_id'       => (string) $product->get_id(),
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_name(),
 				'$price'         => $product->get_price() * 1000000, // $39.99
 				'$currency_code' => $order->get_currency(), // For the order specifically, not the whole store.
 				'$quantity'      => $item->get_quantity(),
-				'$category'      => wc_get_product_category_list( $product->get_id() ),
+				'$category'      => $category,
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			);
 
@@ -420,29 +426,42 @@ class Events {
 			}
 		}
 
+		$properties = array(
+			'$user_id'         => (string) $user->ID ?? null,
+			'$user_email'      => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
+			'$session_id'      => \WC()->session->get_customer_unique_id(),
+			'$order_id'        => $order_id,
+			'$verification_phone_number'
+				=> $order->get_billing_phone(),
+			'$amount'          => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
+			'$currency_code'   => get_woocommerce_currency(),
+			'$items'           => $items,
+			'$shipping_method' => $physical_or_electronic,
+			'$browser'         => self::get_client_browser(),
+			'$site_domain'     => wp_parse_url( site_url(), PHP_URL_HOST ),
+			'$site_country'    => wc_get_base_location()['country'],
+			'$ip'              => self::get_client_ip(),
+			'$time'            => intval( 1000 * microtime( true ) ),
+		);
+		// Add in the address information if it's available.
+		$billing_address = self::get_order_address( $user->ID, 'billing' );
+		if ( ! empty( $billing_address ) ) {
+			$properties['$billing_address'] = $billing_address;
+		}
+		$shipping_address = self::get_order_address( $user->ID, 'shipping' );
+		if ( ! empty( $shipping_address ) ) {
+			$properties['$shipping_address'] = $shipping_address;
+		}
+		try {
+			SiftObjectValidator::validate_create_order( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
 		self::add(
 			'$create_order',
-			array(
-				'$user_id'          => $user->ID ? $user->ID : null,
-				'$user_email'       => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
-				'$session_id'       => \WC()->session->get_customer_unique_id(),
-				'$order_id'         => $order_id,
-				'$verification_phone_number'
-									=> $order->get_billing_phone(),
-				'$amount'           => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
-				'$currency_code'    => get_woocommerce_currency(),
-				'$billing_address'  => self::get_order_address( $user->ID, 'billing' ),
-				// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-				// '$payment_methods' => array(),
-				'$shipping_address' => self::get_order_address( $user->ID, 'shipping' ),
-				'$items'            => $items,
-				'$shipping_method'  => $physical_or_electronic,
-				'$browser'          => self::get_client_browser(),
-				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
-				'$site_country'     => wc_get_base_location()['country'],
-				'$ip'               => self::get_client_ip(),
-				'$time'             => intval( 1000 * microtime( true ) ),
-			)
+			$properties
 		);
 	}
 
