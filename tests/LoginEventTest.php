@@ -37,6 +37,7 @@ class LoginEventTest extends EventTest {
 		);
 
 		// Assert
+		static::fail_on_error_logged();
 		static::assertLoginEvent( '$success', $user_id );
 
 		// Clean up
@@ -66,6 +67,7 @@ class LoginEventTest extends EventTest {
 		);
 
 		// Assert
+		static::fail_on_error_logged();
 		static::assertLoginEvent( '$failure', $user_id );
 
 		// Clean up
@@ -86,7 +88,7 @@ class LoginEventTest extends EventTest {
 			[
 				'event'                    => '$login',
 				'properties.$login_status' => $login_status,
-				'properties.$user_id'      => $user_id,
+				'properties.$user_id'      => (string) $user_id,
 			]
 		);
 		static::assertGreaterThanOrEqual( 1, count( $events ), 'No $login event found' );
