@@ -1425,4 +1425,17 @@ class SiftObjectValidator {
 		}
 		return true;
 	}
+
+	/**
+	 * Validate a $remove_item_from_cart event.
+	 *
+	 * @param array $data The event to validate.
+	 *
+	 * @return mixed
+	 * @throws \Exception If the event is invalid.
+	 */
+	public static function validate_remove_item_from_cart( $data ) {
+		//  functionally identical
+		return static::validate_add_item_to_cart( $data );
+	}
 }
