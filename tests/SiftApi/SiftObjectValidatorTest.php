@@ -47,8 +47,10 @@ abstract class SiftObjectValidatorTest extends \WP_UnitTestCase {
 			foreach ( $change_data as $key => $value ) {
 				if ( is_array( $value ) ) {
 					$data[ $key ] = $recursively_fix( $data[ $key ], $value );
-				} else {
+				} else if ( ! is_null( $value ) ) {
 					$data[ $key ] = $value;
+				} else if ( is_null( $value ) ) {
+					unset( $data[ $key ] );
 				}
 			}
 			return $data;

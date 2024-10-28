@@ -38,6 +38,7 @@ class LinkSessionToUserEventTest extends EventTest {
 		WC()->session->init_session_cookie();
 
 		// Assert
+		static::fail_on_error_logged();
 		static::assertLinkSessionToUserEvent( $user_id );
 
 		// Clean up
