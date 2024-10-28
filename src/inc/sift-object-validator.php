@@ -1251,6 +1251,14 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate a "Ordered From" field.
+	 *
+	 * @param array $data The "Ordered From" data to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the data is invalid.
+	 */
 	public static function validate_ordered_from( $data ) {
 		$validator_map = array(
 			'$store_id'      => 'is_string',
@@ -1266,6 +1274,14 @@ class SiftObjectValidator {
 		return true;
 	}
 
+	/**
+	 * Validate a Merchant Profile field.
+	 *
+	 * @param array $data The Merchant Profile data to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the data is invalid.
+	 */
 	public static function validate_merchant_profile( $data ) {
 		$validator_map = array(
 			'$merchant_id'            => 'is_string',
@@ -1287,10 +1303,26 @@ class SiftObjectValidator {
 		return true;
 	}
 
-	public static function validate_booking( $data ) {
+	/**
+	 * Validate a Booking field.
+	 *
+	 * @param array $data The Booking data to validate.
+	 *
+	 * @return mixed
+	 * @throws \Exception If the data is invalid.
+	 */
+	public static function validate_booking( $data ) { //phpcs:ignore
 		throw new \Exception( 'Not implemented' );
 	}
 
+	/**
+	 * Validate a $create_order event.
+	 *
+	 * @param array $data The event to validate.
+	 *
+	 * @return mixed
+	 * @throws \Exception If the event is invalid.
+	 */
 	public static function validate_create_order( $data ) {
 		$validator_map = array(
 			'$user_id'                   => array( __CLASS__, 'validate_id' ),
