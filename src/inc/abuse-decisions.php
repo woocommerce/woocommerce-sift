@@ -16,11 +16,9 @@ use function WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions\{
  *
  * @param mixed $return The return value.
  * @param string $decision_id The ID of the Sift decision.
- * @param string $entity_type The type of entity the decision is for.
- * @param int $entity_id The ID of the entity the decision is for.
- * @param int $time The time the decision was made.
+ * @param integer $entity_id The ID of the entity the decision is for.
  */
-function process_sift_decision_received( $return, $decision_id, $entity_type, $entity_id, $time ) {
+function process_sift_decision_received( $return, $decision_id, $entity_id ) {
 
 	switch( $decision_id ) {
 		case 'trust_list_payment_abuse':

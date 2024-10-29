@@ -5,7 +5,7 @@ namespace WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions;
 /**
  * Unblock a user from making purchases if Sift indicates that they are no longer a fraud risk.
  *
- * @param int $user_id The ID of the user to unblock from making purchases.
+ * @param integer $user_id The ID of the user to unblock from making purchases.
  */
 function unblock_user_from_purchases( $user_id ) {
 	delete_user_meta( $user_id, 'is_blocked_from_purchases' );
@@ -14,11 +14,11 @@ function unblock_user_from_purchases( $user_id ) {
 /**
  * Void and refund all orders for a user.
  *
- * @param int $user_id The ID of the user to void and refund orders for.
+ * @param integer $user_id The ID of the user to void and refund orders for.
  */
 function void_and_refund_user_orders( $user_id ) {
 	$orders = wc_get_orders( array(
-		'customer' => $user_id,
+	'customer' => $user_id,
 		'status'   => array( 'completed', 'processing' ),
 	) );
 
@@ -30,7 +30,7 @@ function void_and_refund_user_orders( $user_id ) {
 /**
  * Cancel all subscriptions for a user.
  *
- * @param int $user_id The ID of the user to cancel subscriptions for.
+ * @param integer $user_id The ID of the user to cancel subscriptions for.
  */
 function cancel_and_remove_user_subscriptions( $user_id ) {
 	$subscriptions = wcs_get_users_subscriptions( $user_id );
@@ -46,7 +46,7 @@ function cancel_and_remove_user_subscriptions( $user_id ) {
 /**
  * Remove licenses and product keys associated with a user.
  *
- * @param int $user_id The ID of the user to remove licenses and product keys for.
+ * @param integer $user_id The ID of the user to remove licenses and product keys for.
  */
 function remove_user_licenses_and_product_keys( $user_id ) {
 	delete_user_meta( $user_id, 'user_licenses' );
@@ -79,7 +79,7 @@ function display_sgdc_error( $message = '' ) {
 /**
  * Force user logout when they are blocked from making purchases.
  *
- * @param int $user_id The ID of the user to log out.
+ * @param integer $user_id The ID of the user to log out.
  */
 function force_user_logout( $user_id ) {
 	if ( class_exists( 'WP_Session_Tokens' ) ) {
