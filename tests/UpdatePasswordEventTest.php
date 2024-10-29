@@ -32,6 +32,7 @@ class UpdatePasswordEventTest extends EventTest {
 		wp_set_password( $password, $user_id );
 
 		// Assert
+		static::fail_on_error_logged();
 		UpdateAccountEventTest::assertNoUpdateAccountEvent( $user_id );
 		static::assertUpdatePasswordEvent( $user_id );
 
@@ -63,6 +64,7 @@ class UpdatePasswordEventTest extends EventTest {
 		);
 
 		// Assert
+		static::fail_on_error_logged();
 		// Might as well 😆 (currently only testing wp_insert_user() so this adds another check).
 		UpdateAccountEventTest::assertUpdateAccountEvent( $user_id );
 		static::assertUpdatePasswordEvent( $user_id );
@@ -94,6 +96,7 @@ class UpdatePasswordEventTest extends EventTest {
 		);
 
 		// Assert
+		static::fail_on_error_logged();
 		// Might as well 😆 (currently only testing wp_insert_user() so this adds another check).
 		UpdateAccountEventTest::assertUpdateAccountEvent( $user_id );
 		static::assertNoUpdatePasswordEvent( $user_id );
@@ -113,7 +116,7 @@ class UpdatePasswordEventTest extends EventTest {
 		$events = static::filter_events(
 			[
 				'event'               => '$update_password',
-				'properties.$user_id' => $user_id,
+				'properties.$user_id' => (string) $user_id,
 			]
 		);
 		static::assertGreaterThanOrEqual( 1, count( $events ), 'No $update_password event found' );
@@ -130,7 +133,7 @@ class UpdatePasswordEventTest extends EventTest {
 		$events = static::filter_events(
 			[
 				'event'               => '$update_password',
-				'properties.$user_id' => $user_id,
+				'properties.$user_id' => (string) $user_id,
 			]
 		);
 		static::assertEquals( 0, count( $events ), '$update_password event found' );
