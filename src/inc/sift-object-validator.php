@@ -1482,7 +1482,46 @@ class SiftObjectValidator {
 		}
 		return true;
 	}
+
+
+	/**
+	 * Validate the update password event.
+	 *
+	 * @param array $data The event to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the event is invalid.
+	 */
+	public static function validate_update_password( $data ) {
+		$validator_map = array(
+			'$user_id'                   => array( __CLASS__, 'validate_id' ),
+			'$reason'                    => array( '$user_update', '$forgot_password', '$forced_reset' ),
+			'$status'                    => array( '$pending', '$success', '$failure' ),
+			'$browser'                   => array( __CLASS__, 'validate_browser' ),
+			'$app'                       => array( __CLASS__, 'validate_app' ),
+			'$account_types'             => static::validate_array_fn( 'is_string' ),
+			'$brand_name'                => 'is_string',
+			'$site_country'              => array( __CLASS__, 'validate_country_code' ),
+			'$site_domain'               => 'is_string',
+			'$user_email'                => array( __CLASS__, 'validate_email' ),
+			'$verification_phone_number' => array( __CLASS__, 'validate_phone_number' ),
+		);
+		try {
+			static::validate( $data, $validator_map );
+			// required field: $user_id, $reason, $status
+			if ( empty( $data['$user_id'] ) ) {
+				throw new \Exception( 'missing $user_id' );
+			}
+			if ( empty( $data['$reason'] ) ) {
+				throw new \Exception( 'missing $reason' );
+			}
+			if ( empty( $data['$status'] ) ) {
+				throw new \Exception( 'missing $status' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Invalid $update_password event: ' . esc_html( $e->getMessage() ) );
 		}
 		return true;
 	}
+
 }
