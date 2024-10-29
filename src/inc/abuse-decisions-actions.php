@@ -79,11 +79,12 @@ function remove_user_licenses_and_product_keys( $user_id ) {
  * Display the SGDC error to the user.
  *
  * @param string $message Override the default message to display to the user.
+ *
  * @return void
  */
 function display_sgdc_error( $message = '' ) {
 	$default_message = __( 'Your account has been blocked from making purchases. SGDC Error OYBPXRQ', 'sift-decisions' );
-	$message = $message ? $message : $default_message;
+	$message         = $message ? $message : $default_message;
 	wc_add_notice( $message, 'error' );
 }
 
@@ -91,6 +92,7 @@ function display_sgdc_error( $message = '' ) {
  * Force user logout when they are blocked from making purchases.
  *
  * @param integer $user_id The ID of the user to log out.
+ *
  * @return void
  */
 function force_user_logout( $user_id ) {
