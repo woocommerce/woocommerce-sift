@@ -14,9 +14,9 @@ use function WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions\{
 /**
  * Process the Sift decision received.
  *
- * @param mixed  $return_value The return value.
- * @param string $decision_id  The ID of the Sift decision.
- * @param integer    $entity_id    The ID of the entity the decision is for.
+ * @param mixed   $return_value The return value.
+ * @param string  $decision_id  The ID of the Sift decision.
+ * @param integer $entity_id    The ID of the entity the decision is for.
  *
  * @return mixed
  */
