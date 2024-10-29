@@ -256,7 +256,6 @@ class Events {
 
 		$properties = array(
 			'$user_id'      => (string) $user->ID,
-			//'$session_id'   => WC()->session->get_customer_unique_id(),
 			'$reason'       => '$user_update', // Can alternately be `$forgot_password` or `$forced_reset` -- no real way to set those yet.
 			'$status'       => '$success', // This action only fires after the change is done.
 			'$browser'      => self::get_client_browser(),

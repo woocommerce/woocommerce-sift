@@ -1508,7 +1508,7 @@ class SiftObjectValidator {
 		);
 		try {
 			static::validate( $data, $validator_map );
-			// required field: $user_id, $reason, $status
+			// Required fields for update password: $user_id, $reason, $status
 			if ( empty( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
@@ -1523,5 +1523,4 @@ class SiftObjectValidator {
 		}
 		return true;
 	}
-
 }
