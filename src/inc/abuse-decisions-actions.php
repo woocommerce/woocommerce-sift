@@ -6,6 +6,7 @@ namespace WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions;
  * Unblock a user from making purchases if Sift indicates that they are no longer a fraud risk.
  *
  * @param integer $user_id The ID of the user to unblock from making purchases.
+ *
  * @return void
  */
 function unblock_user_from_purchases( $user_id ) {
@@ -16,6 +17,7 @@ function unblock_user_from_purchases( $user_id ) {
  * Void and refund all orders for a user.
  *
  * @param integer $user_id The ID of the user to void and refund orders for.
+ *
  * @return void
  */
 function void_and_refund_user_orders( $user_id ) {
@@ -35,6 +37,7 @@ function void_and_refund_user_orders( $user_id ) {
  * Cancel all subscriptions for a user.
  *
  * @param integer $user_id The ID of the user to cancel subscriptions for.
+ *
  * @return void
  */
 function cancel_and_remove_user_subscriptions( $user_id ) {
@@ -52,6 +55,7 @@ function cancel_and_remove_user_subscriptions( $user_id ) {
  * Remove licenses and product keys associated with a user.
  *
  * @param integer $user_id The ID of the user to remove licenses and product keys for.
+ *
  * @return void
  */
 function remove_user_licenses_and_product_keys( $user_id ) {
@@ -106,6 +110,7 @@ function force_user_logout( $user_id ) {
  * Loosely based on https://www.ibenic.com/how-to-create-woocommerce-refunds-programmatically/ -- but needs review.
  *
  * @param mixed $order_id Post object or post ID of the order.
+ *
  * @return \WC_Order_Refund|\WP_Error
  */
 function sift_fraud_void_refund_order( $order_id ) {
