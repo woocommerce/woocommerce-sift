@@ -1,0 +1,61 @@
+
+{
+	"$user_id"    : "billy_jones_301",
+
+	"$changed_password"          : true,
+	"$user_email"                : "billjones1@example.com",
+	"$verification_phone_number" : "+123456789012",
+	"$name"                      : "Bill Jones",
+	"$phone"                     : "1-415-555-6040",
+	"$referrer_user_id"          : "janejane102",
+	"$payment_methods"  : [
+		{
+			"$payment_type"    : "$credit_card",
+			"$card_bin"        : "542486",
+			"$card_last4"      : "4444"
+		}
+	],
+	"$billing_address"  :
+	{
+		"$name"         : "Bill Jones",
+		"$phone"        : "1-415-555-6041",
+		"$address_1"    : "2100 Main Street",
+		"$address_2"    : "Apt 3B",
+		"$city"         : "New London",
+		"$region"       : "New Hampshire",
+		"$country"      : "US",
+		"$zipcode"      : "03257"
+	},
+	"$shipping_address" : {
+		"$name"         : "Bill Jones",
+		"$phone"        : "1-415-555-6041",
+		"$address_1"    : "2100 Main Street",
+		"$address_2"    : "Apt 3B",
+		"$city"         : "New London",
+		"$region"       : "New Hampshire",
+		"$country"      : "US",
+		"$zipcode"      : "03257"
+	},
+
+	"$social_sign_on_type"   : "$twitter",
+	"$account_types"         : ["merchant", "premium"],
+	"$ip"                    : "54.208.214.78",
+
+	"$browser"        : {
+		"$user_agent"       : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
+		"$accept_language"  : "en-US",
+		"$content_language" : "en-GB"
+	},
+
+	"$app"        : {
+
+		"$os"                  : "iOS",
+		"$os_version"          : "10.1.3",
+		"$device_manufacturer" : "Apple",
+		"$device_model"        : "iPhone 4,2",
+		"$device_unique_id"    : "A3D261E4-DE0A-470B-9E4A-720F3D3D22E6",
+		"$app_name"            : "Calculator",
+		"$app_version"         : "3.2.7",
+		"$client_language"     : "en-US"
+	}
+}
