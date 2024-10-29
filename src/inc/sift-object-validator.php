@@ -1438,4 +1438,51 @@ class SiftObjectValidator {
 		//  functionally identical
 		return static::validate_add_item_to_cart( $data );
 	}
+
+
+	/**
+	 * Validate the update account event.
+	 *
+	 * @param array $data The event to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the event is invalid.
+	 */
+	public static function validate_update_account( $data ) {
+		$validator_map = array(
+			'$user_id'                   => array( __CLASS__, 'validate_id' ),
+			'$session_id'                => array( __CLASS__, 'validate_id' ),
+			'$changed_password'          => array( true, false ),
+			'$user_email'                => array( __CLASS__, 'validate_email' ),
+			'$verification_phone_number' => array( __CLASS__, 'validate_phone_number' ),
+			'$name'                      => 'is_string',
+			'$phone'                     => array( __CLASS__, 'validate_phone_number' ),
+			'$referrer_user_id'          => array( __CLASS__, 'validate_id' ),
+			'$payment_methods'           => static::validate_array_fn( array( __CLASS__, 'validate_payment_method' ) ),
+			'$billing_address'           => array( __CLASS__, 'validate_address' ),
+			'$shipping_address'          => array( __CLASS__, 'validate_address' ),
+			'$promotions'                => static::validate_array_fn( array( __CLASS__, 'validate_promotion' ) ),
+			'$social_sign_on_type'       => self::SOCIAL_SIGN_ON_TYPES,
+			'$browser'                   => array( __CLASS__, 'validate_browser' ),
+			'$app'                       => array( __CLASS__, 'validate_app' ),
+			'$account_types'             => static::validate_array_fn( 'is_string' ),
+			'$brand_name'                => 'is_string',
+			'$site_country'              => array( __CLASS__, 'validate_country_code' ),
+			'$site_domain'               => 'is_string',
+			'$merchant_profile'          => array( __CLASS__, 'validate_merchant_profile' ),
+		);
+		try {
+			static::validate( $data, $validator_map );
+			// required field: $user_id
+			if ( empty( $data['$user_id'] ) ) {
+				throw new \Exception( 'missing $user_id' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Invalid $update_account event: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+		}
+		return true;
+	}
 }

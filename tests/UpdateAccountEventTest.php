@@ -37,6 +37,7 @@ class UpdateAccountEventTest extends EventTest {
 		);
 
 		// Assert
+		static::fail_on_error_logged();
 		static::assertUpdateAccountEvent( $user_id );
 
 		// Clean up
@@ -54,7 +55,7 @@ class UpdateAccountEventTest extends EventTest {
 		$events = static::filter_events(
 			[
 				'event'               => '$update_account',
-				'properties.$user_id' => $user_id,
+				'properties.$user_id' => (string) $user_id,
 			]
 		);
 		static::assertGreaterThanOrEqual( 1, count( $events ), 'No $update_account event found' );
@@ -72,7 +73,7 @@ class UpdateAccountEventTest extends EventTest {
 		$events = static::filter_events(
 			[
 				'event'               => '$update_account',
-				'properties.$user_id' => $user_id,
+				'properties.$user_id' => (string) $user_id,
 			]
 		);
 		static::assertEquals( 0, count( $events ), '$update_account event found' );
