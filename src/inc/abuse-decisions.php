@@ -16,7 +16,7 @@ use function WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions\{
  *
  * @param mixed  $return_value The return value.
  * @param string $decision_id  The ID of the Sift decision.
- * @param int    $entity_id    The ID of the entity the decision is for.
+ * @param integer    $entity_id    The ID of the entity the decision is for.
  *
  * @return mixed
  */
@@ -66,7 +66,7 @@ add_filter( 'sift_decision_received', __NAMESPACE__ . '\process_sift_decision_re
 /**
  * Handle the 'trust_list_payment_abuse' decision.
  *
- * @param int $user_id The ID of the user.
+ * @param integer $user_id The ID of the user.
  *
  * @return void
  */
@@ -77,7 +77,7 @@ function handle_trust_list_payment_abuse( $user_id ) {
 /**
  * Handle the 'looks_good_payment_abuse' decision.
  *
- * @param int $user_id The ID of the user.
+ * @param integer $user_id The ID of the user.
  *
  * @return void
  */
@@ -88,7 +88,7 @@ function handle_looks_good_payment_abuse( $user_id ) {
 /**
  * Handle the 'not_likely_fraud_payment_abuse' decision.
  *
- * @param int $user_id The ID of the user.
+ * @param integer $user_id The ID of the user.
  *
  * @return void
  */
@@ -99,7 +99,7 @@ function handle_not_likely_fraud_payment_abuse( $user_id ) {
 /**
  * Handle the 'likely_fraud_refundno_renew_payment_abuse' decision.
  *
- * @param int $user_id The ID of the user.
+ * @param integer $user_id The ID of the user.
  *
  * @return void
  */
@@ -114,7 +114,7 @@ function handle_likely_fraud_refundno_renew_payment_abuse( $user_id ) {
 /**
  * Handle the 'likely_fraud_keep_purchases_payment_abuse' decision.
  *
- * @param int $user_id The ID of the user.
+ * @param integer $user_id The ID of the user.
  *
  * @return void
  */
@@ -126,7 +126,7 @@ function handle_likely_fraud_keep_purchases_payment_abuse( $user_id ) {
 /**
  * Handle the 'fraud_payment_abuse' decision.
  *
- * @param int $user_id The ID of the user.
+ * @param integer $user_id The ID of the user.
  *
  * @return void
  */
@@ -142,7 +142,7 @@ function handle_fraud_payment_abuse( $user_id ) {
 /**
  * Handle the 'block_wo_review_payment_abuse' decision.
  *
- * @param int $user_id The ID of the user.
+ * @param integer $user_id The ID of the user.
  *
  * @return void
  */
