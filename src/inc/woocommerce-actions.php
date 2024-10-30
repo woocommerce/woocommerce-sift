@@ -39,7 +39,6 @@ class Events {
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
 
 		add_action( 'woocommerce_checkout_order_processed', array( static::class, 'create_order' ), 100, 3 );
-		add_action( 'woocommerce_new_order', array( static::class, 'add_session_info' ), 100 );
 		add_action( 'post_updated', array( static::class, 'update_order' ), 100 );
 
 		/**
@@ -521,17 +520,6 @@ class Events {
 			$properties
 		);
 	}
-
-	/**
-	 * Adds session info to the order.
-	 *
-	 * Unsure if necessary?  Was in prior plugin. -- George
-	 *
-	 * @param string $order_id ID of the order.
-	 *
-	 * @return void
-	 */
-	public static function add_session_info( string $order_id ) {}
 
 	/**
 	 * Log error for unsupported status changes.
