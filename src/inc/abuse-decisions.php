@@ -60,7 +60,6 @@ function process_sift_decision_received( $return_value, $decision_id, $entity_id
 	}
 
 	return $return_value;
-	return $return_value;
 }
 add_filter( 'sift_decision_received', __NAMESPACE__ . '\process_sift_decision_received', 10, 5 );
 
