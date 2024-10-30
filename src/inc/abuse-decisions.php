@@ -71,24 +71,8 @@ add_filter( 'sift_decision_received', __NAMESPACE__ . '\process_sift_decision_re
  *
  * @return void
  */
-/**
- * Handle the 'trust_list_payment_abuse' decision.
- *
- * @param integer $user_id The ID of the user.
- *
- * @return void
- */
 function handle_trust_list_payment_abuse( $user_id ) {
 	unblock_user_from_purchases( $user_id );
-}
-
-/**
- * Handle the 'looks_good_payment_abuse' decision.
- *
- * @param integer $user_id The ID of the user.
- *
- * @return void
- */
 }
 
 /**
@@ -109,26 +93,8 @@ function handle_looks_good_payment_abuse( $user_id ) {
  *
  * @return void
  */
-}
-
-/**
- * Handle the 'not_likely_fraud_payment_abuse' decision.
- *
- * @param integer $user_id The ID of the user.
- *
- * @return void
- */
 function handle_not_likely_fraud_payment_abuse( $user_id ) {
 	unblock_user_from_purchases( $user_id );
-}
-
-/**
- * Handle the 'likely_fraud_refundno_renew_payment_abuse' decision.
- *
- * @param integer $user_id The ID of the user.
- *
- * @return void
- */
 }
 
 /**
@@ -153,27 +119,9 @@ function handle_likely_fraud_refundno_renew_payment_abuse( $user_id ) {
  *
  * @return void
  */
-}
-
-/**
- * Handle the 'likely_fraud_keep_purchases_payment_abuse' decision.
- *
- * @param integer $user_id The ID of the user.
- *
- * @return void
- */
 function handle_likely_fraud_keep_purchases_payment_abuse( $user_id ) {
 	update_user_meta( $user_id, 'is_blocked_from_purchases', true );
 	display_sgdc_error( 'You are blocked from making purchases due to a recent fraud review. SGDC Error OYBPXRQ' );
-}
-
-/**
- * Handle the 'fraud_payment_abuse' decision.
- *
- * @param integer $user_id The ID of the user.
- *
- * @return void
- */
 }
 
 /**
@@ -190,15 +138,6 @@ function handle_fraud_payment_abuse( $user_id ) {
 	remove_user_licenses_and_product_keys( $user_id );
 	display_sgdc_error( 'You are blocked from making purchases due to fraudulent activity. SGDC Error OYBPXRQ' );
 	force_user_logout( $user_id );
-}
-
-/**
- * Handle the 'block_wo_review_payment_abuse' decision.
- *
- * @param integer $user_id The ID of the user.
- *
- * @return void
- */
 }
 
 /**
