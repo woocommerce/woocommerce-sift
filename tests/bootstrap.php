@@ -31,7 +31,14 @@ require_once "{$_tests_dir}/includes/functions.php";
  * Manually load the plugin being tested.
  */
 function _manually_load_plugin() {
-	require dirname( dirname( __FILE__ ) ) . '/sift-decisions.php';
+	// WooCommerce is loaded from wp-env environment from the plugin directory.
+	// Let's check if WOO_TEST_DIR is defined and load WooCommerce from there if it is.
+	if ( false !== getenv( 'WOO_TEST_DIR' ) ) {
+		require getenv( 'WOO_TEST_DIR' ) . '/woocommerce.php';
+	} else {
+		require dirname( dirname( __DIR__ ) ) . '/woocommerce/woocommerce.php';
+	}
+	require dirname( __DIR__ ) . '/sift-decisions.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

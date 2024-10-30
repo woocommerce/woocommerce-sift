@@ -113,7 +113,7 @@ function force_user_logout( $user_id ) {
  *
  * @param mixed $order_id Post object or post ID of the order.
  *
- * @return \WC_Order_Refund
+ * @return \WC_Order_Refund|\WP_Error
  */
 function sift_fraud_void_refund_order( $order_id ) {
 	$order = wc_get_order( $order_id );
@@ -125,7 +125,7 @@ function sift_fraud_void_refund_order( $order_id ) {
 		);
 	}
 
-	if ( 'refunded' == $order->get_status() ) {
+	if ( 'refunded' === $order->get_status() ) {
 		return new \WP_Error(
 			'wc-order',
 			__( 'Order has been already refunded', 'sift-decisions' )
@@ -164,7 +164,7 @@ function sift_fraud_void_refund_order( $order_id ) {
 		// Calculate line total, including tax.
 		$line_total_inc_tax = wc_format_decimal( $line_total ) + ( is_numeric( reset( $refund_tax ) ) ? wc_format_decimal( reset( $refund_tax ) ) : 0 );
 
-		// Add the total for this line tot the grand total.
+		// Add the total for this line to the grand total.
 		$refund_amount += round( $line_total_inc_tax, 2 );
 
 		// Fill item per line.

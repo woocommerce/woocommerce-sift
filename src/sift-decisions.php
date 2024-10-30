@@ -6,7 +6,7 @@ require_once __DIR__ . '/inc/wc-settings-tab.php';
 require_once __DIR__ . '/inc/rest-api-webhooks.php';
 require_once __DIR__ . '/inc/tracking-js.php';
 require_once __DIR__ . '/inc/woocommerce-actions.php';
-
+require_once __DIR__ . '/inc/sift-object-validator.php';
 
 defined( 'ABSPATH' ) || exit;
 
@@ -121,6 +121,7 @@ class SiftDecisions {
 				array(
 					'api_key'    => $api_key,
 					'account_id' => $account_id,
+					'version'    => '205', // Hardcode this so new sift versions don't break us.
 				)
 			);
 		}

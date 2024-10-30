@@ -1,0 +1,88 @@
+# This is a basic workflow to help you get started with Actions
+
+name: PHPUnit
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the trunk branch
+on:
+  pull_request:
+    branches: [ trunk ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "phpunit"
+  phpunit:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # setup the composer cache (vendor) with github actions cache and the cache dir defined in the previous step
+      - uses: actions/cache@v4
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+      # run composer install
+      - name: Composer Install
+        uses: php-actions/composer@v6
+
+      # get the node version from the .nvmrc file
+      - name: Read .nvmrc
+        run: echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_OUTPUT
+        id: nvm
+
+      # setup node based on the version from the .nvmrc file, fetched in the previous step
+      - name: Setup Node.js (.nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "${{ steps.nvm.outputs.NVMRC }}"
+          cache: 'npm'
+
+      # run the ci equivalent of npm install
+      - name: npm ci
+        run: |
+          npm ci
+
+      # Let's cache wp-env
+      - name: Grab wp-env dir
+        id: wp_env_dir
+        run: |
+          echo "WPENV_DIR=$(npx wp-env install-path)" >> $GITHUB_OUTPUT
+
+      # setup the wp-env cache
+#      - name: Cache wp-env
+#        uses: actions/cache@v4
+#        with:
+#          path: ${{ steps.wp_env_dir.outputs.WPENV_DIR }}
+#          key: ${{ runner.os }}-${{ hashFiles('**/.wp-env.json') }}
+
+      # run the wp-env setup command (wp-env start)
+      - name: setup wp env
+        run: |
+          npx wp-env start --xdebug
+
+      # Run the PHPUnit tests
+      - name: run PHPUnit
+        run: |
+          npm run test:coverage
+
+      - name: Generate code coverage report
+        uses: irongut/CodeCoverageSummary@v1.3.0
+        with:
+          filename: coverage.xml
+          badge: true
+          hide_branch_rate: 'false'
+          hide_complexity: 'false'
+          output: both
+          format: markdown
+
+      - name: Add Coverage PR Comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md

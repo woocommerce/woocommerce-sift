@@ -1,0 +1,78 @@
+{
+	"$user_id"    : "billy_jones_301",
+
+	"$session_id"                : "gigtleqddo84l8cm15qe4il",
+	"$user_email"                : "billjones1@example.com",
+	"$verification_phone_number" : "+123456789012",
+	"$name"                      : "Bill Jones",
+	"$phone"                     : "1-415-555-6040",
+	"$referrer_user_id"          : "janejane101",
+	"$payment_methods"           : [
+		{
+			"$payment_type"    : "$credit_card",
+			"$card_bin"        : "542486",
+			"$card_last4"      : "4444"
+		}
+	],
+	"$billing_address"  : {
+		"$name"         : "Bill Jones",
+		"$phone"        : "1-415-555-6040",
+		"$address_1"    : "2100 Main Street",
+		"$address_2"    : "Apt 3B",
+		"$city"         : "New London",
+		"$region"       : "New Hampshire",
+		"$country"      : "US",
+		"$zipcode"      : "03257"
+	},
+	"$shipping_address"  : {
+		"$name"          : "Bill Jones",
+		"$phone"         : "1-415-555-6041",
+		"$address_1"     : "2100 Main Street",
+		"$address_2"     : "Apt 3B",
+		"$city"          : "New London",
+		"$region"        : "New Hampshire",
+		"$country"       : "US",
+		"$zipcode"       : "03257"
+	},
+	"$promotions"       : [
+		{
+			"$promotion_id"     : "FriendReferral",
+			"$status"           : "$success",
+			"$referrer_user_id" : "janejane102",
+			"$credit_point"     : {
+				"$amount"             : 100,
+				"$credit_point_type"  : "account karma"
+			}
+		}
+	],
+
+	"$social_sign_on_type"   : "$twitter",
+	"$account_types"         : ["merchant", "premium"],
+	"$ip"                    : "54.208.214.78",
+
+
+	"twitter_handle"          : "billyjones",
+	"work_phone"              : "1-347-555-5921",
+	"location"                : "New London, NH",
+	"referral_code"           : "MIKEFRIENDS",
+	"email_confirmed_status"  : "$pending",
+	"phone_confirmed_status"  : "$pending",
+
+	"$browser"        : {
+		"$user_agent"       : "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36",
+		"$accept_language"  : "en-US",
+		"$content_language" : "en-GB"
+	},
+
+	"$app"        : {
+
+		"$os"                  : "iOS",
+		"$os_version"          : "10.1.3",
+		"$device_manufacturer" : "Apple",
+		"$device_model"        : "iPhone 4,2",
+		"$device_unique_id"    : "A3D261E4-DE0A-470B-9E4A-720F3D3D22E6",
+		"$app_name"            : "Calculator",
+		"$app_version"         : "3.2.7",
+		"$client_language"     : "en-US"
+	}
+}
