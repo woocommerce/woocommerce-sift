@@ -14,15 +14,16 @@ use function WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions\{
 /**
  * Process the Sift decision received.
  *
- * @param mixed $return The return value.
- * @param string $decision_id The ID of the Sift decision.
- * @param string $entity_type The type of entity the decision is for.
- * @param int $entity_id The ID of the entity the decision is for.
- * @param int $time The time the decision was made.
+ * @param mixed   $return      The return value.
+ * @param string  $decision_id The ID of the Sift decision.
+ * @param string  $entity_type The type of entity the decision is for.
+ * @param integer $entity_id   The ID of the entity the decision is for.
+ *
+ * @return mixed  The return value after processing the decision.
  */
-function process_sift_decision_received( $return, $decision_id, $entity_type, $entity_id, $time ) {
+function process_sift_decision_received( $return, $decision_id, $entity_type, $entity_id ) {
 
-	switch( $decision_id ) {
+	switch ( $decision_id ) {
 		case 'trust_list_payment_abuse':
 			handle_trust_list_payment_abuse( $entity_id );
 			break;
@@ -63,22 +64,49 @@ function process_sift_decision_received( $return, $decision_id, $entity_type, $e
 }
 add_filter( 'sift_decision_received', __NAMESPACE__ . '\process_sift_decision_received', 10, 5 );
 
-// Case-specific handler functions
+/**
+ * Handle trust list payment abuse.
+ *
+ * @param integer $user_id The user ID.
+ *
+ * @return void
+ */
 function handle_trust_list_payment_abuse( $user_id ) {
 	unblock_user_from_purchases( $user_id );
 	// Apply the same Sift decision to the associated WordPress.com account.
 }
 
+/**
+ * Handle looks good payment abuse.
+ *
+ * @param integer $user_id The user ID.
+ *
+ * @return void
+ */
 function handle_looks_good_payment_abuse( $user_id ) {
 	unblock_user_from_purchases( $user_id );
 	// Apply the same Sift decision to the associated WordPress.com account.
 }
 
+/**
+ * Handle not likely fraud payment abuse.
+ *
+ * @param integer $user_id The user ID.
+ *
+ * @return void
+ */
 function handle_not_likely_fraud_payment_abuse( $user_id ) {
 	unblock_user_from_purchases( $user_id );
 	// Apply the same Sift decision to the associated WordPress.com account.
 }
 
+/**
+ * Handle likely fraud refund no renew payment abuse.
+ *
+ * @param integer $user_id The user ID.
+ *
+ * @return void
+ */
 function handle_likely_fraud_refundno_renew_payment_abuse( $user_id ) {
 	update_user_meta( $user_id, 'is_blocked_from_purchases', true );
 	void_and_refund_user_orders( $user_id );
@@ -88,12 +116,26 @@ function handle_likely_fraud_refundno_renew_payment_abuse( $user_id ) {
 	// Apply the same Sift decision to the associated WordPress.com account.
 }
 
+/**
+ * Handle likely fraud keep purchases payment abuse.
+ *
+ * @param integer $user_id The user ID.
+ *
+ * @return void
+ */
 function handle_likely_fraud_keep_purchases_payment_abuse( $user_id ) {
 	update_user_meta( $user_id, 'is_blocked_from_purchases', true );
 	display_sgdc_error( 'You are blocked from making purchases due to a recent fraud review. SGDC Error OYBPXRQ' );
 	// Apply the same Sift decision to the associated WordPress.com account.
 }
 
+/**
+ * Handle fraud payment abuse.
+ *
+ * @param integer $user_id The user ID.
+ *
+ * @return void
+ */
 function handle_fraud_payment_abuse( $user_id ) {
 	update_user_meta( $user_id, 'is_blocked_from_purchases', true );
 	void_and_refund_user_orders( $user_id );
@@ -104,6 +146,13 @@ function handle_fraud_payment_abuse( $user_id ) {
 	// Apply the same Sift decision to the associated WordPress.com account.
 }
 
+/**
+ * Handle block without review payment abuse.
+ *
+ * @param integer $user_id The user ID.
+ *
+ * @return void
+ */
 function handle_block_wo_review_payment_abuse( $user_id ) {
 	update_user_meta( $user_id, 'is_blocked_from_purchases', true );
 	// Apply the same Sift decision to the associated WordPress.com account.

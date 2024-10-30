@@ -1,0 +1,17 @@
+{
+	"phpcbf.executablePath": "/Users/christophersmith/Projects/WordPress/sift-decisions/vendor/bin/phpcbf",
+  "phpcbf.onsave": true,
+  "phpcbf.standard": ".phpcs.xml",
+  "phpcbf.debug": true,
+  "intelephense.environment.documentRoot": "src",
+  "phpsab.executablePathCBF": "/Users/christophersmith/Projects/WordPress/sift-decisions/vendor/bin/phpcbf",
+  "phpsab.executablePathCS": "/Users/christophersmith/Projects/WordPress/sift-decisions/vendor/bin/phpcs",
+  "phpsab.allowedAutoRulesets": [
+    ".phpcs.xml",
+    ".phpcs.xml.dist",
+    "phpcs.xml",
+    "phpcs.xml.dist",
+    "phpcs.ruleset.xml",
+    "ruleset.xml"
+  ]
+}

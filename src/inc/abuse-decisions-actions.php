@@ -5,7 +5,9 @@ namespace WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions;
 /**
  * Unblock a user from making purchases if Sift indicates that they are no longer a fraud risk.
  *
- * @param int $user_id The ID of the user to unblock from making purchases.
+ * @param integer $user_id The ID of the user to unblock from making purchases.
+ *
+ * @return void
  */
 function unblock_user_from_purchases( $user_id ) {
 	delete_user_meta( $user_id, 'is_blocked_from_purchases' );
@@ -14,13 +16,17 @@ function unblock_user_from_purchases( $user_id ) {
 /**
  * Void and refund all orders for a user.
  *
- * @param int $user_id The ID of the user to void and refund orders for.
+ * @param integer $user_id The ID of the user to void and refund orders for.
+ *
+ * @return void
  */
 function void_and_refund_user_orders( $user_id ) {
-	$orders = wc_get_orders( array(
-		'customer' => $user_id,
-		'status'   => array( 'completed', 'processing' ),
-	) );
+	$orders = wc_get_orders(
+		array(
+			'customer' => $user_id,
+			'status'   => array( 'completed', 'processing' ),
+		)
+	);
 
 	foreach ( $orders as $order ) {
 		sift_fraud_void_refund_order( $order->get_id() );
@@ -30,7 +36,9 @@ function void_and_refund_user_orders( $user_id ) {
 /**
  * Cancel all subscriptions for a user.
  *
- * @param int $user_id The ID of the user to cancel subscriptions for.
+ * @param integer $user_id The ID of the user to cancel subscriptions for.
+ *
+ * @return void
  */
 function cancel_and_remove_user_subscriptions( $user_id ) {
 	$subscriptions = wcs_get_users_subscriptions( $user_id );
@@ -46,7 +54,9 @@ function cancel_and_remove_user_subscriptions( $user_id ) {
 /**
  * Remove licenses and product keys associated with a user.
  *
- * @param int $user_id The ID of the user to remove licenses and product keys for.
+ * @param integer $user_id The ID of the user to remove licenses and product keys for.
+ *
+ * @return void
  */
 function remove_user_licenses_and_product_keys( $user_id ) {
 	delete_user_meta( $user_id, 'user_licenses' );
@@ -69,17 +79,21 @@ function remove_user_licenses_and_product_keys( $user_id ) {
  * Display the SGDC error to the user.
  *
  * @param string $message Override the default message to display to the user.
+ *
+ * @return void
  */
 function display_sgdc_error( $message = '' ) {
 	$default_message = __( 'Your account has been blocked from making purchases. SGDC Error OYBPXRQ', 'sift-decisions' );
-	$message = $message ? $message : $default_message;
+	$message         = $message ? $message : $default_message;
 	wc_add_notice( $message, 'error' );
 }
 
 /**
  * Force user logout when they are blocked from making purchases.
  *
- * @param int $user_id The ID of the user to log out.
+ * @param integer $user_id The ID of the user to log out.
+ *
+ * @return void
  */
 function force_user_logout( $user_id ) {
 	if ( class_exists( 'WP_Session_Tokens' ) ) {
@@ -98,6 +112,7 @@ function force_user_logout( $user_id ) {
  * Loosely based on https://www.ibenic.com/how-to-create-woocommerce-refunds-programmatically/ -- but needs review.
  *
  * @param mixed $order_id Post object or post ID of the order.
+ *
  * @return \WC_Order_Refund
  */
 function sift_fraud_void_refund_order( $order_id ) {
@@ -120,8 +135,7 @@ function sift_fraud_void_refund_order( $order_id ) {
 	$order_items = $order->get_items( array( 'line_item', 'fee', 'shipping' ) );
 
 	$refund_amount = 0;
-	$line_items = array();
-
+	$line_items    = array();
 
 	if ( ! $order_items ) {
 		return new \WP_Error(
@@ -157,18 +171,20 @@ function sift_fraud_void_refund_order( $order_id ) {
 		$line_items[ $item_id ] = array(
 			'qty'          => $qty,
 			'refund_total' => wc_format_decimal( $line_total ),
-			'refund_tax'   => array_map( 'wc_round_tax_total', $refund_tax )
+			'refund_tax'   => array_map( 'wc_round_tax_total', $refund_tax ),
 		);
 	}
 
-	$refund = wc_create_refund( array(
-		'amount'         => $refund_amount,
-		'reason'         => 'Sift Fraud Detection - Voiding Order',
-		'order_id'       => $order->ID,
-		'line_items'     => $line_items,
-		'refund_payment' => true,
-		'restock_items'  => true,
-	) );
+	$refund = wc_create_refund(
+		array(
+			'amount'         => $refund_amount,
+			'reason'         => 'Sift Fraud Detection - Voiding Order',
+			'order_id'       => $order->ID,
+			'line_items'     => $line_items,
+			'refund_payment' => true,
+			'restock_items'  => true,
+		)
+	);
 
 	return $refund;
 }
