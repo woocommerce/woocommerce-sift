@@ -22,6 +22,10 @@ class CreateOrderEventTest extends EventTest {
 	 */
 	public function test_create_account() {
 		// Arrange
+		// - create a user and log them in
+		$user_id = $this->factory()->user->create();
+		wp_set_current_user( $user_id );
+
 		$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
 		add_filter( 'woocommerce_checkout_fields', fn() => [], 10, 0 );
 		add_filter( 'woocommerce_cart_needs_payment', '__return_false' );
@@ -32,7 +36,11 @@ class CreateOrderEventTest extends EventTest {
 		$co->process_checkout();
 
 		// Assert
+		static::fail_on_error_logged();
 		static::assertCreateOrderEventTriggered();
+
+		// Clean up
+		wp_delete_user( $user_id );
 	}
 
 	/**

@@ -38,11 +38,12 @@ class LinkSessionToUserEventTest extends EventTest {
 		WC()->session->init_session_cookie();
 
 		// Assert
+		static::fail_on_error_logged();
 		static::assertLinkSessionToUserEvent( $user_id );
 
 		// Clean up
 		remove_filter( 'woocommerce_set_cookie_enabled', $f );
-		wp_logout();
+		wp_set_current_user( 0 );
 		wp_delete_user( $user_id );
 	}
 

@@ -5,6 +5,7 @@
 namespace WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions;
 
 use WC_Order_Item_Product;
+use WPCOMSpecialProjects\SiftDecisions\Sift\SiftObjectValidator;
 
 /**
  * Class Events
@@ -74,21 +75,26 @@ class Events {
 	 * @return void
 	 */
 	public static function login_success( string $username, object $user ) {
-		self::add(
-			'$login',
-			array(
-				'$user_id'       => $user->ID,
-				'$login_status'  => '$success',
-				'$session_id'    => WC()->session->get_customer_unique_id(),
-				'$user_email'    => $user->user_email ? $user->user_email : null,
-				'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
-				'$username'      => $username,
-				'$account_types' => $user->roles,
-				'$ip'            => self::get_client_ip(),
-				'$time'          => intval( 1000 * microtime( true ) ),
-				// Other optional data like site_country site_domain etc etc.
-			)
+		$properties = array(
+			'$user_id'       => (string) $user->ID,
+			'$login_status'  => '$success',
+			'$session_id'    => WC()->session->get_customer_unique_id(),
+			'$user_email'    => $user->user_email ? $user->user_email : null,
+			'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
+			'$username'      => $username,
+			'$account_types' => $user->roles,
+			'$ip'            => self::get_client_ip(),
+			'$time'          => intval( 1000 * microtime( true ) ),
 		);
+
+		try {
+			SiftObjectValidator::validate_login( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( '$login', $properties );
 	}
 
 	/**
@@ -120,7 +126,7 @@ class Events {
 				$failure_reason = null;
 		}
 		$properties = array(
-			'$user_id'      => $attempted_user->ID ? $attempted_user->ID : null,
+			'$user_id'      => (string) $attempted_user->ID ?? null,
 			'$login_status' => '$failure',
 			'$session_id'   => WC()->session->get_customer_unique_id(),
 			'$browser'      => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
@@ -128,6 +134,13 @@ class Events {
 			'$ip'           => self::get_client_ip(),
 			'$time'         => intval( 1000 * microtime( true ) ),
 		);
+
+		try {
+			SiftObjectValidator::validate_login( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
 
 		if ( ! empty( $failure_reason ) ) {
 			$properties['$failure_reason'] = $failure_reason;
@@ -148,25 +161,34 @@ class Events {
 	public static function create_account( string $user_id ) {
 		$user = get_user_by( 'id', $user_id );
 
+		$properties = array(
+			'$user_id'          => (string) $user->ID,
+			'$session_id'       => WC()->session->get_customer_unique_id(),
+			'$user_email'       => $user->user_email ? $user->user_email : null,
+			'$name'             => $user->display_name,
+			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
+			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
+			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
+			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
+			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
+			'$browser'          => self::get_client_browser(),
+			'$account_types'    => $user->roles,
+			'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
+			'$site_country'     => wc_get_base_location()['country'],
+			'$ip'               => self::get_client_ip(),
+			'$time'             => intval( 1000 * microtime( true ) ),
+		);
+
+		try {
+			SiftObjectValidator::validate_create_account( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
 		self::add(
 			'$create_account',
-			array(
-				'$user_id'          => $user->ID,
-				'$session_id'       => WC()->session->get_customer_unique_id(),
-				'$user_email'       => $user->user_email ? $user->user_email : null,
-				'$name'             => $user->display_name,
-				'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
-				// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-				// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
-				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
-				'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
-				'$browser'          => self::get_client_browser(),
-				'$account_types'    => $user->roles,
-				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
-				'$site_country'     => wc_get_base_location()['country'],
-				'$ip'               => self::get_client_ip(),
-				'$time'             => intval( 1000 * microtime( true ) ),
-			)
+			$properties
 		);
 	}
 
@@ -189,25 +211,31 @@ class Events {
 			self::update_password( '', $user_id );
 		}
 
-		self::add(
-			'$update_account',
-			array(
-				'$user_id'          => $user->ID,
-				'$user_email'       => $user->user_email ? $user->user_email : null,
-				'$name'             => $user->display_name,
-				'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
-				// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-				// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
-				'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
-				'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
-				'$browser'          => self::get_client_browser(),
-				'$account_types'    => $user->roles,
-				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
-				'$site_country'     => wc_get_base_location()['country'],
-				'$ip'               => self::get_client_ip(),
-				'$time'             => intval( 1000 * microtime( true ) ),
-			)
+		$properties = array(
+			'$user_id'          => (string) $user->ID,
+			'$user_email'       => $user->user_email ? $user->user_email : null,
+			'$name'             => $user->display_name,
+			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
+			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
+			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
+			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
+			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
+			'$browser'          => self::get_client_browser(),
+			'$account_types'    => $user->roles,
+			'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
+			'$site_country'     => wc_get_base_location()['country'],
+			'$ip'               => self::get_client_ip(),
+			'$time'             => intval( 1000 * microtime( true ) ),
 		);
+
+		try {
+			SiftObjectValidator::validate_update_account( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( '$update_account', $properties );
 	}
 
 	/**
@@ -226,20 +254,25 @@ class Events {
 
 		$user = get_user_by( 'id', $user_id );
 
-		self::add(
-			'$update_password',
-			array(
-				'$user_id'      => $user->ID,
-				'$session_id'   => WC()->session->get_customer_unique_id(),
-				'$reason'       => '$user_update', // Can alternately be `$forgot_password` or `$forced_reset` -- no real way to set those yet.
-				'$status'       => '$success', // This action only fires after the change is done.
-				'$browser'      => self::get_client_browser(),
-				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
-				'$site_country' => wc_get_base_location()['country'],
-				'$ip'           => self::get_client_ip(),
-				'$time'         => intval( 1000 * microtime( true ) ),
-			)
+		$properties = array(
+			'$user_id'      => (string) $user->ID,
+			'$reason'       => '$user_update', // Can alternately be `$forgot_password` or `$forced_reset` -- no real way to set those yet.
+			'$status'       => '$success', // This action only fires after the change is done.
+			'$browser'      => self::get_client_browser(),
+			'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
+			'$site_country' => wc_get_base_location()['country'],
+			'$ip'           => self::get_client_ip(),
+			'$time'         => intval( 1000 * microtime( true ) ),
 		);
+
+		try {
+			SiftObjectValidator::validate_update_password( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( '$update_password', $properties );
 	}
 
 	/**
@@ -253,15 +286,21 @@ class Events {
 	 * @return void
 	 */
 	public static function link_session_to_user( string $session_id, string $user_id ) {
-		self::add(
-			'$link_session_to_user',
-			array(
-				'$user_id'    => $user_id,
-				'$session_id' => $session_id,
-				'$ip'         => self::get_client_ip(),
-				'$time'       => intval( 1000 * microtime( true ) ),
-			)
+		$properties = array(
+			'$user_id'    => $user_id,
+			'$session_id' => $session_id,
+			'$ip'         => self::get_client_ip(),
+			'$time'       => intval( 1000 * microtime( true ) ),
 		);
+
+		try {
+			SiftObjectValidator::validate_link_session_to_user( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( '$link_session_to_user', $properties );
 	}
 
 	/**
@@ -283,29 +322,43 @@ class Events {
 		if ( ! $product ) {
 			return;
 		}
+		// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
+		$category = wc_get_product_category_list( $product->get_id() );
+		if ( is_wp_error( $category ) || ! is_string( $category ) ) {
+			$category = '';
+		}
+
+		$properties = array(
+			'$user_id'      => (string) $user->ID ?? null,
+			'$user_email'   => $user->user_email ?? null,
+			'$session_id'   => \WC()->session->get_customer_unique_id(),
+			'$item'         => array(
+				'$item_id'       => $cart_item_key,
+				'$sku'           => $product->get_sku(),
+				'$product_title' => $product->get_title(),
+				'$price'         => $product->get_price() * 1000000, // $39.99
+				'$currency_code' => get_woocommerce_currency(),
+				'$quantity'      => $cart_item['quantity'],
+				'$category'      => $category,
+				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
+			),
+			'$browser'      => self::get_client_browser(),
+			'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
+			'$site_country' => wc_get_base_location()['country'],
+			'$ip'           => self::get_client_ip(),
+			'$time'         => intval( 1000 * microtime( true ) ),
+		);
+
+		try {
+			SiftObjectValidator::validate_add_item_to_cart( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
 
 		self::add(
 			'$add_item_to_cart',
-			array(
-				'$user_id'      => $user->ID ?? null,
-				'$user_email'   => $user->user_email ?? null,
-				'$session_id'   => \WC()->session->get_customer_unique_id(),
-				'$item'         => array(
-					'$item_id'       => $cart_item_key,
-					'$sku'           => $product->get_sku(),
-					'$product_title' => $product->get_title(),
-					'$price'         => $product->get_price() * 1000000, // $39.99
-					'$currency_code' => get_woocommerce_currency(),
-					'$quantity'      => $cart_item['quantity'],
-					'$category'      => wc_get_product_category_list( $product->get_id() ),
-					'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
-				),
-				'$browser'      => self::get_client_browser(),
-				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
-				'$site_country' => wc_get_base_location()['country'],
-				'$ip'           => self::get_client_ip(),
-				'$time'         => intval( 1000 * microtime( true ) ),
-			)
+			$properties
 		);
 	}
 
@@ -324,29 +377,36 @@ class Events {
 		$product   = $cart_item['data'];
 		$user      = wp_get_current_user();
 
-		self::add(
-			'$remove_item_from_cart',
-			array(
-				'$user_id'      => $user->ID ? $user->ID : null,
-				'$user_email'   => $user->user_email ? $user->user_email : null,
-				'$session_id'   => \WC()->session->get_customer_unique_id(),
-				'$item'         => array(
-					'$item_id'       => $product->get_id(),
-					'$sku'           => $product->get_sku(),
-					'$product_title' => $product->get_title(),
-					'$price'         => $product->get_price() * 1000000, // $39.99
-					'$currency_code' => get_woocommerce_currency(),
-					'$quantity'      => $cart_item['quantity'],
-					'$category'      => wc_get_product_category_list( $product->get_id() ),
-					'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
-				),
-				'$browser'      => self::get_client_browser(),
-				'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
-				'$site_country' => wc_get_base_location()['country'],
-				'$ip'           => self::get_client_ip(),
-				'$time'         => intval( 1000 * microtime( true ) ),
-			)
+		$properties = array(
+			'$user_id'      => (string) $user->ID ?? null,
+			'$user_email'   => $user->user_email ? $user->user_email : null,
+			'$session_id'   => \WC()->session->get_customer_unique_id(),
+			'$item'         => array(
+				'$item_id'       => $product->get_id(),
+				'$sku'           => $product->get_sku(),
+				'$product_title' => $product->get_title(),
+				'$price'         => $product->get_price() * 1000000, // $39.99
+				'$currency_code' => get_woocommerce_currency(),
+				'$quantity'      => $cart_item['quantity'],
+				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
+			),
+			'$browser'      => self::get_client_browser(),
+			'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
+			'$site_country' => wc_get_base_location()['country'],
+			'$ip'           => self::get_client_ip(),
+			'$time'         => intval( 1000 * microtime( true ) ),
 		);
+
+		// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
+		$category = wc_get_product_category_list( $product->get_id() );
+		if ( is_wp_error( $category ) || ! is_string( $category ) ) {
+			$category = '';
+		}
+		if ( ! empty( $category ) ) {
+			$properties['$item']['$category'] = $category;
+		}
+
+		self::add( '$remove_item_from_cart', $properties );
 	}
 
 	/**
@@ -380,14 +440,20 @@ class Events {
 				continue;
 			}
 
+			// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
+			$category = wc_get_product_category_list( $product->get_id() );
+			if ( is_wp_error( $category ) || ! is_string( $category ) ) {
+				$category = '';
+			}
+
 			$items[] = array(
-				'$item_id'       => $product->get_id(),
+				'$item_id'       => (string) $product->get_id(),
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_name(),
 				'$price'         => $product->get_price() * 1000000, // $39.99
 				'$currency_code' => $order->get_currency(), // For the order specifically, not the whole store.
 				'$quantity'      => $item->get_quantity(),
-				'$category'      => wc_get_product_category_list( $product->get_id() ),
+				'$category'      => $category,
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			);
 
@@ -396,29 +462,42 @@ class Events {
 			}
 		}
 
+		$properties = array(
+			'$user_id'         => (string) $user->ID ?? null,
+			'$user_email'      => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
+			'$session_id'      => \WC()->session->get_customer_unique_id(),
+			'$order_id'        => $order_id,
+			'$verification_phone_number'
+				=> $order->get_billing_phone(),
+			'$amount'          => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
+			'$currency_code'   => get_woocommerce_currency(),
+			'$items'           => $items,
+			'$shipping_method' => $physical_or_electronic,
+			'$browser'         => self::get_client_browser(),
+			'$site_domain'     => wp_parse_url( site_url(), PHP_URL_HOST ),
+			'$site_country'    => wc_get_base_location()['country'],
+			'$ip'              => self::get_client_ip(),
+			'$time'            => intval( 1000 * microtime( true ) ),
+		);
+		// Add in the address information if it's available.
+		$billing_address = self::get_order_address( $user->ID, 'billing' );
+		if ( ! empty( $billing_address ) ) {
+			$properties['$billing_address'] = $billing_address;
+		}
+		$shipping_address = self::get_order_address( $user->ID, 'shipping' );
+		if ( ! empty( $shipping_address ) ) {
+			$properties['$shipping_address'] = $shipping_address;
+		}
+		try {
+			SiftObjectValidator::validate_create_order( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
 		self::add(
 			'$create_order',
-			array(
-				'$user_id'          => $user->ID ? $user->ID : null,
-				'$user_email'       => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
-				'$session_id'       => \WC()->session->get_customer_unique_id(),
-				'$order_id'         => $order_id,
-				'$verification_phone_number'
-									=> $order->get_billing_phone(),
-				'$amount'           => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
-				'$currency_code'    => get_woocommerce_currency(),
-				'$billing_address'  => self::get_order_address( $user->ID, 'billing' ),
-				// phpcs:ignore Squiz.PHP.CommentedOutCode.Found
-				// '$payment_methods' => array(),
-				'$shipping_address' => self::get_order_address( $user->ID, 'shipping' ),
-				'$items'            => $items,
-				'$shipping_method'  => $physical_or_electronic,
-				'$browser'          => self::get_client_browser(),
-				'$site_domain'      => wp_parse_url( site_url(), PHP_URL_HOST ),
-				'$site_country'     => wc_get_base_location()['country'],
-				'$ip'               => self::get_client_ip(),
-				'$time'             => intval( 1000 * microtime( true ) ),
-			)
+			$properties
 		);
 	}
 

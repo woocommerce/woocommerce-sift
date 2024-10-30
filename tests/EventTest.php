@@ -16,6 +16,24 @@ abstract class EventTest extends WP_UnitTestCase {
 
 	protected static int $product_id = 0;
 
+	protected static array $errors = [];
+
+	/**
+	 * Watches woocommerce log handler for errors.
+	 *
+	 * @param string $message Log message.
+	 * @param string $level   Log level.
+	 *
+	 * @return void
+	 * @throws \Exception If an error log occurs.
+	 */
+	public static function log_watcher( $message, $level ) {
+		// if an error log occurs, throw an exception
+		if ( 'error' === $level ) {
+			static::$errors[] = $message;
+		}
+	}
+
 	/**
 	 * Set up before class.
 	 *
@@ -27,6 +45,8 @@ abstract class EventTest extends WP_UnitTestCase {
 		static::$product_id              = static::create_simple_product();
 		$_SERVER['HTTP_USER_AGENT']      = 'Test User Agent';
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9';
+
+		add_filter( 'woocommerce_logger_log_message', array( __CLASS__, 'log_watcher' ), 10, 2 );
 	}
 
 	/**
@@ -37,6 +57,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	public static function tear_down_after_class() {
 		// Delete the product.
 		wc_get_product( static::$product_id )->delete( true );
+		remove_filter( 'woocommerce_logger_log_message', array( __CLASS__, 'log_watcher' ) );
 		parent::tear_down_after_class();
 	}
 
@@ -89,6 +110,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 		Events::$to_send = [];
+		static::$errors  = [];
 	}
 
 	/**
@@ -99,6 +121,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	public function tear_down() {
 		Events::$to_send = [];
 		WC()->cart->empty_cart();
+		static::$errors = [];
 		parent::tear_down();
 	}
 
@@ -135,5 +158,17 @@ abstract class EventTest extends WP_UnitTestCase {
 	 */
 	public static function filter_events( $filters = [] ) {
 		return iterator_to_array( static::filter_events_gen( $filters ) );
+	}
+
+	/**
+	 * Assert that an event was not triggered.
+	 *
+	 * @return void
+	 */
+	public static function fail_on_error_logged() {
+		// Check for errors in the WooCommerce log
+		if ( ! empty( static::$errors ) ) {
+			static::fail( 'Errors found in WooCommerce log: ' . implode( ', ', static::$errors ) );
+		}
 	}
 }
