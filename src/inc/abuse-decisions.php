@@ -16,31 +16,31 @@ function process_sift_decision_received( $return_value, $decision_id, $entity_id
 	// We can rename once we have a final name.
 	switch ( $decision_id ) {
 		case 'trust_list_payment_abuse':
-			do_action( 'sift_decisions_sift_action_trust_list_payment_abuse', $entity_id );
+			do_action( 'sift_decisions_trust_list_payment_abuse', $entity_id );
 			break;
 
 		case 'looks_good_payment_abuse':
-			do_action( 'sift_decisions_sift_action_looks_good_payment_abuse', $entity_id );
+			do_action( 'sift_decisions_looks_good_payment_abuse', $entity_id );
 			break;
 
 		case 'not_likely_fraud_payment_abuse':
-			do_action( 'sift_decisions_sift_action_not_likely_fraud_payment_abuse', $entity_id );
+			do_action( 'sift_decisions_not_likely_fraud_payment_abuse', $entity_id );
 			break;
 
 		case 'likely_fraud_refundno_renew_payment_abuse':
-			do_action( 'sift_decisions_sift_action_likely_fraud_refundno_renew_payment_abuse', $entity_id );
+			do_action( 'sift_decisions_likely_fraud_refundno_renew_payment_abuse', $entity_id );
 			break;
 
 		case 'likely_fraud_keep_purchases_payment_abuse':
-			do_action( 'sift_decisions_sift_action_likely_fraud_keep_purchases_payment_abuse', $entity_id );
+			do_action( 'sift_decisions_likely_fraud_keep_purchases_payment_abuse', $entity_id );
 			break;
 
 		case 'fraud_payment_abuse':
-			do_action( 'sift_decisions_sift_action_fraud_payment_abuse', $entity_id );
+			do_action( 'sift_decisions_fraud_payment_abuse', $entity_id );
 			break;
 
 		case 'block_wo_review_payment_abuse':
-			do_action( 'sift_decisions_sift_action_block_wo_review_payment_abuse', $entity_id );
+			do_action( 'sift_decisions_block_wo_review_payment_abuse', $entity_id );
 			break;
 
 		case 'looks_ok_payment_abuse':
