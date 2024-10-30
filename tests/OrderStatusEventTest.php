@@ -48,6 +48,7 @@ class OrderStatusEventTest extends EventTest {
 		$order_id = $events[0]['properties.$order_id'];
 		$order    = wc_get_order( $order_id );
 		$order->update_status( 'cancelled', '', true );
+		static::fail_on_error_logged();
 		static::assertOrderStatusEventTriggered(
 			[
 				'$source'       => '$manual_review',
@@ -55,7 +56,14 @@ class OrderStatusEventTest extends EventTest {
 			]
 		);
 
+		// Let's try an unsupported status.
+		$gold_status_filter = fn( $statuses ) => array_merge( $statuses, [ 'wc-gold' => 'Gold' ] );
+		add_filter( 'wc_order_statuses', $gold_status_filter );
+		$order->update_status( 'gold', '', true );
+		static::assertNotEmpty( static::$errors, 'No error logged for unsupported status' );
+
 		// Clean up
+		remove_filter( 'wc_order_statuses', $gold_status_filter );
 		wp_delete_user( $user_id );
 	}
 
@@ -64,7 +72,7 @@ class OrderStatusEventTest extends EventTest {
 	 *
 	 * @param array $props Event properties.
 	 *
-	 * @return void
+	 * @return array Return the matching events.
 	 */
 	public static function assertOrderStatusEventTriggered( array $props = [] ) {
 		$filters = [ 'event' => '$order_status' ];
