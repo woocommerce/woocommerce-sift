@@ -521,7 +521,18 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function change_order_status( string $order_id ) {}
+	public static function change_order_status( string $order_id ) {
+		//$properties = array();
+		//
+		//try {
+		//	SiftObjectValidator::validate_order_status( $properties );
+		//} catch ( \Exception $e ) {
+		//	wc_get_logger()->error( esc_html( $e->getMessage() ) );
+		//	return;
+		//}
+		//
+		//self::add( '$order_status', $properties );
+	}
 
 	/**
 	 * Adds event for order update
