@@ -10,6 +10,7 @@ require_once __DIR__ . '/inc/sift-property.php';
 require_once __DIR__ . '/inc/payment-method.php';
 require_once __DIR__ . '/inc/payment-gateways/load.php';
 require_once __DIR__ . '/inc/sift-order.php';
+require_once __DIR__ . '/inc/sift-object-validator.php';
 
 defined( 'ABSPATH' ) || exit;
 
@@ -124,6 +125,7 @@ class SiftDecisions {
 				array(
 					'api_key'    => $api_key,
 					'account_id' => $account_id,
+					'version'    => '205', // Hardcode this so new sift versions don't break us.
 				)
 			);
 		}

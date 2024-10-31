@@ -53,6 +53,7 @@
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
     "start": "npm-run-all --parallel start:**",
-    "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-decisions vendor/bin/phpunit"
+    "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-decisions vendor/bin/phpunit",
+    "test:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-decisions bin/test-with-coverage.sh"
   }
 }
