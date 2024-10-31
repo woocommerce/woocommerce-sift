@@ -1,6 +1,19 @@
 <?php
+/*
+Plugin Name: WCCOM Sidecar - Sift Decisions
+Description: A sidecar plugin to extend Sift Decisions with WCCOM-specific business logic.
+Version: 1.0
+Author: Automattic, Inc.
+*/
 
 namespace WPCOMSpecialProjects\SiftDecisions\WCCOM_Sidecar;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+// Include the sidecar actions file.
+require_once plugin_dir_path( __FILE__ ) . 'wccom-sidecar-abuse-decisions-actions.php';
 
 use function WPCOMSpecialProjects\SiftDecisions\WCCOM_Sidecar_Actions\{
 	unblock_user_from_purchases,
