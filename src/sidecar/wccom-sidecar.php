@@ -9,7 +9,7 @@ Author: Automattic, Inc.
 namespace WPCOMSpecialProjects\SiftDecisions\WCCOM_Sidecar;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 // Include the sidecar actions file.
