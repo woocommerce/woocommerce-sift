@@ -1,6 +1,6 @@
 <?php
 /**
- * Class CreateOrderEventTest
+ * Class UpdateOrderEventTest
  *
  * @package Sift_Decisions
  */
@@ -14,13 +14,13 @@ use WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions\Events;
 /**
  * Test case.
  */
-class CreateOrderEventTest extends EventTest {
+class UpdateOrderEventTest extends EventTest {
 	/**
 	 * Test that the $create_order event is triggered.
 	 *
 	 * @return void
 	 */
-	public function test_create_account() {
+	public function test_create_order() {
 		// Arrange
 		// - create a user and log them in
 		$user_id = $this->factory()->user->create();
@@ -37,7 +37,7 @@ class CreateOrderEventTest extends EventTest {
 
 		// Assert
 		static::fail_on_error_logged();
-		static::assertCreateOrderEventTriggered();
+		static::assertUpdateOrderEventTriggered();
 
 		// Clean up
 		wp_delete_user( $user_id );
@@ -48,8 +48,8 @@ class CreateOrderEventTest extends EventTest {
 	 *
 	 * @return void
 	 */
-	public static function assertCreateOrderEventTriggered() {
-		$events = static::filter_events( [ 'event' => '$create_order' ] );
-		static::assertGreaterThanOrEqual( 1, count( $events ), 'No $create_order event found' );
+	public static function assertUpdateOrderEventTriggered() {
+		$events = static::filter_events( [ 'event' => '$update_order' ] );
+		static::assertGreaterThanOrEqual( 1, count( $events ), 'No $update_order event found' );
 	}
 }
