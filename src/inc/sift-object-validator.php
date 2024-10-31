@@ -1331,14 +1331,14 @@ class SiftObjectValidator {
 	}
 
 	/**
-	 * Validate a $create_order event.
+	 * Validate a $create_order or $update_order event.
 	 *
 	 * @param array $data The event to validate.
 	 *
 	 * @return mixed
 	 * @throws \Exception If the event is invalid.
 	 */
-	public static function validate_create_order( $data ) {
+	public static function validate_create_or_update_order( $data ) {
 		$validator_map = array(
 			'$user_id'                   => array( __CLASS__, 'validate_id' ),
 			'$session_id'                => 'is_string',
@@ -1369,12 +1369,12 @@ class SiftObjectValidator {
 		);
 		try {
 			static::validate( $data, $validator_map );
-			// required field: $user_id
-			if ( empty( $data['$user_id'] ) ) {
-				throw new \Exception( 'missing $user_id' );
+			// required field: $session_id if no $user_id provided.
+			if ( ! isset( $data['$user_id'] ) && empty( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $session_id' );
 			}
 		} catch ( \Exception $e ) {
-			throw new \Exception( 'Failed to validate $create_order event: ' . esc_html( $e->getMessage() ) );
+			throw new \Exception( 'Failed to validate order event: ' . esc_html( $e->getMessage() ) );
 		}
 		return true;
 	}

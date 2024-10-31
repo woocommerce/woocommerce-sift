@@ -37,29 +37,36 @@ class OrderStatusEventTest extends EventTest {
 
 		// Assert
 		static::fail_on_error_logged();
+		UpdateOrderEventTest::assertUpdateOrderEventTriggered();
 		$events = static::assertOrderStatusEventTriggered(
 			[
 				'$source'       => '$automated',
 				'$order_status' => '$held',
 			]
 		);
+		// Reset events.
+		Events::$to_send = [];
 
 		// Let's manually change the status of the order by cancelling it.
 		$order_id = $events[0]['properties.$order_id'];
 		$order    = wc_get_order( $order_id );
 		$order->update_status( 'cancelled', '', true );
 		static::fail_on_error_logged();
+		UpdateOrderEventTest::assertUpdateOrderEventTriggered();
 		static::assertOrderStatusEventTriggered(
 			[
 				'$source'       => '$manual_review',
 				'$order_status' => '$canceled',
 			]
 		);
+		// Reset events.
+		Events::$to_send = [];
 
 		// Let's try an unsupported status.
 		$gold_status_filter = fn( $statuses ) => array_merge( $statuses, [ 'wc-gold' => 'Gold' ] );
 		add_filter( 'wc_order_statuses', $gold_status_filter );
 		$order->update_status( 'gold', '', true );
+		UpdateOrderEventTest::assertUpdateOrderEventTriggered();
 		static::assertNotEmpty( static::$errors, 'No error logged for unsupported status' );
 
 		// Clean up

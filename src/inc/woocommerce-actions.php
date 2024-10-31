@@ -37,9 +37,7 @@ class Events {
 		add_action( 'wp_set_password', array( static::class, 'update_password' ), 100, 2 );
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
-
-		add_action( 'woocommerce_checkout_order_processed', array( static::class, 'create_order' ), 100, 3 );
-		add_action( 'post_updated', array( static::class, 'update_order' ), 100 );
+		add_action( 'woocommerce_update_order', array( static::class, 'update_order' ), 100, 2 );
 
 		/**
 		 * We need to break this out into separate actions so we have the $status_transition available.
@@ -430,18 +428,19 @@ class Events {
 	}
 
 	/**
-	 * Adds event for order creation
+	 * Adds event for order creation/update.
 	 *
-	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/create-order
+	 * The $create_order and $update_order events are identical.  When an $update_order event is called it will overwrite
+	 * any existing $create_order event with the same $order_id, so we'll combine the two into a single function.
 	 *
-	 * @param string    $order_id    Order id.
-	 * @param array     $posted_data The data posted from the checkout form.
-	 * @param \WC_Order $order       The Order object.
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-order
+	 *
+	 * @param string    $order_id Order id.
+	 * @param \WC_Order $order    The Order object.
 	 *
 	 * @return void
 	 */
-	public static function create_order( string $order_id, array $posted_data, \WC_Order $order ) {
-		$data = $order->get_data();
+	public static function update_order( string $order_id, \WC_Order $order ) {
 		$user = wp_get_current_user();
 
 		$physical_or_electronic = '$electronic';
@@ -509,14 +508,14 @@ class Events {
 			$properties['$shipping_address'] = $shipping_address;
 		}
 		try {
-			SiftObjectValidator::validate_create_order( $properties );
+			SiftObjectValidator::validate_create_or_update_order( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
 		}
 
 		self::add(
-			'$create_order',
+			'$update_order',
 			$properties
 		);
 	}
@@ -604,17 +603,6 @@ class Events {
 
 		self::add( '$order_status', $properties );
 	}
-
-	/**
-	 * Adds event for order update
-	 *
-	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-order
-	 *
-	 * @param string $order_id Order ID.
-	 *
-	 * @return void
-	 */
-	public static function update_order( string $order_id ) {}
 
 	/**
 	 * Enqueue an event to send.  This will enable sending them all at shutdown.
