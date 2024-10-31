@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions;
+namespace WPCOMSpecialProjects\SiftDecisions\WCCOM_Sidecar_Actions;
 
 /**
  * Unblock a user from making purchases if Sift indicates that they are no longer a fraud risk.

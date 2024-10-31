@@ -2,7 +2,7 @@
 
 namespace WPCOMSpecialProjects\SiftDecisions\WCCOM_Sidecar;
 
-use function WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions\{
+use function WPCOMSpecialProjects\SiftDecisions\WCCOM_Sidecar_Actions\{
 	unblock_user_from_purchases,
 	void_and_refund_user_orders,
 	cancel_and_remove_user_subscriptions,
