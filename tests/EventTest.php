@@ -89,7 +89,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	 *
 	 * @return array
 	 */
-	private static function array_dot( mixed $multidimensional_array ) {
+	protected static function array_dot( mixed $multidimensional_array ) {
 		$flat = [];
 		$it   = new RecursiveIteratorIterator( new RecursiveArrayIterator( $multidimensional_array ) );
 		foreach ( $it as $leaf ) {
