@@ -1,5 +1,7 @@
 <?php declare( strict_types=1 );
 
+namespace WPCOMSpecialProjects\SiftDecisions\PaymentGateways\Lib;
+
 class Stripe {
 	public static function get_all_payment_methods_for_customer_from_order( \WC_Order $order ) {
 		$stripe_customer_id = $order->get_meta( '_stripe_customer_id', true );
@@ -49,10 +51,10 @@ class Stripe {
 
 	public static function get_intent( string $intent_type, string $intent_id ) {
 		if ( ! in_array( $intent_type, [ 'payment_intents', 'setup_intents' ], true ) ) {
-			throw new Exception( "Failed to get intent of type $intent_type. Type is not allowed" );
+			throw new \Exception( "Failed to get intent of type $intent_type. Type is not allowed" );
 		}
 
-		$response = WC_Stripe_API::request( [], "$intent_type/$intent_id?expand[]=payment_method", 'GET' );
+		$response = \WC_Stripe_API::request( [], "$intent_type/$intent_id?expand[]=payment_method", 'GET' );
 
 		if ( $response && isset( $response->{ 'error' } ) ) {
 			return false;
@@ -64,7 +66,7 @@ class Stripe {
 	public static function get_charge_for_intent_from_order( \WC_Order $order ) {
 		$intent = Stripe::get_intent_from_order( $order );
 		if ( ! empty( $intent ) ) {
-			$result = WC_Stripe_API::request(
+			$result = \WC_Stripe_API::request(
 				[],
 				'payment_intents/' . $intent->id
 			);

@@ -9,7 +9,7 @@ require_once __DIR__ . '/../src/inc/sift-property.php';
 require_once __DIR__ . '/../src/inc/payment-gateway.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/lib/stripe.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/stripe.php';
-require_once __DIR__ . '/../src/inc/payment-gateways/woopay.php';
+require_once __DIR__ . '/../src/inc/payment-gateways/transact.php';
 require_once __DIR__ . '/../src/inc/payment-type.php';
 
 /**
@@ -32,7 +32,7 @@ class PaymentTypeTest extends WP_UnitTestCase {
 
 	public function payment_type_provider() {
 		$stripe_gateway = new Payment_Gateway( 'stripe' );
-		$woopay_gateway = new Payment_Gateway( 'woocommerce_payments' );
+		$transact_gateway = new Payment_Gateway( 'transact' );
 		return [
 			'Stripe\'s "card" type is a valid payment type' => [
 				'gateway'      => $stripe_gateway,
@@ -46,16 +46,16 @@ class PaymentTypeTest extends WP_UnitTestCase {
 				'is_valid'     => true,
 				'sift_slug'    => '$sepa_direct_debit'
 			],
-			'WooPay\'s "card" type is a valid payment type' => [
-				'gateway' => $woopay_gateway,
+			'Transact\'s "card" type is a valid payment type' => [
+				'gateway' => $transact_gateway,
 				'payment_type' => 'card',
 				'is_valid'     => true,
 				'sift_slug'    => '$credit_card'
 			],
-			'WooPay\'s "sepa_debit" type is a valid payment type' => [
-				'gateway' => $woopay_gateway,
+			'Transact\'s "sepa_debit" type is an invalid payment type' => [
+				'gateway' => $transact_gateway,
 				'payment_type' => 'sepa_debit',
-				'is_valid'     => true,
+				'is_valid'     => false,
 				'sift_slug'    => '$sepa_direct_debit'
 			],
 		];

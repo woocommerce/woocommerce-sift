@@ -1,7 +1,7 @@
 <?php declare( strict_types=1 );
 
 add_action(
-	'woocommerce_loaded',
+	'woocommerce_init',
 	function() {
 		$gateways = \WC()->payment_gateways->get_available_payment_gateways();
 
@@ -13,7 +13,7 @@ add_action(
 					break;
 				case 'woocommerce_payments':
 					require_once __DIR__ . '/lib/stripe.php';
-					require_once __DIR__ . '/woopay.php';
+					require_once __DIR__ . '/transact.php';
 					break;
 			}
 		}

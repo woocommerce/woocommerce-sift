@@ -8,7 +8,7 @@
 require_once __DIR__ . '/../src/inc/payment-gateway.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/lib/stripe.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/stripe.php';
-require_once __DIR__ . '/../src/inc/payment-gateways/woopay.php';
+require_once __DIR__ . '/../src/inc/payment-gateways/transact.php';
 
 /**
  * Tests for payment gateway interoperability
@@ -37,7 +37,7 @@ class PaymentGatewayTest extends WP_UnitTestCase {
 				'is_valid'       => true,
 				'sift_slug'      => '$stripe',
 			],
-			'WooPay is a valid payment gateway' => [
+			'Transact is a valid payment gateway' => [
 				'woo_gateway_id' => 'woocommerce_payments',
 				'is_valid'       => true,
 				'sift_slug'      => '$stripe',
