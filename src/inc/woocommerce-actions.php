@@ -96,13 +96,13 @@ class Events {
 	public static function add_promotion( \WC_Coupon $coupon, \WC_Order $order ): void {
 
 		$properties = array(
-			'$user_id'   => $order->get_user_id(),
+			'$user_id'    => $order->get_user_id(),
 			'$promotions' => array(
 				'$promotion_id' => $coupon->get_id(),
 			),
-			'$ip'        => self::get_client_ip(),
-			'$browser'   => self::get_client_browser(),
-			'$time'      => intval( 1000 * microtime( true ) ),
+			'$ip'         => self::get_client_ip(),
+			'$browser'    => self::get_client_browser(),
+			'$time'       => intval( 1000 * microtime( true ) ),
 		);
 
 		try {
@@ -112,7 +112,7 @@ class Events {
 			return;
 		}
 
-		self::add('$add_promotion', $properties );
+		self::add( '$add_promotion', $properties );
 	}
 
 	/**
@@ -910,14 +910,16 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
 	 *
-	 * @return int
+	 * @param float $price The price to format.
+	 *
+	 * @return integer
 	 */
 	private static function get_transaction_micros( float $price ) {
-		$currencies_without_decimals = [ 'JPY' ];
+		$currencies_without_decimals = array( 'JPY' );
 
 		$current_currency = get_woocommerce_currency();
 
-		if( in_array( $current_currency, $currencies_without_decimals, true ) ) {
+		if ( in_array( $current_currency, $currencies_without_decimals, true ) ) {
 			return intval( $price * 1000000 );
 		}
 
