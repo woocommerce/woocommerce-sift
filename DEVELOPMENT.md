@@ -5,7 +5,7 @@ A simple development environment can be created using the `wp-env` tool. In orde
 
 `wp-env start` Bootstraps a local development environment using docker and
 attempts to pull a current version of WordPress and the version of woocommerce
-defined in the `.wp-env.json` file.  Additionally it maps `sift-decisions` and
+defined in the `.wp-env.json` file.  Additionally it maps `sift-for-woocommerce` and
 `bin/test-payment-gateway` as plugins and enables them.
 
 After running those steps it executes a local script to run the current scheduled

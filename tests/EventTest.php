@@ -2,12 +2,12 @@
 /**
  * Class EventTest
  *
- * @package Sift_Decisions
+ * @package Sift_For_WooCommerce
  */
 
 // phpcs:disable Universal.Arrays.DisallowShortArraySyntax.Found
 
-use WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions\Events;
+use Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions\Events;
 
 /**
  * Events test case.

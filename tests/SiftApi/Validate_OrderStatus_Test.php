@@ -4,7 +4,7 @@
 
 namespace SiftApi;
 
-use WPCOMSpecialProjects\SiftDecisions\Sift\SiftObjectValidator;
+use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift\SiftObjectValidator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

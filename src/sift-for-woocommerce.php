@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCOMSpecialProjects\SiftDecisions;
+namespace Sift_For_WooCommerce\Sift_For_WooCommerce;
 
 require_once __DIR__ . '/inc/wc-settings-tab.php';
 require_once __DIR__ . '/inc/rest-api-webhooks.php';
@@ -11,6 +11,7 @@ require_once __DIR__ . '/inc/payment-method.php';
 require_once __DIR__ . '/inc/payment-gateways/load.php';
 require_once __DIR__ . '/inc/sift-order.php';
 require_once __DIR__ . '/inc/sift-object-validator.php';
+require_once __DIR__ . '/inc/abuse-decisions.php';
 
 defined( 'ABSPATH' ) || exit;
 
@@ -20,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
  * @since   1.0.0
  * @version 1.0.0
  */
-class SiftDecisions {
+class Sift_For_WooCommerce {
 
 	// region MAGIC METHODS
 
@@ -34,8 +35,8 @@ class SiftDecisions {
 		add_action( 'rest_api_init', __NAMESPACE__ . '\Rest_Api_Webhooks\register_routes' );
 
 		add_filter( 'woocommerce_settings_tabs_array', __NAMESPACE__ . '\WC_Settings_Tab\add_settings_tab', 50 );
-		add_action( 'woocommerce_settings_tabs_sift_decisions', __NAMESPACE__ . '\WC_Settings_Tab\settings_tab' );
-		add_action( 'woocommerce_update_options_sift_decisions', __NAMESPACE__ . '\WC_Settings_Tab\update_settings' );
+		add_action( 'woocommerce_settings_tabs_sift_for_woocommerce', __NAMESPACE__ . '\WC_Settings_Tab\settings_tab' );
+		add_action( 'woocommerce_update_options_sift_for_woocommerce', __NAMESPACE__ . '\WC_Settings_Tab\update_settings' );
 
 		add_action( 'wp_body_open', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Core's implementation! https://make.wordpress.org/themes/2019/03/29/addition-of-new-wp_body_open-hook/
 		add_action( 'genesis_before', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Genesis
@@ -45,7 +46,7 @@ class SiftDecisions {
 
 		add_action( 'login_header', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Allow Sift tracking of login page visits.
 
-		\WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions\Events::hooks();
+		\Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions\Events::hooks();
 	}
 
 	/**
@@ -105,15 +106,15 @@ class SiftDecisions {
 		static $client = null;
 
 		if ( null === $client ) {
-			$api_key    = get_option( 'wc_sift_decisions_api_key' );
-			$account_id = get_option( 'wc_sift_decisions_account_id' );
+			$api_key    = get_option( 'wc_sift_for_woocommerce_api_key' );
+			$account_id = get_option( 'wc_sift_for_woocommerce_account_id' );
 
 			if ( ! $account_id || ! $api_key ) {
 				wc_get_logger()->log(
 					'error',
 					'Attempting to instantiate Sift API client, but missing `account_id` or `api_key`.',
 					array(
-						'source' => 'sift-decisions',
+						'source' => 'sift-for-woocommerce',
 					)
 				);
 

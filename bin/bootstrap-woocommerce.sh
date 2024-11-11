@@ -4,7 +4,7 @@
 wp-env run cli bash -c '{
 wp action-scheduler run
 wp wc tool run install_pages --user=admin
-product=$(wp post list --post_type=product --name=sift-decisions --ids)
+product=$(wp post list --post_type=product --name=sift-for-woocommerce --ids)
 if [[ -z $product ]]; then
    wp wc product create --name="Sift Decisions" --regular_price=10 --user=admin
 fi

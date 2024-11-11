@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCOMSpecialProjects\SiftDecisions\Rest_Api_Webhooks;
+namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Rest_Api_Webhooks;
 
 /**
  * Register the routes for our webhook catchers with the REST API.
@@ -9,7 +9,7 @@ namespace WPCOMSpecialProjects\SiftDecisions\Rest_Api_Webhooks;
  */
 function register_routes() {
 	register_rest_route(
-		'sift-decisions/v1',
+		'sift-for-woocommerce/v1',
 		'/decision',
 		array(
 			'methods'             => 'GET',
@@ -29,7 +29,7 @@ function register_routes() {
 function decision_webhook_auth( \WP_REST_Request $request ) {
 	$key = $request->get_header( 'X-Sift-Science-Signature' );
 
-	if ( $key && hash_equals( get_option( 'wc_sift_decisions_webhook_key', '' ), $key ) ) {
+	if ( $key && hash_equals( get_option( 'wc_sift_for_woocommerce_webhook_key', '' ), $key ) ) {
 		return true;
 	}
 
@@ -37,7 +37,7 @@ function decision_webhook_auth( \WP_REST_Request $request ) {
 		'debug',
 		'Unauthorized Sift Decision Request. Bad key: `' . $key . '`',
 		array(
-			'source' => 'sift-decisions',
+			'source' => 'sift-for-woocommerce',
 		)
 	);
 
@@ -61,7 +61,7 @@ function decision_webhook( \WP_REST_Request $request ) {
 		'info',
 		'Received Sift Decision: ' . wp_json_encode( $json ),
 		array(
-			'source' => 'sift-decisions',
+			'source' => 'sift-for-woocommerce',
 		)
 	);
 

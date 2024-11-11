@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Sift Decisions 0.0.1-alpha\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sift-decisions\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sift-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,7 @@ msgstr ""
 "POT-Creation-Date: 2024-01-15T16:07:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.7.1\n"
-"X-Domain: sift-decisions\n"
+"X-Domain: sift-for-woocommerce\n"
 
 #. Plugin Name of the plugin
 #: src/inc/wc-settings-tab.php:13
@@ -32,7 +32,7 @@ msgstr ""
 msgid "georgestephanis"
 msgstr ""
 
-#: sift-decisions.php:47
+#: sift-for-woocommerce.php:47
 msgid "It seems like <strong>Sift Decisions</strong> is corrupted. Please reinstall!"
 msgstr ""
 
