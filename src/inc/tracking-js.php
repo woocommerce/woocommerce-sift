@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCOMSpecialProjects\SiftDecisions\Tracking_Js;
+namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Tracking_Js;
 
 /**
  * This function can run multiple times, but will only print once.
@@ -14,7 +14,7 @@ function print_sift_tracking_js() {
 		return null;
 	}
 
-	$beacon_key = get_option( 'wc_sift_decisions_beacon_key' );
+	$beacon_key = get_option( 'wc_sift_for_woocommerce_beacon_key' );
 	if ( ! $beacon_key ) {
 		return null;
 	}

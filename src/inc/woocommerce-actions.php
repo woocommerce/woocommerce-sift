@@ -2,10 +2,10 @@
 
 // phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
-namespace WPCOMSpecialProjects\SiftDecisions\WooCommerce_Actions;
+namespace Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions;
 
 use WC_Order_Item_Product;
-use WPCOMSpecialProjects\SiftDecisions\Sift\SiftObjectValidator;
+use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift\SiftObjectValidator;
 
 /**
  * Class Events
@@ -642,7 +642,7 @@ class Events {
 	 */
 	public static function send() {
 		if ( self::count() > 0 ) {
-			$client = \WPCOMSpecialProjects\SiftDecisions\SiftDecisions::get_api_client();
+			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
 			if ( empty( $client ) ) {
 				return false;
 			}
@@ -664,7 +664,7 @@ class Events {
 					$log_type,
 					$log_title,
 					array(
-						'source'     => 'sift-decisions',
+						'source'     => 'sift-for-woocommerce',
 						'properties' => $entry['properties'],
 						'response'   => $response,
 					)
@@ -828,7 +828,7 @@ class Events {
 		 * @param array   $payment_methods An array of payment methods.
 		 * @param integer $user_id         The User / Customer ID.
 		 */
-		$payment_methods = apply_filters( 'sift_decisions_get_customer_payment_methods', $payment_methods, $user_id );
+		$payment_methods = apply_filters( 'sift_for_woocommerce_get_customer_payment_methods', $payment_methods, $user_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		return $payment_methods ?? null;
 	}

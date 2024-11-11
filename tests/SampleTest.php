@@ -2,7 +2,7 @@
 /**
  * Class SampleTest
  *
- * @package Sift_Decisions
+ * @package Sift_For_WooCommerce
  */
 
 /**
