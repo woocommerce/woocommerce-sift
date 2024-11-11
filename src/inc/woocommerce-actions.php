@@ -642,7 +642,7 @@ class Events {
 	 */
 	public static function send() {
 		if ( self::count() > 0 ) {
-			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce\SiftDecisions::get_api_client();
+			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
 			if ( empty( $client ) ) {
 				return false;
 			}
