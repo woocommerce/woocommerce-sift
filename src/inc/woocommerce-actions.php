@@ -380,7 +380,7 @@ class Events {
 				'$item_id'       => $cart_item_key,
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_title(),
-				'$price'         => $product->get_price() * 1000000, // $39.99
+				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => get_woocommerce_currency(),
 				'$quantity'      => $cart_item['quantity'],
 				'$category'      => $category,
@@ -429,7 +429,7 @@ class Events {
 				'$item_id'       => $product->get_id(),
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_title(),
-				'$price'         => $product->get_price() * 1000000, // $39.99
+				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => get_woocommerce_currency(),
 				'$quantity'      => $cart_item['quantity'],
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
@@ -495,7 +495,7 @@ class Events {
 				'$item_id'       => (string) $product->get_id(),
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_name(),
-				'$price'         => $product->get_price() * 1000000, // $39.99
+				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => $order->get_currency(), // For the order specifically, not the whole store.
 				'$quantity'      => $item->get_quantity(),
 				'$category'      => $category,
@@ -514,7 +514,7 @@ class Events {
 			'$order_id'        => $order_id,
 			'$verification_phone_number'
 				=> $order->get_billing_phone(),
-			'$amount'          => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
+			'$amount'          => self::get_transaction_micros( $order->get_total() ),
 			'$currency_code'   => get_woocommerce_currency(),
 			'$items'           => $items,
 			'$shipping_method' => $physical_or_electronic,
@@ -582,7 +582,7 @@ class Events {
 	public static function transaction( \WC_Order $order, string $status, string $transaction_type ) {
 		$properties = array(
 			'$user_id'            => (string) $order->get_user_id(),
-			'$amount'             => $order->get_total(),
+			'$amount'             => self::get_transaction_micros( $order->get_total() ), // Gotta multiply it up to give an integer.
 			'$currency_code'      => $order->get_currency(),
 			'$order_id'           => (string) $order->get_id(),
 			'$transaction_type'   => $transaction_type,
@@ -894,5 +894,25 @@ class Events {
 		$payment_methods = apply_filters( 'sift_for_woocommerce_get_customer_payment_methods', $payment_methods, $user_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		return $payment_methods ?? null;
+	}
+
+	/**
+	 * Return the amount of transaction "micros"
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
+	 *
+	 * @return int
+	 */
+	private static function get_transaction_micros( float $price ) {
+		$currencies_without_decimals = [ 'JPY' ];
+
+		$current_currency = get_woocommerce_currency();
+
+		if( in_array( $current_currency, $currencies_without_decimals, true ) ) {
+			return intval( $price * 1000000 );
+		}
+
+		// For currencies with decimals
+		return intval( $price * 10000 );
 	}
 }
