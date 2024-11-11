@@ -19,6 +19,8 @@ use function Sift_For_WooCommerce\Sift_For_WooCommerce\Abuse_Decision_Actions\{
  * @param string  $decision_id  The ID of the Sift decision.
  * @param integer $entity_id    The ID of the entity the decision corresponds to.
  *
+ * @phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+ *
  * @return mixed
  */
 function process_sift_decision_received( $return_value, $decision_id, $entity_id ) {
