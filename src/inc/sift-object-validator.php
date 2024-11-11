@@ -1,6 +1,6 @@
 <?php declare( strict_types = 1 );
 
-namespace WPCOMSpecialProjects\SiftDecisions\Sift;
+namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Sift;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

@@ -2,7 +2,7 @@
 /**
  * PHPUnit bootstrap file.
  *
- * @package Sift_Decisions
+ * @package Sift_For_WooCommerce
  *
  * phpcs:disable
  */
@@ -38,7 +38,7 @@ function _manually_load_plugin() {
 	} else {
 		require dirname( dirname( __DIR__ ) ) . '/woocommerce/woocommerce.php';
 	}
-	require dirname( __DIR__ ) . '/sift-decisions.php';
+	require dirname( __DIR__ ) . '/sift-for-woocommerce.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

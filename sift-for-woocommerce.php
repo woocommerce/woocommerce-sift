@@ -10,7 +10,7 @@
  * @noinspection    ALL
  *
  * @wordpress-plugin
- * Plugin Name:             Sift Decisions
+ * Plugin Name:             Sift For WooCommerce
  * Plugin URI:              https://wpspecialprojects.wordpress.com
  * Description:             A plugin to integrate WooCommerce with Sift Science Fraud Detection
  * Version:                 0.0.1-alpha
@@ -21,7 +21,7 @@
  * Author URI:              https://wpspecialprojects.wordpress.com
  * License:                 GPL v3 or later
  * License URI:             https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain:             sift-decisions
+ * Text Domain:             sift-for-woocommerce
  * Domain Path:             /languages
  **/
 
@@ -32,7 +32,7 @@ add_action(
 	'init',
 	static function () {
 		load_plugin_textdomain(
-			'sift-decisions',
+			'sift-for-woocommerce',
 			false,
 			__DIR__ . '/languages'
 		);
@@ -44,7 +44,7 @@ if ( ! is_file( __DIR__ . '/vendor/autoload.php' ) ) {
 	add_action(
 		'admin_notices',
 		static function () {
-			$message      = __( 'It seems like <strong>Sift Decisions</strong> is corrupted. Please reinstall!', 'sift-decisions' );
+			$message      = __( 'It seems like <strong>Sift Decisions</strong> is corrupted. Please reinstall!', 'sift-for-woocommerce' );
 			$html_message = wp_sprintf( '<div class="error notice wpcomsp-scaffold-error">%s</div>', wpautop( $message ) );
 			echo wp_kses_post( $html_message );
 		}
@@ -53,6 +53,6 @@ if ( ! is_file( __DIR__ . '/vendor/autoload.php' ) ) {
 }
 require_once __DIR__ . '/vendor/autoload.php';
 
-require_once __DIR__ . '/src/sift-decisions.php';
+require_once __DIR__ . '/src/sift-for-woocommerce.php';
 
-\WPCOMSpecialProjects\SiftDecisions\SiftDecisions::get_instance();
+\Sift_For_WooCommerce\SiftDecisions::get_instance();

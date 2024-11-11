@@ -1,18 +1,18 @@
 {
-  "name": "sift-decisions",
+  "name": "sift-for-woocommerce",
   "version": "0.0.1-alpha",
   "description": "A plugin to integrate WooCommerce with Sift Science Fraud Detection",
   "author": {
-    "name": "WordPress.com Special Projects Team",
-    "url": "https://wpspecialprojects.wordpress.com"
+    "name": "WooCommerce.com",
+    "url": "https://woocommerce.com"
   },
   "license": "GPL-3.0-or-later",
   "keywords": [
     "wordpress"
   ],
-  "homepage": "https://wordpress.org/a8cteam51/sift-decisions/",
-  "repository": "https://github.com/a8cteam51/sift-decisions",
-  "bugs": "https://github.com/a8cteam51/sift-decisions/issues",
+  "homepage": "https://woocommerce.com",
+  "repository": "https://github.com/woocommerce/sift-for-woocommerce",
+  "bugs": "https://github.com/woocommerce/sift-for-woocommerce/issues",
   "engines": {
     "node": ">=18.15",
     "npm": ">=9.5"
@@ -53,7 +53,7 @@
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
     "start": "npm-run-all --parallel start:**",
-    "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-decisions vendor/bin/phpunit",
-    "test:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-decisions bin/test-with-coverage.sh"
+    "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce vendor/bin/phpunit",
+    "test:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce bin/test-with-coverage.sh"
   }
 }
