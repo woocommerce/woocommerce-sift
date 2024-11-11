@@ -9,7 +9,7 @@ class Verification_Status extends Sift_Property {
 
 	private Payment_Gateway $gateway;
 
-	protected array $valid_sift_strings = array(
+	protected array $valid_sift_slugs = array(
 		'$success',
 		'$failure',
 		'$pending',
