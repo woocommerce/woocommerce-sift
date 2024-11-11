@@ -914,7 +914,7 @@ class Events {
 	 *
 	 * @return integer
 	 */
-	private static function get_transaction_micros( float $price ) {
+	public static function get_transaction_micros( float $price ) {
 		$currencies_without_decimals = array( 'JPY' );
 
 		$current_currency = get_woocommerce_currency();
