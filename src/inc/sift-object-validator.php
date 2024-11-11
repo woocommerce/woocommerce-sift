@@ -1194,6 +1194,29 @@ class SiftObjectValidator {
 		return true;
 	}
 
+
+	/**
+	 * Validate AddPromotion.
+	 *
+	 * @param array $data The add_promotion to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the add_promotion is invalid.
+	 */
+	public static function validate_add_promotion( $data ) {
+		$validator_map = array(
+			'$user_id'    => array( __CLASS__, 'validate_id' ),
+			'$promotions' => static::validate_array_fn( array( __CLASS__, 'validate_promotion' ) ),
+			'$browser'    => array( __CLASS__, 'validate_browser' ),
+		);
+		try {
+			static::validate( $data, $validator_map );
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'invalid promotion: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+
 	/**
 	 * Validate Promotion.
 	 *

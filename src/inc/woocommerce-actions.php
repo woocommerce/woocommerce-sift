@@ -94,17 +94,25 @@ class Events {
 	 * @return void
 	 */
 	public static function add_promotion( \WC_Coupon $coupon, \WC_Order $order ): void {
-		self::add(
-			'$add_promotion',
-			array(
-				'$user_id'   => $order->get_user_id(),
-				'$ip'        => self::get_client_ip(),
-				'$browser'   => self::get_client_browser(),
-				'promotions' => array(
-					'$promotion_id' => $coupon->get_id(),
-				),
-			)
+
+		$properties = array(
+			'$user_id'   => $order->get_user_id(),
+			'$promotions' => array(
+				'$promotion_id' => $coupon->get_id(),
+			),
+			'$ip'        => self::get_client_ip(),
+			'$browser'   => self::get_client_browser(),
+			'$time'      => intval( 1000 * microtime( true ) ),
 		);
+
+		try {
+			SiftObjectValidator::validate_add_promotion( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add('$add_promotion', $properties );
 	}
 
 	/**
@@ -587,6 +595,7 @@ class Events {
 			'$order_id'           => (string) $order->get_id(),
 			'$transaction_type'   => $transaction_type,
 			'$transaction_status' => $status,
+			'$time'               => intval( 1000 * microtime( true ) ),
 		);
 
 		try {
