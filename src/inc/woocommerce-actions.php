@@ -4,11 +4,9 @@
 
 namespace Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions;
 
-use Payment_Gateway;
-use Payment_Method;
-use Sift_For_WooCommerce_Sift_Order;
 use WC_Order_Item_Product;
 use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift\SiftObjectValidator;
+use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift_Order;
 
 /**
  * Class Events
@@ -494,7 +492,7 @@ class Events {
 			'$amount'          => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
 			'$currency_code'   => get_woocommerce_currency(),
 			'$items'           => $items,
-			'$payment_methods'  => self::get_order_payment_methods( $order ),
+			'$payment_methods' => self::get_order_payment_methods( $order ),
 			'$shipping_method' => $physical_or_electronic,
 			'$browser'         => self::get_client_browser(),
 			'$site_domain'     => wp_parse_url( site_url(), PHP_URL_HOST ),
@@ -837,8 +835,18 @@ class Events {
 		return $payment_methods ?? null;
 	}
 
+	/**
+	 * Get an array of the order's payment methods.
+	 *
+	 * Return data should conform to the expected format described here:
+	 * https://developers.sift.com/docs/curl/events-api/complex-field-types/payment-method
+	 *
+	 * @param \WC_Order $order The Woo Order object.
+	 *
+	 * @return array
+	 */
 	public static function get_order_payment_methods( \WC_Order $order ): array {
-		$Sift_For_WooCommerce_Sift_Order = new Sift_For_WooCommerce_Sift_Order( $order );
-		return $Sift_For_WooCommerce_Sift_Order->get_payment_methods();
+		$sift_order = new Sift_Order( $order );
+		return $sift_order->get_payment_methods();
 	}
 }

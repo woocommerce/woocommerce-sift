@@ -2,7 +2,7 @@
 
 add_action(
 	'woocommerce_init',
-	function() {
+	function () {
 		$gateways = \WC()->payment_gateways->get_available_payment_gateways();
 
 		foreach ( $gateways as $gateway ) {

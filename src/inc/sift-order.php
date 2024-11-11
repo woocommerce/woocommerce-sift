@@ -1,9 +1,11 @@
 <?php declare( strict_types=1 );
 
+namespace Sift_For_WooCommerce\Sift_For_WooCommerce;
+
 /**
- * A class representing a Woo order which allows normalizes order-related data according to expectations in the SIFT API.
+ * A class representing a Woo order which normalizes order-related data according to expectations in the Sift API.
  */
-class Sift_For_WooCommerce_Sift_Order {
+class Sift_Order {
 
 	private \WC_Order $wc_order;
 	private Payment_Gateway $payment_gateway;
@@ -11,19 +13,23 @@ class Sift_For_WooCommerce_Sift_Order {
 	private $payment_method_details;
 	private $charge_details;
 
+	/**
+	 * A class which words as an abstraction layer for Sift representing a WooCommerce Order.
+	 *
+	 * @param \WC_Order $wc_order A WooCommerce Order object.
+	 */
 	public function __construct( \WC_Order $wc_order ) {
 		$this->wc_order = $wc_order;
 
 		$this->payment_gateway        = new Payment_Gateway( $this->wc_order->get_payment_method() );
 		$this->payment_method_details = $this->get_payment_method_details_from_order( $this->payment_gateway->get_woo_gateway_id(), $this->wc_order );
 		$this->charge_details         = $this->get_charge_details_from_order( $this->payment_gateway->get_woo_gateway_id(), $this->wc_order );
-
 	}
 
 	/**
 	 * Return a value which subsequent hooks can use to obtain information related to a payment method used from an order.
-	 * 
-	 * This acts as an abstraction layer between WooCommerce and the various payment gateway plugins. This method, along 
+	 *
+	 * This acts as an abstraction layer between WooCommerce and the various payment gateway plugins. This method, along
 	 * with `get_charge_details_from_order` call the filter
 	 * `sift_for_woocommerce_PAYMENT_GATEWAY_ID_payment_method_details_from_order` which accepts a WC_Order object and is
 	 * expected to return an object which will then be passed to Payment_Method functions. These Payment_Method functions
@@ -34,14 +40,14 @@ class Sift_For_WooCommerce_Sift_Order {
 	 * @return mixed A value which contains the information that subsequent functions will use to extract payment method info.
 	 */
 	private function get_payment_method_details_from_order() {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_method_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), $this->wc_order );
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_method_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
-	 * Return a value which subsequent hooks can use to obtain information related to the charge details / transaction 
+	 * Return a value which subsequent hooks can use to obtain information related to the charge details / transaction
 	 * used from an order.
-	 * 
-	 * This acts as an abstraction layer between WooCommerce and the various payment gateway plugins. This method, along 
+	 *
+	 * This acts as an abstraction layer between WooCommerce and the various payment gateway plugins. This method, along
 	 * with `get_payment_method_details_from_order` call the filter
 	 * `sift_for_woocommerce_PAYMENT_GATEWAY_ID_charge_details_from_order` which accepts a WC_Order object and is
 	 * expected to return an object which will then be passed to Payment_Method functions. These Payment_Method functions
@@ -52,7 +58,7 @@ class Sift_For_WooCommerce_Sift_Order {
 	 * @return mixed A value which contains the information that subsequent functions will use to extract charge / transaction info.
 	 */
 	private function get_charge_details_from_order() {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_charge_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), $this->wc_order );
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_charge_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**

@@ -1,9 +1,19 @@
 <?php declare( strict_types=1 );
 
-namespace WPCOMSpecialProjects\SiftDecisions\PaymentGateways\Lib;
+namespace Sift_For_WooCommerce\Sift_For_WooCommerce\PaymentGateways\Lib;
 
+/**
+ * A class to share Stripe-specific logic with payment gateways that use Stripe in some way.
+ */
 class Stripe {
-	public static function get_all_payment_methods_for_customer_from_order( \WC_Order $order ) {
+	/**
+	 * Get all payment methods for customer from order.
+	 *
+	 * @param \WC_Order $order The WC Order.
+	 *
+	 * @return array|null
+	 */
+	public static function get_all_payment_methods_for_customer_from_order( \WC_Order $order ): ?array {
 		$stripe_customer_id = $order->get_meta( '_stripe_customer_id', true );
 
 		$stripe_customer = new \WC_Stripe_Customer();
@@ -19,9 +29,16 @@ class Stripe {
 		}
 	}
 
+	/**
+	 * Get payment method from order.
+	 *
+	 * @param \WC_Order $order The WC Order.
+	 *
+	 * @return object The payment method from the order.
+	 */
 	public static function get_payment_method_from_order( \WC_Order $order ) {
-		$stripe_source_id   = $order->get_meta( '_stripe_source_id', true );
-		$sources = static::get_all_payment_methods_for_customer_from_order( $order );
+		$stripe_source_id = $order->get_meta( '_stripe_source_id', true );
+		$sources          = static::get_all_payment_methods_for_customer_from_order( $order );
 
 		if ( $sources ) {
 			foreach ( $sources as $source ) {
@@ -32,6 +49,13 @@ class Stripe {
 		}
 	}
 
+	/**
+	 * Get payment intent from order.
+	 *
+	 * @param \WC_Order $order The WC Order.
+	 *
+	 * @return object The payment intent from the order.
+	 */
 	public static function get_intent_from_order( \WC_Order $order ) {
 		$intent_id = $order->get_meta( '_stripe_intent_id' );
 
@@ -49,12 +73,20 @@ class Stripe {
 		return false;
 	}
 
+	/**
+	 * Get the intent by ID from the Stripe API.
+	 *
+	 * @param string $intent_type The intent type.
+	 * @param string $intent_id   The intent's ID.
+	 *
+	 * @return object The intent from the API.
+	 */
 	public static function get_intent( string $intent_type, string $intent_id ) {
-		if ( ! in_array( $intent_type, [ 'payment_intents', 'setup_intents' ], true ) ) {
-			throw new \Exception( "Failed to get intent of type $intent_type. Type is not allowed" );
+		if ( ! in_array( $intent_type, array( 'payment_intents', 'setup_intents' ), true ) ) {
+			throw new \Exception( sprintf( 'Failed to get intent of type %s. Type is not allowed', esc_attr( $intent_type ) ) );
 		}
 
-		$response = \WC_Stripe_API::request( [], "$intent_type/$intent_id?expand[]=payment_method", 'GET' );
+		$response = \WC_Stripe_API::request( array(), "$intent_type/$intent_id?expand[]=payment_method", 'GET' );
 
 		if ( $response && isset( $response->{ 'error' } ) ) {
 			return false;
@@ -63,11 +95,18 @@ class Stripe {
 		return $response;
 	}
 
+	/**
+	 * Get the charge for a payment intent from a WC_Order object.
+	 *
+	 * @param \WC_Order $order The WC Order.
+	 *
+	 * @return object The charge for the intent from the order.
+	 */
 	public static function get_charge_for_intent_from_order( \WC_Order $order ) {
-		$intent = Stripe::get_intent_from_order( $order );
+		$intent = self::get_intent_from_order( $order );
 		if ( ! empty( $intent ) ) {
 			$result = \WC_Stripe_API::request(
-				[],
+				array(),
 				'payment_intents/' . $intent->id
 			);
 			if ( empty( $result->error ) ) {
@@ -76,10 +115,24 @@ class Stripe {
 		}
 	}
 
-	public static function get_payment_type_from_order( \WC_Order $order ) {
+	/**
+	 * Get the Stripe UPE payment type from Order metadata.
+	 *
+	 * @param \WC_Order $order The WC Order.
+	 *
+	 * @return null|string
+	 */
+	public static function get_payment_type_from_order( \WC_Order $order ): ?string {
 		return $order->get_meta( '_stripe_upe_payment_type' );
 	}
 
+	/**
+	 * Convert a payment method string from a string Stripe would use to a string Sift would use.
+	 *
+	 * @param string $payment_method A payment method string Stripe would use.
+	 *
+	 * @return string|null A payment method string Sift would use.
+	 */
 	public static function convert_payment_method_to_sift_payment_gateway( string $payment_method ): ?string {
 		switch ( $payment_method ) {
 			case 'affirm':
@@ -141,6 +194,13 @@ class Stripe {
 		return null;
 	}
 
+	/**
+	 * Convert a payment type from a string that Stripe would use to a string that Sift would use.
+	 *
+	 * @param string $payment_type A payment type string that Stripe would use.
+	 *
+	 * @return string|null A payment type string that Sift would use.
+	 */
 	public static function convert_payment_type_to_sift_payment_type( string $payment_type ): ?string {
 		switch ( $payment_type ) {
 			case 'affirm':
@@ -193,5 +253,4 @@ class Stripe {
 		}
 		return null;
 	}
-
 }

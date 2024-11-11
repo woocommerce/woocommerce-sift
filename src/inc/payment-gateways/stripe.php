@@ -2,15 +2,21 @@
 
 add_filter( 'sift_for_woocommerce_stripe_payment_gateway_string', fn() => '$stripe' );
 
-add_filter( 'sift_for_woocommerce_stripe_payment_method_details_from_order', function( \WC_Order $order ) {
-	return Stripe::get_payment_method_from_order( $order );
-} );
+add_filter(
+	'sift_for_woocommerce_stripe_payment_method_details_from_order',
+	function ( \WC_Order $order ) {
+		return Stripe::get_payment_method_from_order( $order );
+	}
+);
 
-add_filter( 'sift_for_woocommerce_stripe_charge_details_from_order', function( \WC_Order $order ) {
-	return Stripe::get_charge_for_intent_from_order( $order );
-} );
+add_filter(
+	'sift_for_woocommerce_stripe_charge_details_from_order',
+	function ( \WC_Order $order ) {
+		return Stripe::get_charge_for_intent_from_order( $order );
+	}
+);
 
-add_filter( 'sift_for_woocommerce_stripe_payment_type_string', [ Stripe::class, 'convert_payment_type_to_sift_payment_type' ] );
+add_filter( 'sift_for_woocommerce_stripe_payment_type_string', array( Stripe::class, 'convert_payment_type_to_sift_payment_type' ) );
 
 add_filter( 'sift_for_woocommerce_stripe_card_last4', fn( $stripe_payment_method ) => $stripe_payment_method->card->last4 );
 add_filter( 'sift_for_woocommerce_stripe_card_bin', fn( $stripe_payment_method ) => $stripe_payment_method->card->iin );
