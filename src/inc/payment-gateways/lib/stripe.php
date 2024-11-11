@@ -151,9 +151,9 @@ class Stripe {
 			case 'alipay':
 			case 'stripe_alipay':
 				return '$digital_wallet';
-			// case 'stripe_bancontact':
-			// case 'bancontact':
-			// 	return '$electronic_fund_transfer';
+			case 'stripe_bancontact':
+			case 'bancontact':
+				return '$electronic_fund_transfer';
 			case 'stripe_boleto':
 			case 'boleto':
 				return '$voucher';
@@ -161,35 +161,35 @@ class Stripe {
 				return '$credit_card';
 			case 'clearpay':
 				return '$financing';
-			// case 'stripe_eps':
-			// case 'eps':
-			// 	return '$electronic_fund_transfer';
+			case 'stripe_eps':
+			case 'eps':
+				return '$electronic_fund_transfer';
 			case 'stripe_giropay':
 			case 'giropay':
 				return '$electronic_fund_transfer';
 			case 'stripe_ideal':
-			// case 'ideal':
-			// 	return '$electronic_fund_transfer';
+			case 'ideal':
+				return '$electronic_fund_transfer';
 			case 'klarna':
 				return '$financing';
-			// case 'link':
-			// 	return '$third_party_processor';
+			case 'link':
+				return '$third_party_processor';
 			case 'stripe_multibanco':
 				return '$voucher';
 			case 'stripe_oxxo':
 			case 'oxxo':
 				return '$voucher';
-			// case 'stripe_p24':
-			// case 'p24':
-			// case 'przelewy24':
-			// 	return '$electronic_fund_transfer';
+			case 'stripe_p24':
+			case 'p24':
+			case 'przelewy24':
+				return '$electronic_fund_transfer';
 			case 'stripe_sepa':
 			case 'sepa_debit':
 			case 'sepa':
 				return '$sepa_direct_debit';
-			// case 'stripe_sofort':
-			// case 'sofort':
-			// 	return '$electronic_fund_transfer';
+			case 'stripe_sofort':
+			case 'sofort':
+				return '$electronic_fund_transfer';
 		}
 		return null;
 	}
