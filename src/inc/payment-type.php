@@ -9,7 +9,7 @@ class Payment_Type extends Sift_Property {
 
 	private Payment_Gateway $gateway;
 
-	protected $valid_sift_strings = array(
+	protected $valid_sift_slugs = array(
 		'$cash',
 		'$check',
 		'$credit_card',
