@@ -32,7 +32,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_payment_type_string( Payment_Gateway $gateway, ?string $gateway_payment_type = null ): string {
-		if ( empty ( $gateway_payment_type ) ) {
+		if ( empty( $gateway_payment_type ) ) {
 			return null;
 		}
 		return Payment_Type::normalize_payment_type_string( $gateway, $gateway_payment_type );
