@@ -97,7 +97,7 @@ function get_sift_for_woocommerce_settings() {
 		unset( $settings['test_credentials'] );
 	}
 
-	return apply_filters( 'sift_for_woocommerce_settings', $settings );
+	return apply_filters( 'sift_for_woocommerce_settings', $settings ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 }
 
 /**

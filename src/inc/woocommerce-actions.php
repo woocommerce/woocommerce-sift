@@ -828,7 +828,7 @@ class Events {
 		 * @param array   $payment_methods An array of payment methods.
 		 * @param integer $user_id         The User / Customer ID.
 		 */
-		$payment_methods = apply_filters( 'sift_for_woocommerce_get_customer_payment_methods', $payment_methods, $user_id );
+		$payment_methods = apply_filters( 'sift_for_woocommerce_get_customer_payment_methods', $payment_methods, $user_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		return $payment_methods ?? null;
 	}
