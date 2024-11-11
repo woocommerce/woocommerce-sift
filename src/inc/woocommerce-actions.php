@@ -88,8 +88,8 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/add-promotion
 	 *
-	 * @param \WC_Coupon $coupon
-	 * @param \WC_Order $order
+	 * @param \WC_Coupon $coupon Coupon used.
+	 * @param \WC_Order  $order  Order.
 	 *
 	 * @return void
 	 */
@@ -97,12 +97,12 @@ class Events {
 		self::add(
 			'$add_promotion',
 			array(
-				'$user_id' => $order->get_user_id(),
-				'$ip'      => self::get_client_ip(),
-				'$browser' => self::get_client_browser(),
-				'promotions' => [
+				'$user_id'   => $order->get_user_id(),
+				'$ip'        => self::get_client_ip(),
+				'$browser'   => self::get_client_browser(),
+				'promotions' => array(
 					'$promotion_id' => $coupon->get_id(),
-				]
+				),
 			)
 		);
 	}
@@ -555,7 +555,7 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function maybe_log_change_order_status(string $order_id, string $from, string $to) {
+	public static function maybe_log_change_order_status( string $order_id, string $from, string $to ) {
 		if ( ! in_array( $to, self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
 			wc_get_logger()->error(
 				sprintf(
@@ -573,11 +573,13 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction
 	 *
-	 * @param \WC_Order $order
-	 * @param string $status
-	 * @param string $transaction_type
+	 * @param \WC_Order $order            Order.
+	 * @param string    $status           Transaction status.
+	 * @param string    $transaction_type Transaction type.
+	 *
+	 * @return void
 	 */
-	public static function transaction(\WC_Order $order, string $status, string $transaction_type) {
+	public static function transaction( \WC_Order $order, string $status, string $transaction_type ) {
 		$properties = array(
 			'$user_id'            => (string) $order->get_user_id(),
 			'$amount'             => $order->get_total(),
@@ -611,7 +613,7 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function change_order_status(string $order_id, \WC_Order $order, array $status_transition) {
+	public static function change_order_status( string $order_id, \WC_Order $order, array $status_transition ) {
 
 		$properties = array(
 			'$user_id'      => (string) $order->get_user_id(),
@@ -630,26 +632,23 @@ class Events {
 			case 'pending':
 			case 'processing':
 			case 'on-hold':
-				$properties[ '$order_status' ] = '$held';
+				$properties['$order_status'] = '$held';
 				self::transaction( $order, '$pending', '$sale' );
 				break;
 			case 'completed':
-				$properties[ '$order_status' ] = '$fulfilled';
+				$properties['$order_status'] = '$fulfilled';
 
 				// When the status is completed, we also queue the $transaction event
 				self::transaction( $order, '$success', '$sale' );
 				break;
-			case 'cancelled':
-				self::transaction( $order, '$failure', '$sale' );
-				$properties[ '$order_status' ] = '$canceled';
-				break;
 			case 'refunded':
 				self::transaction( $order, '$failure', '$refund' );
-				$properties[ '$order_status' ] = '$canceled';
+				$properties['$order_status'] = '$canceled';
 				break;
+			case 'cancelled':
 			case 'failed':
 				self::transaction( $order, '$failure', '$sale' );
-				$properties[ '$order_status' ] = '$canceled';
+				$properties['$order_status'] = '$canceled';
 				break;
 		}
 

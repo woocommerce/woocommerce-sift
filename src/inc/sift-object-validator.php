@@ -1616,10 +1616,10 @@ class SiftObjectValidator {
 	 */
 	public static function validate_transaction( array $data ) {
 		$validator_map = array(
-			'$user_id'     		  => array( __CLASS__, 'validate_id' ),
+			'$user_id'            => array( __CLASS__, 'validate_id' ),
 			'$amount'             => 'is_int',
 			'$currency_code'      => array( __CLASS__, 'validate_currency_code' ),
-			'$order_id'   		  => 'is_string',
+			'$order_id'           => 'is_string',
 			'$transaction_type'   => self::SUPPORTED_TRANSACTION_TYPE,
 			'$transaction_status' => self::SUPPORTED_TRANSACTION_STATUS,
 		);
