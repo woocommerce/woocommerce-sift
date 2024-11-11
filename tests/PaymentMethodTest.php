@@ -45,7 +45,7 @@ class PaymentMethodTest extends WP_UnitTestCase {
 		$stripe_card_last4     = '4242';
 		$transact_card_last4   = '1111';
 		$stripe_payment_method = (object) array(
-			'card' => array(
+			'card' => (object) array(
 				'last4' => $stripe_card_last4,
 			),
 		);
