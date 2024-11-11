@@ -7,12 +7,12 @@ This plugin will integrate with Sift Science's fraud detection suite and WooComm
 This plugin has the following folder structure:
 
 ```
-sift-decisions/
+sift-for-woocommerce/
 ├── languages/
 ├── src/
 │   ├ ...
 │   └── inc/
-└── sift-decisions.php
+└── sift-for-woocommerce.php
 ```
 
 - languages: Contains the translation files for your plugin.
@@ -43,7 +43,7 @@ You can run the tests using the local PHP environment by running the database on
 
 Start environment with XDEBUG enabled: `npx wp-env start --xdebug`.  Configure your IDE to listen for XDEBUG connections on port 9003. When you browse in the browser, XDEBUG should connect to your IDE.
 
-To get tests working with XDEBUG, it requires a little more work.  Configure your IDE server name to be something like `XDEBUG_OMATTIC` and then launch the tests by running `npx wp-env run tests-cli --env-cwd=wp-content/plugins/sift-decisions bash`. At the new prompt you need to run: `PHP_IDE_CONFIG=serverName=XDEBUG_OMATTIC vendor/bin/phpunit`.
+To get tests working with XDEBUG, it requires a little more work.  Configure your IDE server name to be something like `XDEBUG_OMATTIC` and then launch the tests by running `npx wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce bash`. At the new prompt you need to run: `PHP_IDE_CONFIG=serverName=XDEBUG_OMATTIC vendor/bin/phpunit`.
 
 ### Troubleshooting:
 

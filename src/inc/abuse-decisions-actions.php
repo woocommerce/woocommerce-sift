@@ -1,6 +1,6 @@
 <?php
 
-namespace WPCOMSpecialProjects\SiftDecisions\Abuse_Decision_Actions;
+namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Abuse_Decision_Actions;
 
 /**
  * Unblock a user from making purchases if Sift indicates that they are no longer a fraud risk.
@@ -45,7 +45,7 @@ function cancel_and_remove_user_subscriptions( $user_id ) {
 
 	foreach ( $subscriptions as $subscription ) {
 		if ( 'active' === $subscription->get_status() || 'pending-cancel' === $subscription->get_status() ) {
-			$subscription->update_status( 'cancelled', __( 'Cancelled by system due to account block. SGDC Error OYBPXRQ', 'sift-decisions' ) );
+			$subscription->update_status( 'cancelled', __( 'Cancelled by system due to account block. SGDC Error OYBPXRQ', 'sift-for-woocommerce' ) );
 			wp_delete_post( $subscription->get_id(), true );
 		}
 	}
@@ -83,7 +83,7 @@ function remove_user_licenses_and_product_keys( $user_id ) {
  * @return void
  */
 function display_sgdc_error( $message = '' ) {
-	$default_message = __( 'Your account has been blocked from making purchases. SGDC Error OYBPXRQ', 'sift-decisions' );
+	$default_message = __( 'Your account has been blocked from making purchases. SGDC Error OYBPXRQ', 'sift-for-woocommerce' );
 	$message         = $message ? $message : $default_message;
 	wc_add_notice( $message, 'error' );
 }
@@ -121,14 +121,14 @@ function sift_fraud_void_refund_order( $order_id ) {
 	if ( ! is_a( $order, 'WC_Order' ) ) {
 		return new \WP_Error(
 			'wc-order',
-			__( 'Provided ID is not a WC Order', 'sift-decisions' )
+			__( 'Provided ID is not a WC Order', 'sift-for-woocommerce' )
 		);
 	}
 
 	if ( 'refunded' === $order->get_status() ) {
 		return new \WP_Error(
 			'wc-order',
-			__( 'Order has been already refunded', 'sift-decisions' )
+			__( 'Order has been already refunded', 'sift-for-woocommerce' )
 		);
 	}
 
@@ -140,7 +140,7 @@ function sift_fraud_void_refund_order( $order_id ) {
 	if ( ! $order_items ) {
 		return new \WP_Error(
 			'wc-order',
-			__( 'This order has no items', 'sift-decisions' )
+			__( 'This order has no items', 'sift-for-woocommerce' )
 		);
 	}
 
