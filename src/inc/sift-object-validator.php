@@ -686,6 +686,21 @@ class SiftObjectValidator {
 		'$other',
 	);
 
+	const ORDER_STATUSES = array(
+		'$approved',
+		'$canceled',
+		'$held',
+		'$fulfilled',
+		'$returned',
+	);
+
+	const CANCELLATION_REASONS = array(
+		'$payment_risk',
+		'$abuse',
+		'$policy',
+		'$other',
+	);
+
 	/**
 	 * This is the main validation function.
 	 *
@@ -1316,14 +1331,14 @@ class SiftObjectValidator {
 	}
 
 	/**
-	 * Validate a $create_order event.
+	 * Validate a $create_order or $update_order event.
 	 *
 	 * @param array $data The event to validate.
 	 *
 	 * @return mixed
 	 * @throws \Exception If the event is invalid.
 	 */
-	public static function validate_create_order( $data ) {
+	public static function validate_create_or_update_order( $data ) {
 		$validator_map = array(
 			'$user_id'                   => array( __CLASS__, 'validate_id' ),
 			'$session_id'                => 'is_string',
@@ -1354,12 +1369,12 @@ class SiftObjectValidator {
 		);
 		try {
 			static::validate( $data, $validator_map );
-			// required field: $user_id
-			if ( empty( $data['$user_id'] ) ) {
-				throw new \Exception( 'missing $user_id' );
+			// required field: $session_id if no $user_id provided.
+			if ( ! isset( $data['$user_id'] ) && empty( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $session_id' );
 			}
 		} catch ( \Exception $e ) {
-			throw new \Exception( 'Failed to validate $create_order event: ' . esc_html( $e->getMessage() ) );
+			throw new \Exception( 'Failed to validate order event: ' . esc_html( $e->getMessage() ) );
 		}
 		return true;
 	}
@@ -1521,6 +1536,50 @@ class SiftObjectValidator {
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Invalid $update_password event: ' . esc_html( $e->getMessage() ) );
 		}
+		return true;
+	}
+
+	/**
+	 * Validate the order status event.
+	 *
+	 * @param array $data The event to validate.
+	 *
+	 * @return true
+	 * @throws \Exception If the event is invalid.
+	 */
+	public static function validate_order_status( array $data ) {
+		$validator_map = array(
+			'$user_id'      => array( __CLASS__, 'validate_id' ),
+			'$order_id'     => 'is_string',
+			'$order_status' => self::ORDER_STATUSES,
+			'$reason'       => self::CANCELLATION_REASONS,
+			'$source'       => array( '$automated', '$manual_review' ),
+			'$analyst'      => 'is_string',
+			'$webhook_id'   => 'is_string',
+			'$description'  => 'is_string',
+			'$browser'      => array( __CLASS__, 'validate_browser' ),
+			'$app'          => array( __CLASS__, 'validate_app' ),
+			'$brand_name'   => 'is_string',
+			'$site_country' => array( __CLASS__, 'validate_country_code' ),
+			'$site_domain'  => 'is_string',
+		);
+
+		try {
+			static::validate( $data, $validator_map );
+			// Required fields for order status: $user_id, $order_id, $order_status
+			if ( empty( $data['$user_id'] ) ) {
+				throw new \Exception( 'missing $user_id' );
+			}
+			if ( empty( $data['$order_id'] ) ) {
+				throw new \Exception( 'missing $order_id' );
+			}
+			if ( empty( $data['$order_status'] ) ) {
+				throw new \Exception( 'missing $order_status' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Invalid $order_status event: ' . esc_html( $e->getMessage() ) );
+		}
+
 		return true;
 	}
 }

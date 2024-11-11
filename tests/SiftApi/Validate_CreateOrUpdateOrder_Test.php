@@ -12,11 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once 'SiftObjectValidatorTest.php';
 
-class Validate_CreateOrder_Test extends SiftObjectValidatorTest {
+class Validate_CreateOrUpdateOrder_Test extends SiftObjectValidatorTest {
 	protected static ?string $fixture_name = 'create-order.json';
 
 	protected static function validator( $data ) {
-		return SiftObjectValidator::validate_create_order( $data );
+		return SiftObjectValidator::validate_create_or_update_order( $data );
+	}
+
+	public function test_session_id_required_if_no_user_id_set() {
+		static::assert_invalid_argument_exception(
+			static::modify_data( [ '$user_id' => null, '$session_id' => null ] ),
+			'missing $session_id'
+		);
 	}
 
 	public function test_app_browser_set() {

@@ -13,6 +13,16 @@ use WPCOMSpecialProjects\SiftDecisions\Sift\SiftObjectValidator;
 class Events {
 	public static $to_send = array();
 
+	const SUPPORTED_STATUS_CHANGES = array(
+		'pending',
+		'processing',
+		'on-hold',
+		'completed',
+		'cancelled',
+		'refunded',
+		'failed',
+	);
+
 	/**
 	 * Set up the integration hooks for messages we want to send to Sift.
 	 *
@@ -27,11 +37,19 @@ class Events {
 		add_action( 'wp_set_password', array( static::class, 'update_password' ), 100, 2 );
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
+		add_action( 'woocommerce_update_order', array( static::class, 'update_order' ), 100, 2 );
 
-		add_action( 'woocommerce_checkout_order_processed', array( static::class, 'create_order' ), 100, 3 );
-		add_action( 'woocommerce_new_order', array( static::class, 'add_session_info' ), 100 );
-		add_action( 'woocommerce_order_status_changed', array( static::class, 'change_order_status' ), 100 );
-		add_action( 'post_updated', array( static::class, 'update_order' ), 100 );
+		/**
+		 * We need to break this out into separate actions so we have the $status_transition available.
+		 *
+		 * This limits the number of supported status transitions so if we have an unsupported transition we need to
+		 * log it.
+		 */
+		foreach ( self::SUPPORTED_STATUS_CHANGES as $status ) {
+			add_action( 'woocommerce_order_status_' . $status, array( static::class, 'change_order_status' ), 100, 3 );
+		}
+		// For unsupported actions.
+		add_action( 'woocommerce_order_status_changed', array( static::class, 'maybe_log_change_order_status' ), 100, 3 );
 
 		/**
 		 * This action merged in to WooCommerce and shipped via 8.8.0
@@ -410,18 +428,19 @@ class Events {
 	}
 
 	/**
-	 * Adds event for order creation
+	 * Adds event for order creation/update.
 	 *
-	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/create-order
+	 * The $create_order and $update_order events are identical.  When an $update_order event is called it will overwrite
+	 * any existing $create_order event with the same $order_id, so we'll combine the two into a single function.
 	 *
-	 * @param string    $order_id    Order id.
-	 * @param array     $posted_data The data posted from the checkout form.
-	 * @param \WC_Order $order       The Order object.
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-order
+	 *
+	 * @param string    $order_id Order id.
+	 * @param \WC_Order $order    The Order object.
 	 *
 	 * @return void
 	 */
-	public static function create_order( string $order_id, array $posted_data, \WC_Order $order ) {
-		$data = $order->get_data();
+	public static function update_order( string $order_id, \WC_Order $order ) {
 		$user = wp_get_current_user();
 
 		$physical_or_electronic = '$electronic';
@@ -489,50 +508,101 @@ class Events {
 			$properties['$shipping_address'] = $shipping_address;
 		}
 		try {
-			SiftObjectValidator::validate_create_order( $properties );
+			SiftObjectValidator::validate_create_or_update_order( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
 		}
 
 		self::add(
-			'$create_order',
+			'$update_order',
 			$properties
 		);
 	}
 
 	/**
-	 * Adds session info to the order.
+	 * Log error for unsupported status changes.
 	 *
-	 * Unsure if necessary?  Was in prior plugin. -- George
-	 *
-	 * @param string $order_id ID of the order.
+	 * @param string $order_id Order ID.
+	 * @param string $from     From status.
+	 * @param string $to       To status.
 	 *
 	 * @return void
 	 */
-	public static function add_session_info( string $order_id ) {}
+	public static function maybe_log_change_order_status( string $order_id, string $from, string $to ) {
+		if ( ! in_array( $to, self::SUPPORTED_STATUS_CHANGES, true ) ) {
+			wc_get_logger()->error(
+				sprintf(
+					'Unsupported status change from %s to %s for order %s.',
+					$from,
+					$to,
+					$order_id
+				)
+			);
+		}
+	}
 
 	/**
 	 * Adds the event for the order status update
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/order-status
 	 *
-	 * @param string $order_id Order ID.
+	 * @param string    $order_id          Order ID.
+	 * @param \WC_Order $order             The order object.
+	 * @param array     $status_transition Status transition data.
+	 *                                     type: array<string $from, string $to, string $note, boolean $manual>.
 	 *
 	 * @return void
 	 */
-	public static function change_order_status( string $order_id ) {}
+	public static function change_order_status( string $order_id, \WC_Order $order, array $status_transition ) {
+		if ( ! in_array( $status_transition['to'], self::SUPPORTED_STATUS_CHANGES, true ) ) {
+			self::maybe_log_change_order_status( $order_id, $status_transition['from'], $status_transition['to'] );
+			return;
+		}
 
-	/**
-	 * Adds event for order update
-	 *
-	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-order
-	 *
-	 * @param string $order_id Order ID.
-	 *
-	 * @return void
-	 */
-	public static function update_order( string $order_id ) {}
+		$properties = array(
+			'$user_id'      => (string) $order->get_user_id(),
+			'$order_id'     => (string) $order_id,
+			'$source'       => $status_transition['manual'] ? '$manual_review' : '$automated',
+			'$description'  => $status_transition['note'],
+			'$browser'      => self::get_client_browser(),
+			'$site_country' => wc_get_base_location()['country'],
+			'$site_domain'  => wp_parse_url( site_url(), PHP_URL_HOST ),
+			'$ip'           => self::get_client_ip(),
+			'$time'         => intval( 1000 * microtime( true ) ),
+		);
+
+		// Add the $order_status property (based on the status transition).
+		switch ( $status_transition['to'] ) {
+			case 'pending':
+			case 'processing':
+			case 'on-hold':
+				$properties['$order_status'] = '$held';
+				break;
+			case 'completed':
+				$properties['$order_status'] = '$fulfilled';
+				break;
+			case 'cancelled':
+			case 'refunded':
+			case 'failed':
+				$properties['$order_status'] = '$canceled';
+				break;
+		}
+
+		// For manual reviews add the user as the `$analyst`.
+		if ( $status_transition['manual'] ?? false ) {
+			$properties['$analyst'] = wp_get_current_user()->user_login;
+		}
+
+		try {
+			SiftObjectValidator::validate_order_status( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( '$order_status', $properties );
+	}
 
 	/**
 	 * Enqueue an event to send.  This will enable sending them all at shutdown.
