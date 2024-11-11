@@ -10,7 +10,7 @@ class Payment_Type extends Sift_Property {
 	}
 
 	public static function normalize_payment_type_string( Payment_Gateway $gateway, string $payment_type ): ?string {
-		$sift_slug = apply_filters( sprintf( 'wc_sift_decisions_%s_payment_type_string', $gateway->get_woo_gateway_id() ), $payment_type );
+		$sift_slug = apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_type_string', $gateway->get_woo_gateway_id() ), $payment_type );
 		if ( static::is_valid_sift_slug( $sift_slug ) ) {
 			return $sift_slug;
 		}

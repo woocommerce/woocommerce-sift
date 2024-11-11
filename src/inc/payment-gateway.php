@@ -17,7 +17,7 @@ class Payment_Gateway extends Sift_Property {
 		if ( 'transact' === strtolower( $gateway_id ) ) {
 			$gateway_id = 'woocommerce_payments';
 		}
-		$payment_gateway = apply_filters( sprintf( 'wc_sift_decisions_%s_payment_gateway_string', $gateway_id ), '' );
+		$payment_gateway = apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_gateway_string', $gateway_id ), '' );
 		if ( static::is_valid_sift_slug( $payment_gateway ) ) {
 			return $payment_gateway;
 		}

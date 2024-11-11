@@ -6,7 +6,7 @@ namespace Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions;
 
 use Payment_Gateway;
 use Payment_Method;
-use Sift_Order;
+use Sift_For_WooCommerce_Sift_Order;
 use WC_Order_Item_Product;
 use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift\SiftObjectValidator;
 
@@ -838,7 +838,7 @@ class Events {
 	}
 
 	public static function get_order_payment_methods( \WC_Order $order ): array {
-		$sift_order = new Sift_Order( $order );
-		return $sift_order->get_payment_methods();
+		$Sift_For_WooCommerce_Sift_Order = new Sift_For_WooCommerce_Sift_Order( $order );
+		return $Sift_For_WooCommerce_Sift_Order->get_payment_methods();
 	}
 }
