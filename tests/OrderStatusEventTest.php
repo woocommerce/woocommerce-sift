@@ -77,7 +77,7 @@ class OrderStatusEventTest extends EventTest {
 	public static function test_micros_based_on_currency( array $props = [] ) {
 		update_option( 'woocommerce_currency', 'USD' );
 
-		static::assertEquals(  Events::get_transaction_micros( 39.00  ), 399000);
+		static::assertEquals(  Events::get_transaction_micros( 39.00  ), 390000);
 
 		update_option( 'woocommerce_currency', 'JPY' );
 
