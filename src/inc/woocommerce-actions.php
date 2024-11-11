@@ -38,6 +38,7 @@ class Events {
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
 		add_action( 'woocommerce_update_order', array( static::class, 'update_order' ), 100, 2 );
+		add_action( 'woocommerce_order_applied_coupon', array( static::class, 'add_promotion' ), 100, 2 );
 
 		/**
 		 * We need to break this out into separate actions so we have the $status_transition available.
@@ -78,6 +79,30 @@ class Events {
 				'$browser' => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$ip'      => self::get_client_ip(),
 				'$time'    => intval( 1000 * microtime( true ) ),
+			)
+		);
+	}
+
+	/**
+	 * Adds $add_promotion event
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/add-promotion
+	 *
+	 * @param \WC_Coupon $coupon
+	 * @param \WC_Order $order
+	 *
+	 * @return void
+	 */
+	public static function add_promotion( \WC_Coupon $coupon, \WC_Order $order ): void {
+		self::add(
+			'$add_promotion',
+			array(
+				'$user_id' => $order->get_user_id(),
+				'$ip'      => self::get_client_ip(),
+				'$browser' => self::get_client_browser(),
+				'promotions' => [
+					'$promotion_id' => $coupon->get_id(),
+				]
 			)
 		);
 	}
@@ -545,6 +570,8 @@ class Events {
 
 	/**
 	 * Adds the event for transaction
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction
 	 *
 	 * @param \WC_Order $order
 	 * @param string $status
