@@ -12,7 +12,7 @@ namespace Sift_For_WooCommerce\Sift_For_WooCommerce;
  * `$credit_card`.
  */
 abstract class Sift_Property {
-	protected ?string $sift_slug;
+	protected static ?string $sift_slug;
 
 	protected array $valid_sift_slugs = array(); // Override this array in a child class
 

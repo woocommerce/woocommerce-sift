@@ -9,7 +9,7 @@ class Payment_Gateway extends Sift_Property {
 
 	private string $woo_gateway_id;
 
-	protected array $valid_sift_slugs = array(
+	protected static array $valid_sift_slugs = array(
 		'$abra',
 		'$acapture',
 		'$accpet_blue',
