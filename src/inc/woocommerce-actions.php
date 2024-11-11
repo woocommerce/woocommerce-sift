@@ -13,7 +13,7 @@ use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift\SiftObjectValidator;
 class Events {
 	public static $to_send = array();
 
-	const SUPPORTED_STATUS_CHANGES = array(
+	const SUPPORTED_WOO_ORDER_STATUS_CHANGES = array(
 		'pending',
 		'processing',
 		'on-hold',
@@ -45,7 +45,7 @@ class Events {
 		 * This limits the number of supported status transitions so if we have an unsupported transition we need to
 		 * log it.
 		 */
-		foreach ( self::SUPPORTED_STATUS_CHANGES as $status ) {
+		foreach ( self::SUPPORTED_WOO_ORDER_STATUS_CHANGES as $status ) {
 			add_action( 'woocommerce_order_status_' . $status, array( static::class, 'change_order_status' ), 100, 3 );
 		}
 		// For unsupported actions.
@@ -186,7 +186,7 @@ class Events {
 			'$name'             => $user->display_name,
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
+			'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
 			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
 			'$browser'          => self::get_client_browser(),
@@ -236,6 +236,7 @@ class Events {
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
 			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
+			'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
 			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
 			'$browser'          => self::get_client_browser(),
@@ -529,8 +530,8 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function maybe_log_change_order_status( string $order_id, string $from, string $to ) {
-		if ( ! in_array( $to, self::SUPPORTED_STATUS_CHANGES, true ) ) {
+	public static function maybe_log_change_order_status(string $order_id, string $from, string $to) {
+		if ( ! in_array( $to, self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
 			wc_get_logger()->error(
 				sprintf(
 					'Unsupported status change from %s to %s for order %s.',
@@ -541,6 +542,35 @@ class Events {
 			);
 		}
 	}
+
+	/**
+	 * Adds the event for transaction
+	 *
+	 * @param \WC_Order $order
+	 * @param string $status
+	 * @param string $transaction_type
+	 */
+	public static function transaction(\WC_Order $order, string $status, string $transaction_type) {
+		$properties = array(
+			'$user_id'            => (string) $order->get_user_id(),
+			'$amount'             => $order->get_total(),
+			'$currency_code'      => $order->get_currency(),
+			'$order_id'           => (string) $order->get_id(),
+			'$transaction_type'   => $transaction_type,
+			'$transaction_status' => $status,
+		);
+
+		try {
+			SiftObjectValidator::validate_transaction( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+
+			return;
+		}
+
+		self::add( '$transaction', $properties );
+	}
+
 
 	/**
 	 * Adds the event for the order status update
@@ -554,11 +584,7 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function change_order_status( string $order_id, \WC_Order $order, array $status_transition ) {
-		if ( ! in_array( $status_transition['to'], self::SUPPORTED_STATUS_CHANGES, true ) ) {
-			self::maybe_log_change_order_status( $order_id, $status_transition['from'], $status_transition['to'] );
-			return;
-		}
+	public static function change_order_status(string $order_id, \WC_Order $order, array $status_transition) {
 
 		$properties = array(
 			'$user_id'      => (string) $order->get_user_id(),
@@ -577,15 +603,26 @@ class Events {
 			case 'pending':
 			case 'processing':
 			case 'on-hold':
-				$properties['$order_status'] = '$held';
+				$properties[ '$order_status' ] = '$held';
+				self::transaction( $order, '$pending', '$sale' );
 				break;
 			case 'completed':
-				$properties['$order_status'] = '$fulfilled';
+				$properties[ '$order_status' ] = '$fulfilled';
+
+				// When the status is completed, we also queue the $transaction event
+				self::transaction( $order, '$success', '$sale' );
 				break;
 			case 'cancelled':
+				self::transaction( $order, '$failure', '$sale' );
+				$properties[ '$order_status' ] = '$canceled';
+				break;
 			case 'refunded':
+				self::transaction( $order, '$failure', '$refund' );
+				$properties[ '$order_status' ] = '$canceled';
+				break;
 			case 'failed':
-				$properties['$order_status'] = '$canceled';
+				self::transaction( $order, '$failure', '$sale' );
+				$properties[ '$order_status' ] = '$canceled';
 				break;
 		}
 
