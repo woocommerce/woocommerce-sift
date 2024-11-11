@@ -25,9 +25,9 @@ class PaymentMethodTest extends WP_UnitTestCase {
 	 *
 	 * @dataProvider card_last4_provider
 	 *
-	 * @param Payment_Gateway $gateway      The payment gateway in use.
-	 * @param string          $data         The data which contains the card_last4 value.
-	 * @param null|string     $expected     The expected result if available.
+	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param mixed           $data     The data which contains the card_last4 value.
+	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -42,16 +42,16 @@ class PaymentMethodTest extends WP_UnitTestCase {
 	 * @return array An array of test runs and the data associated with each run.
 	 */
 	public function card_last4_provider(): array {
-		$stripe_card_last4 = '4242';
-		$transact_card_last4 = '1111';
-		$stripe_payment_method = (object) [
-			'card' => [
+		$stripe_card_last4     = '4242';
+		$transact_card_last4   = '1111';
+		$stripe_payment_method = (object) array(
+			'card' => array(
 				'last4' => $stripe_card_last4,
-			],
-		];
-		$mock_order = $this->getMockBuilder( \WC_Order::class )
+			),
+		);
+		$mock_order            = $this->getMockBuilder( \WC_Order::class )
 			->disableOriginalConstructor()
-			->onlyMethods( [ 'get_meta' ] )
+			->onlyMethods( array( 'get_meta' ) )
 			->getMock();
 		$mock_order->expects( $this->any() )
 			->method( 'get_meta' )
