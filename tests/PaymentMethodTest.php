@@ -53,9 +53,8 @@ class PaymentMethodTest extends WP_UnitTestCase {
 			->disableOriginalConstructor()
 			->onlyMethods( array( 'get_meta' ) )
 			->getMock();
-		$mock_order->expects( $this->any() )
+		$mock_order->expects( $this->once() )
 			->method( 'get_meta' )
-			->with( 'last4' )
 			->willReturn( $transact_card_last4 );
 
 		$stripe_gateway   = new Payment_Gateway( 'stripe', $mock_order );
