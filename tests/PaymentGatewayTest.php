@@ -29,7 +29,8 @@ class PaymentGatewayTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_payment_gateway( string $woo_gateway_id, bool $is_valid, ?string $sift_slug ) {
-		$pg = new Payment_Gateway( $woo_gateway_id );
+		$order = new \WC_Order();
+		$pg = new Payment_Gateway( $woo_gateway_id, $order );
 
 		$this->assertEquals( $woo_gateway_id, $pg->get_woo_gateway_id(), 'Should return the woo gateway id' );
 		if ( $is_valid ) {
