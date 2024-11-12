@@ -54,7 +54,11 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_card_last4( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_card_last4', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		$filter_name = sprintf( 'sift_for_woocommerce_%s_card_last4', $gateway->get_woo_gateway_id() );
+		if ( ! has_filter( $filter_name ) ) {
+			return '';
+		}
+		return apply_filters( $filter_name, $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
