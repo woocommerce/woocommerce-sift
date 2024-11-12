@@ -625,10 +625,11 @@ class Payment_Gateway extends Sift_Property {
 	 * Create a class to represent the payment gateway plugin used for an order.
 	 *
 	 * @param string $woo_gateway_id The payment gateway ID as exposed by the plugin (e.g., the output of \WC_Order->get_payment_method()).
+	 * @param \WC_Order $order The WC_Order which uses this gateway. Used to lookup additional information for payment gateway plugins which work with multiple payment gateways.
 	 */
-	public function __construct( string $woo_gateway_id ) {
+	public function __construct( string $woo_gateway_id, \WC_Order $order ) {
 		$this->woo_gateway_id = $woo_gateway_id;
-		$this->sift_slug      = static::normalize_payment_gateway_string( $this->woo_gateway_id );
+		$this->sift_slug      = static::normalize_payment_gateway_string( $this->woo_gateway_id, $order );
 	}
 
 	/**
@@ -644,14 +645,15 @@ class Payment_Gateway extends Sift_Property {
 	 * Normalize the payment gateway ID provided by the payment gateway plugin into a standard string accepted by Sift.
 	 *
 	 * @param string $gateway_id The payment gateway ID as exposed by the plugin (e.g., the output of \WC_Order->get_payment_method()).
+	 * @param \WC_Order $order The WC_Order which uses this gateway. Used to lookup additional information for payment gateway plugins which work with multiple payment gateways.
 	 *
 	 * @return string|null The normalized payment gateway string if one is available.
 	 */
-	public static function normalize_payment_gateway_string( string $gateway_id ): ?string {
+	public static function normalize_payment_gateway_string( string $gateway_id, \WC_Order $order ): ?string {
 		if ( 'transact' === strtolower( $gateway_id ) ) {
 			$gateway_id = 'woopayments';
 		}
-		$payment_gateway = apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_gateway_string', $gateway_id ), '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		$payment_gateway = apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_gateway_string', $gateway_id ), $order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		if ( static::is_valid_sift_slug( $payment_gateway ) ) {
 			return $payment_gateway;
 		}

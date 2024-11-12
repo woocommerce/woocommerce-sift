@@ -21,7 +21,7 @@ class Sift_Order {
 	public function __construct( \WC_Order $wc_order ) {
 		$this->wc_order = $wc_order;
 
-		$this->payment_gateway        = new Payment_Gateway( $this->wc_order->get_payment_method() );
+		$this->payment_gateway        = new Payment_Gateway( $this->wc_order->get_payment_method(), $this->wc_order );
 		$this->payment_method_details = $this->get_payment_method_details_from_order( $this->payment_gateway->get_woo_gateway_id(), $this->wc_order );
 		$this->charge_details         = $this->get_charge_details_from_order( $this->payment_gateway->get_woo_gateway_id(), $this->wc_order );
 	}
@@ -69,7 +69,7 @@ class Sift_Order {
 	public function get_payment_methods(): array {
 		$order_payment_method = array(
 			'$payment_type'                  => Payment_Method::get_payment_type_string( $this->payment_gateway, $this->gateway_payment_type ),
-			'$payment_gateway'               => Payment_Method::get_payment_gateway_string( $this->payment_gateway ),
+			'$payment_gateway'               => Payment_Method::get_payment_gateway_string( $this->payment_gateway, $this->wc_order ),
 			'$card_bin'                      => Payment_Method::get_card_bin( $this->payment_gateway, $this->payment_method_details ),
 			'$card_last4'                    => Payment_Method::get_card_last4( $this->payment_gateway, $this->payment_method_details ),
 			'$avs_result_code'               => Payment_Method::get_avs_result_code( $this->payment_gateway, $this->charge_details ),

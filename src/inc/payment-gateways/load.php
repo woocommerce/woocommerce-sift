@@ -11,8 +11,7 @@ add_action(
 					require_once __DIR__ . '/lib/stripe.php';
 					require_once __DIR__ . '/stripe.php';
 					break;
-				case 'woocommerce_payments':
-					require_once __DIR__ . '/lib/stripe.php';
+				case 'woopayments':
 					require_once __DIR__ . '/transact.php';
 					break;
 			}
