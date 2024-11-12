@@ -28,11 +28,11 @@ class PaymentGatewayTest extends WP_UnitTestCase {
 	 *
 	 * @return void
 	 */
-	public function test_payment_gateway( string $woo_gateway_id, bool $is_valid, ?string $sift_slug ) {
+	public function test_payment_gateway( string $woo_gateway_id, ?string $expected_woo_gateway_id, bool $is_valid, ?string $sift_slug ) {
 		$order = new \WC_Order();
 		$pg    = new Payment_Gateway( $woo_gateway_id, $order );
 
-		$this->assertEquals( $woo_gateway_id, $pg->get_woo_gateway_id(), 'Should return the woo gateway id' );
+		$this->assertEquals( $expected_woo_gateway_id, $pg->get_woo_gateway_id(), 'Should return the woo gateway id' );
 		if ( $is_valid ) {
 			$this->assertTrue( $pg->is_valid(), 'Should return true because it is valid' );
 		} else {
@@ -50,16 +50,25 @@ class PaymentGatewayTest extends WP_UnitTestCase {
 		return array(
 			'Stripe is a valid payment gateway'     => array(
 				'woo_gateway_id' => 'stripe',
+				'expected_woo_gateway_id' => 'stripe',
+				'is_valid'       => true,
+				'sift_slug'      => '$stripe',
+			),
+			'WooPayments is a valid payment gateway'   => array(
+				'woo_gateway_id' => 'woopayments',
+				'expected_woo_gateway_id' => 'woopayments',
 				'is_valid'       => true,
 				'sift_slug'      => '$stripe',
 			),
 			'Transact is a valid payment gateway'   => array(
-				'woo_gateway_id' => 'woopayments',
+				'woo_gateway_id' => 'transact',
+				'expected_woo_gateway_id' => 'woopayments',
 				'is_valid'       => true,
 				'sift_slug'      => '$stripe',
 			),
 			'FakePay is an invalid payment gateway' => array(
 				'woo_gateway_id' => 'fakepay',
+				'expected_woo_gateway_id' => 'fakepay',
 				'is_valid'       => false,
 				'sift_slug'      => null,
 			),

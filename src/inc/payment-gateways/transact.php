@@ -19,4 +19,4 @@ add_filter(
 	}
 );
 
-add_filter( 'sift_for_woocommerce_woopayments_card_last4', fn( $order ) => $order->get_meta( 'last4' ) );
+add_filter( 'sift_for_woocommerce_woopayments_card_last4', fn ( $order ) => $order->get_meta( 'last4' ) );
