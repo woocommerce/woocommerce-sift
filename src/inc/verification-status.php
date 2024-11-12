@@ -35,7 +35,7 @@ class Verification_Status extends Sift_Property {
 	 * @return string|null The normalized verification status string if one is available.
 	 */
 	public static function normalize_verification_status_string( Payment_Gateway $gateway, string $verification_status ): ?string {
-		$sift_slug = apply_filters( sprintf( 'sift_for_woocommerce_%s_verification_status_string', $gateway->get_woo_gateway_id() ), $verification_status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		$sift_slug = apply_filters( sprintf( 'sift_for_woocommerce_%s_verification_status_string', $gateway->get_woo_gateway_id() ), '', $verification_status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		if ( static::is_valid_sift_slug( $sift_slug ) ) {
 			return $sift_slug;
 		}

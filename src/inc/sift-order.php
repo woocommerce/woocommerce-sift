@@ -40,7 +40,7 @@ class Sift_Order {
 	 * @return mixed A value which contains the information that subsequent functions will use to extract payment method info.
 	 */
 	private function get_payment_method_details_from_order() {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_method_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_method_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), null, $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -58,7 +58,7 @@ class Sift_Order {
 	 * @return mixed A value which contains the information that subsequent functions will use to extract charge / transaction info.
 	 */
 	private function get_charge_details_from_order() {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_charge_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_charge_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), null, $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**

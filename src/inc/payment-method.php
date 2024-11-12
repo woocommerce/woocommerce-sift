@@ -54,7 +54,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_card_last4( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_card_last4', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_card_last4', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -66,7 +66,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_card_bin( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_card_bin', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_card_bin', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -78,7 +78,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_avs_result_code( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_avs_result_code', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_avs_result_code', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -90,7 +90,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_cvv_result_code( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_cvv_result_code', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_cvv_result_code', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -102,7 +102,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_verification_status( Payment_Gateway $gateway, mixed $data ): string {
-		$verification_status = apply_filters( sprintf( 'sift_for_woocommerce_%s_verification_status', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		$verification_status = apply_filters( sprintf( 'sift_for_woocommerce_%s_verification_status', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		return Verification_Status::normalize_verification_status_string( $gateway, $verification_status );
 	}
 
@@ -115,7 +115,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_routing_number( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_routing_number', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_routing_number', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -127,7 +127,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_shortened_iban_first6( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_shortened_iban_first6', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_shortened_iban_first6', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -139,7 +139,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_shortened_iban_last4( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_shortened_iban_last4', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_shortened_iban_last4', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -151,7 +151,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_sepa_direct_debit_mandate( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_sepa_direct_debit_mandate', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_sepa_direct_debit_mandate', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -163,7 +163,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_decline_reason_code( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_decline_reason_code', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_decline_reason_code', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -175,7 +175,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_wallet_address( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_wallet_address', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_wallet_address', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -187,7 +187,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_wallet_type( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_wallet_type', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_wallet_type', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -199,7 +199,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_paypal_payer_id( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_payer_id', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_payer_id', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -211,7 +211,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_paypal_payer_email( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_payer_email', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_payer_email', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -223,7 +223,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_paypal_payer_status( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_payer_status', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_payer_status', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -235,7 +235,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_paypal_address_status( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_address_status', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_address_status', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -247,7 +247,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_paypal_protection_eligibility( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_protection_eligibility', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_protection_eligibility', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -259,7 +259,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_paypal_payment_status( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_payment_status', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_paypal_payment_status', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -271,7 +271,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_account_holder_name( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_account_holder_name', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_account_holder_name', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -283,7 +283,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_account_number_last5( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_account_number_last5', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_account_number_last5', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -295,7 +295,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_bank_name( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_bank_name', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_bank_name', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -307,7 +307,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_bank_country( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_bank_country', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_bank_country', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -319,7 +319,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_stripe_cvc_check( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_cvc_check', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_cvc_check', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -331,7 +331,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_stripe_address_line1_check( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_address_line1_check', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_address_line1_check', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -343,7 +343,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_stripe_address_line2_check( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_address_line2_check', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_address_line2_check', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -355,7 +355,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_stripe_address_zip_check( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_address_zip_check', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_address_zip_check', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -367,7 +367,7 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_stripe_funding( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_funding', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_funding', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
@@ -379,6 +379,6 @@ class Payment_Method {
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
 	public static function get_stripe_brand( Payment_Gateway $gateway, mixed $data ): string {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_brand', $gateway->get_woo_gateway_id() ), $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return apply_filters( sprintf( 'sift_for_woocommerce_%s_stripe_brand', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 }
