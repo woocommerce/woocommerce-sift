@@ -22,9 +22,10 @@ class PaymentGatewayTest extends WP_UnitTestCase {
 	 *
 	 * @dataProvider payment_gateway_provider
 	 *
-	 * @param string      $woo_gateway_id The ID exposed by the payment gateway plugin (the result of `\WC_Order->get_payment_method()`).
-	 * @param boolean     $is_valid       True if the test expects the test run data to be valid, otherwise false.
-	 * @param null|string $sift_slug      The slug that was expected if any.
+	 * @param string      $woo_gateway_id          The ID exposed by the payment gateway plugin (the result of `\WC_Order->get_payment_method()`).
+	 * @param string      $expected_woo_gateway_id The expected ID exposed by the payment gateway plugin (the result of `\WC_Order->get_payment_method()`).
+	 * @param boolean     $is_valid                True if the test expects the test run data to be valid, otherwise false.
+	 * @param null|string $sift_slug               The slug that was expected if any.
 	 *
 	 * @return void
 	 */
@@ -48,29 +49,29 @@ class PaymentGatewayTest extends WP_UnitTestCase {
 	 */
 	public function payment_gateway_provider(): array {
 		return array(
-			'Stripe is a valid payment gateway'     => array(
-				'woo_gateway_id' => 'stripe',
+			'Stripe is a valid payment gateway'      => array(
+				'woo_gateway_id'          => 'stripe',
 				'expected_woo_gateway_id' => 'stripe',
-				'is_valid'       => true,
-				'sift_slug'      => '$stripe',
+				'is_valid'                => true,
+				'sift_slug'               => '$stripe',
 			),
-			'WooPayments is a valid payment gateway'   => array(
-				'woo_gateway_id' => 'woopayments',
+			'WooPayments is a valid payment gateway' => array(
+				'woo_gateway_id'          => 'woopayments',
 				'expected_woo_gateway_id' => 'woopayments',
-				'is_valid'       => true,
-				'sift_slug'      => '$stripe',
+				'is_valid'                => true,
+				'sift_slug'               => '$stripe',
 			),
-			'Transact is a valid payment gateway'   => array(
-				'woo_gateway_id' => 'transact',
+			'Transact is a valid payment gateway'    => array(
+				'woo_gateway_id'          => 'transact',
 				'expected_woo_gateway_id' => 'woopayments',
-				'is_valid'       => true,
-				'sift_slug'      => '$stripe',
+				'is_valid'                => true,
+				'sift_slug'               => '$stripe',
 			),
-			'FakePay is an invalid payment gateway' => array(
-				'woo_gateway_id' => 'fakepay',
+			'FakePay is an invalid payment gateway'  => array(
+				'woo_gateway_id'          => 'fakepay',
 				'expected_woo_gateway_id' => 'fakepay',
-				'is_valid'       => false,
-				'sift_slug'      => null,
+				'is_valid'                => false,
+				'sift_slug'               => null,
 			),
 		);
 	}
