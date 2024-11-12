@@ -48,7 +48,7 @@ class PaymentTypeTest extends WP_UnitTestCase {
 	 * @return array An array of test runs and the data associated with each run.
 	 */
 	public function payment_type_provider(): array {
-		$order = new \WC_Order();
+		$order            = new \WC_Order();
 		$stripe_gateway   = new Payment_Gateway( 'stripe', $order );
 		$transact_gateway = new Payment_Gateway( 'transact', $order );
 		return array(
