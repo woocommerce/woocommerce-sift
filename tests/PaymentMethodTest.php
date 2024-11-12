@@ -58,8 +58,8 @@ class PaymentMethodTest extends WP_UnitTestCase {
 			->with( 'last4' )
 			->willReturn( $transact_card_last4 );
 
-		$stripe_gateway   = new Payment_Gateway( 'stripe' );
-		$transact_gateway = new Payment_Gateway( 'transact' );
+		$stripe_gateway   = new Payment_Gateway( 'stripe', $mock_order );
+		$transact_gateway = new Payment_Gateway( 'transact', $mock_order );
 		return array(
 			'Stripe\'s object returns the card_last4 property' => array(
 				'gateway'  => $stripe_gateway,
