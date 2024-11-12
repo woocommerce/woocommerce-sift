@@ -1,5 +1,7 @@
 <?php declare( strict_types=1 );
 
+use Sift_For_WooCommerce\Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
+
 add_filter( 'sift_for_woocommerce_stripe_payment_gateway_string', fn() => '$stripe' );
 
 add_filter(

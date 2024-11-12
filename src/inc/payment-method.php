@@ -29,9 +29,9 @@ class Payment_Method {
 	 * @param Payment_Gateway $gateway              The payment gateway in use.
 	 * @param string|null     $gateway_payment_type The payment type as referred to by the payment gateway plugin.
 	 *
-	 * @return string The normalized, sift-valid string value for this property.
+	 * @return null|string The normalized, sift-valid string value for this property if available.
 	 */
-	public static function get_payment_type_string( Payment_Gateway $gateway, ?string $gateway_payment_type = null ): string {
+	public static function get_payment_type_string( Payment_Gateway $gateway, ?string $gateway_payment_type = null ): ?string {
 		if ( empty( $gateway_payment_type ) ) {
 			return null;
 		}

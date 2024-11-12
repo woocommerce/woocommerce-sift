@@ -42,7 +42,7 @@ abstract class Sift_Property {
 	 *
 	 * @return string
 	 */
-	public function to_string(): string {
+	public function to_string(): ?string {
 		return $this->sift_slug;
 	}
 }
