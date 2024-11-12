@@ -53,7 +53,7 @@ class PaymentGatewayTest extends WP_UnitTestCase {
 				'sift_slug'      => '$stripe',
 			),
 			'Transact is a valid payment gateway'   => array(
-				'woo_gateway_id' => 'woocommerce_payments',
+				'woo_gateway_id' => 'woopayments',
 				'is_valid'       => true,
 				'sift_slug'      => '$stripe',
 			),

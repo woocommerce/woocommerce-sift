@@ -73,7 +73,7 @@ class PaymentTypeTest extends WP_UnitTestCase {
 				'gateway'      => $transact_gateway,
 				'payment_type' => 'sepa_debit',
 				'is_valid'     => false,
-				'sift_slug'    => '$sepa_direct_debit',
+				'sift_slug'    => null,
 			),
 		);
 	}

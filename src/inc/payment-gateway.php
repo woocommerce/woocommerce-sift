@@ -649,7 +649,7 @@ class Payment_Gateway extends Sift_Property {
 	 */
 	public static function normalize_payment_gateway_string( string $gateway_id ): ?string {
 		if ( 'transact' === strtolower( $gateway_id ) ) {
-			$gateway_id = 'woocommerce_payments';
+			$gateway_id = 'woopayments';
 		}
 		$payment_gateway = apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_gateway_string', $gateway_id ), '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		if ( static::is_valid_sift_slug( $payment_gateway ) ) {
