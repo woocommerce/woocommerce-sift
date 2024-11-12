@@ -14,9 +14,9 @@ class Payment_Method {
 	 *
 	 * @param Payment_Gateway $gateway The payment gateway in use.
 	 *
-	 * @return string The normalized, sift-valid string value for this property.
+	 * @return null|string The normalized, sift-valid string value for this property if valid.
 	 */
-	public static function get_payment_gateway_string( Payment_Gateway $gateway ): string {
+	public static function get_payment_gateway_string( Payment_Gateway $gateway ): ?string {
 		return $gateway->to_string();
 	}
 
