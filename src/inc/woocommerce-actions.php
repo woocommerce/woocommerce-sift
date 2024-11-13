@@ -6,6 +6,7 @@ namespace Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions;
 
 use WC_Order_Item_Product;
 use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift\SiftObjectValidator;
+use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift_Order;
 
 /**
  * Class Events
@@ -525,6 +526,7 @@ class Events {
 			'$amount'          => self::get_transaction_micros( $order->get_total() ),
 			'$currency_code'   => get_woocommerce_currency(),
 			'$items'           => $items,
+			'$payment_methods' => self::get_order_payment_methods( $order ),
 			'$shipping_method' => $physical_or_electronic,
 			'$browser'         => self::get_client_browser(),
 			'$site_domain'     => wp_parse_url( site_url(), PHP_URL_HOST ),
@@ -906,14 +908,29 @@ class Events {
 	}
 
 	/**
-	 * Return the amount of transaction "micros"
+	 * Get an array of the order's payment methods.
 	 *
-	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
+	 * Return data should conform to the expected format described here:
+	 * https://developers.sift.com/docs/curl/events-api/complex-field-types/payment-method
 	 *
-	 * @param float $price The price to format.
+	 * @param \WC_Order $order The Woo Order object.
 	 *
-	 * @return integer
+	 * @return array
 	 */
+	public static function get_order_payment_methods( \WC_Order $order ): array {
+		$sift_order = new Sift_Order( $order );
+		return $sift_order->get_payment_methods();
+	}
+
+	/**
+		* Return the amount of transaction "micros"
+		*
+		* @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
+		*
+		* @param float $price The price to format.
+		*
+		* @return integer
+		*/
 	public static function get_transaction_micros( float $price ) {
 		$currencies_without_decimals = array( 'JPY' );
 
