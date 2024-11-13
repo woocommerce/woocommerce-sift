@@ -605,6 +605,36 @@ class Events {
 	}
 
 	/**
+	 * Adds and event for chargebacks
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/chargeback
+	 *
+	 * @param string $order_id Order ID.
+	 * @param \WC_Order $order The order object.
+	 * @param array $chargeback_data Chargeback data.
+	 *
+	 * @return void
+	 */
+	public static function chargeback( string $order_id, \WC_Order $order, string $chargeback_reason ) {
+
+		// Assemble the properties for the chargeback event.
+		$properties = array(
+			'$order_id'          => (string) $order_id,
+			'$user_id'           => (string) $order->get_user_id(),
+			'$chargeback_reason' => (string) $chargeback_reason,
+			'$ip'                => self::get_client_ip(),
+		);
+
+		try {
+			SiftObjectValidator::validate_chargeback( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( '$chargeback', $properties );
+	}
+
+	/**
 	 * Enqueue an event to send.  This will enable sending them all at shutdown.
 	 *
 	 * @param string $event      The event we're recording -- generally will start with a $.
