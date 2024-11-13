@@ -85,7 +85,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	 *
 	 * E.g. ['key' => ['subkey' => 'value']] => ['key.subkey' => 'value']
 	 *
-	 * @param mixed $multidimensional_array Arbitrary array (most likely a SIFT event).
+	 * @param mixed $multidimensional_array Arbitrary array (most likely a Sift event).
 	 *
 	 * @return array
 	 */

@@ -175,8 +175,8 @@ dist
 # DynamoDB Local files
 .dynamodb/
 
-# TernJS port file
-.tern-port
+	# TernJS port file
+	.tern-port
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
@@ -385,3 +385,4 @@ $RECYCLE.BIN/
 *.code-workspace
 .phpunit.result.cache
 coverage.xml
+.wp-env.override.json
