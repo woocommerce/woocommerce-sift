@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-add_filter( 'sift_for_woocommerce_woopayments_payment_gateway_string', fn() => '$stripe' );
+add_filter( 'sift_for_woocommerce_woocommerce_payments_payment_gateway_string', fn() => '$stripe' );
 
 add_filter(
 	'sift_for_woocommerce_woocommerce_payments_payment_method_details_from_order',

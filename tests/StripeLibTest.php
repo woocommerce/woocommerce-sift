@@ -42,13 +42,41 @@ class StripeLibTest extends WP_UnitTestCase {
 				'payment_method'     => 'afterpay',
 				'expected_sift_slug' => '$afterpay',
 			),
-			'klarna is $klarna'         => array(
-				'payment_method'     => 'klarna',
-				'expected_sift_slug' => '$klarna',
+			'bancontact is $bancontact' => array(
+				'payment_method'     => 'bancontact',
+				'expected_sift_slug' => '$bancontact',
+			),
+			'boleto is $boleto'         => array(
+				'payment_method'     => 'boleto',
+				'expected_sift_slug' => '$boleto',
 			),
 			'card is $stripe'           => array(
 				'payment_method'     => 'card',
 				'expected_sift_slug' => '$stripe',
+			),
+			'clearpay is $afterpay'     => array(
+				'payment_method'     => 'clearpay',
+				'expected_sift_slug' => '$afterpay',
+			),
+			'eps is $eps'               => array(
+				'payment_method'     => 'eps',
+				'expected_sift_slug' => '$eps',
+			),
+			'ideal is $ideal'           => array(
+				'payment_method'     => 'ideal',
+				'expected_sift_slug' => '$ideal',
+			),
+			'link is $stripe'           => array(
+				'payment_method'     => 'link',
+				'expected_sift_slug' => '$stripe',
+			),
+			'klarna is $klarna'         => array(
+				'payment_method'     => 'klarna',
+				'expected_sift_slug' => '$klarna',
+			),
+			'oxxo is $cash'             => array(
+				'payment_method'     => 'oxxo',
+				'expected_sift_slug' => '$cash',
 			),
 			'stripe_boleto is $boleto'  => array(
 				'payment_method'     => 'stripe_boleto',
