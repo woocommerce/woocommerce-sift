@@ -13,7 +13,7 @@ use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift\SiftObjectValidator;
 class Events {
 	public static $to_send = array();
 
-	const SUPPORTED_STATUS_CHANGES = array(
+	const SUPPORTED_WOO_ORDER_STATUS_CHANGES = array(
 		'pending',
 		'processing',
 		'on-hold',
@@ -38,6 +38,7 @@ class Events {
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
 		add_action( 'woocommerce_update_order', array( static::class, 'update_order' ), 100, 2 );
+		add_action( 'woocommerce_order_applied_coupon', array( static::class, 'add_promotion' ), 100, 2 );
 
 		/**
 		 * We need to break this out into separate actions so we have the $status_transition available.
@@ -45,7 +46,7 @@ class Events {
 		 * This limits the number of supported status transitions so if we have an unsupported transition we need to
 		 * log it.
 		 */
-		foreach ( self::SUPPORTED_STATUS_CHANGES as $status ) {
+		foreach ( self::SUPPORTED_WOO_ORDER_STATUS_CHANGES as $status ) {
 			add_action( 'woocommerce_order_status_' . $status, array( static::class, 'change_order_status' ), 100, 3 );
 		}
 		// For unsupported actions.
@@ -80,6 +81,38 @@ class Events {
 				'$time'    => intval( 1000 * microtime( true ) ),
 			)
 		);
+	}
+
+	/**
+	 * Adds $add_promotion event
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/add-promotion
+	 *
+	 * @param \WC_Coupon $coupon Coupon used.
+	 * @param \WC_Order  $order  Order.
+	 *
+	 * @return void
+	 */
+	public static function add_promotion( \WC_Coupon $coupon, \WC_Order $order ): void {
+
+		$properties = array(
+			'$user_id'    => $order->get_user_id(),
+			'$promotions' => array(
+				'$promotion_id' => $coupon->get_id(),
+			),
+			'$ip'         => self::get_client_ip(),
+			'$browser'    => self::get_client_browser(),
+			'$time'       => intval( 1000 * microtime( true ) ),
+		);
+
+		try {
+			SiftObjectValidator::validate_add_promotion( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( '$add_promotion', $properties );
 	}
 
 	/**
@@ -186,7 +219,7 @@ class Events {
 			'$name'             => $user->display_name,
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
+			'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
 			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
 			'$browser'          => self::get_client_browser(),
@@ -236,6 +269,7 @@ class Events {
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
 			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
+			'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
 			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
 			'$browser'          => self::get_client_browser(),
@@ -354,7 +388,7 @@ class Events {
 				'$item_id'       => $cart_item_key,
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_title(),
-				'$price'         => $product->get_price() * 1000000, // $39.99
+				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => get_woocommerce_currency(),
 				'$quantity'      => $cart_item['quantity'],
 				'$category'      => $category,
@@ -403,7 +437,7 @@ class Events {
 				'$item_id'       => $product->get_id(),
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_title(),
-				'$price'         => $product->get_price() * 1000000, // $39.99
+				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => get_woocommerce_currency(),
 				'$quantity'      => $cart_item['quantity'],
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
@@ -469,7 +503,7 @@ class Events {
 				'$item_id'       => (string) $product->get_id(),
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_name(),
-				'$price'         => $product->get_price() * 1000000, // $39.99
+				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => $order->get_currency(), // For the order specifically, not the whole store.
 				'$quantity'      => $item->get_quantity(),
 				'$category'      => $category,
@@ -488,7 +522,7 @@ class Events {
 			'$order_id'        => $order_id,
 			'$verification_phone_number'
 				=> $order->get_billing_phone(),
-			'$amount'          => intval( $order->get_total() * 1000000 ), // Gotta multiply it up to give an integer.
+			'$amount'          => self::get_transaction_micros( $order->get_total() ),
 			'$currency_code'   => get_woocommerce_currency(),
 			'$items'           => $items,
 			'$shipping_method' => $physical_or_electronic,
@@ -530,7 +564,7 @@ class Events {
 	 * @return void
 	 */
 	public static function maybe_log_change_order_status( string $order_id, string $from, string $to ) {
-		if ( ! in_array( $to, self::SUPPORTED_STATUS_CHANGES, true ) ) {
+		if ( ! in_array( $to, self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
 			wc_get_logger()->error(
 				sprintf(
 					'Unsupported status change from %s to %s for order %s.',
@@ -541,6 +575,40 @@ class Events {
 			);
 		}
 	}
+
+	/**
+	 * Adds the event for transaction
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction
+	 *
+	 * @param \WC_Order $order            Order.
+	 * @param string    $status           Transaction status.
+	 * @param string    $transaction_type Transaction type.
+	 *
+	 * @return void
+	 */
+	public static function transaction( \WC_Order $order, string $status, string $transaction_type ) {
+		$properties = array(
+			'$user_id'            => (string) $order->get_user_id(),
+			'$amount'             => self::get_transaction_micros( $order->get_total() ), // Gotta multiply it up to give an integer.
+			'$currency_code'      => $order->get_currency(),
+			'$order_id'           => (string) $order->get_id(),
+			'$transaction_type'   => $transaction_type,
+			'$transaction_status' => $status,
+			'$time'               => intval( 1000 * microtime( true ) ),
+		);
+
+		try {
+			SiftObjectValidator::validate_transaction( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+
+			return;
+		}
+
+		self::add( '$transaction', $properties );
+	}
+
 
 	/**
 	 * Adds the event for the order status update
@@ -555,10 +623,6 @@ class Events {
 	 * @return void
 	 */
 	public static function change_order_status( string $order_id, \WC_Order $order, array $status_transition ) {
-		if ( ! in_array( $status_transition['to'], self::SUPPORTED_STATUS_CHANGES, true ) ) {
-			self::maybe_log_change_order_status( $order_id, $status_transition['from'], $status_transition['to'] );
-			return;
-		}
 
 		$properties = array(
 			'$user_id'      => (string) $order->get_user_id(),
@@ -578,13 +642,21 @@ class Events {
 			case 'processing':
 			case 'on-hold':
 				$properties['$order_status'] = '$held';
+				self::transaction( $order, '$pending', '$sale' );
 				break;
 			case 'completed':
 				$properties['$order_status'] = '$fulfilled';
+
+				// When the status is completed, we also queue the $transaction event
+				self::transaction( $order, '$success', '$sale' );
+				break;
+			case 'refunded':
+				self::transaction( $order, '$failure', '$refund' );
+				$properties['$order_status'] = '$canceled';
 				break;
 			case 'cancelled':
-			case 'refunded':
 			case 'failed':
+				self::transaction( $order, '$failure', '$sale' );
 				$properties['$order_status'] = '$canceled';
 				break;
 		}
@@ -831,5 +903,27 @@ class Events {
 		$payment_methods = apply_filters( 'sift_for_woocommerce_get_customer_payment_methods', $payment_methods, $user_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 		return $payment_methods ?? null;
+	}
+
+	/**
+	 * Return the amount of transaction "micros"
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
+	 *
+	 * @param float $price The price to format.
+	 *
+	 * @return integer
+	 */
+	public static function get_transaction_micros( float $price ) {
+		$currencies_without_decimals = array( 'JPY' );
+
+		$current_currency = get_woocommerce_currency();
+
+		if ( in_array( $current_currency, $currencies_without_decimals, true ) ) {
+			return intval( $price * 1000000 );
+		}
+
+		// For currencies with decimals
+		return intval( $price * 10000 );
 	}
 }
