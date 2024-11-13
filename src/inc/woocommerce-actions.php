@@ -756,6 +756,62 @@ class Events {
 	}
 
 	/**
+	 * Adds and event for chargebacks
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/chargeback
+	 *
+	 * @param string $order_id Order ID.
+	 * @param \WC_Order $order The order object.
+	 * @param array $chargeback_data Chargeback data.
+	 *
+	 * @return void
+	 */
+	public static function chargeback( string $order_id, \WC_Order $order, string $chargeback_reason ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$chargeback ) ) {
+			return;
+		}
+
+		// Assemble the properties for the chargeback event.
+		$properties = array(
+			'$order_id'          => (string) $order_id,
+			'$user_id'           => (string) $order->get_user_id(),
+			'$chargeback_reason' => (string) $chargeback_reason,
+			'$ip'                => self::get_client_ip(),
+		);
+
+		try {
+			SiftObjectValidator::validate_chargeback( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( Sift_Event_Types::$chargeback, $properties );
+	}
+
+	/**
+	 * Enqueue an event to send.  This will enable sending them all at shutdown.
+	 *
+	 * @param string $event      The event we're recording -- generally will start with a $.
+	 * @param array  $properties An array of the data we're passing along to Sift.  Keys will generally start with a $.
+	 *
+	 * @return void
+	 */
+	public static function add( string $event, array $properties ) {
+		if ( 'localhost' === ( $properties['$site_domain'] ?? '' ) ) {
+			$properties['$site_domain'] = 'george-test-local.woocommerce.com';
+		}
+
+		array_push(
+			self::$to_send,
+			array(
+				'event'      => $event,
+				'properties' => $properties,
+			)
+		);
+	}
+
+	/**
 	 * Return how many events have been registered thus far and are queued up to send.
 	 *
 	 * @return integer
