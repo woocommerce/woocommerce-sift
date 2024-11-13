@@ -17,6 +17,8 @@ require_once __DIR__ . '/inc/abuse-decisions.php';
 
 defined( 'ABSPATH' ) || exit;
 
+
+const FILTER_EVENT_ENABLE_PREFIX = 'wc_sift_for_woocommerce_enable_';
 /**
  * Main plugin class.
  *

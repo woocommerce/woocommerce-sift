@@ -6,6 +6,8 @@ namespace Sift_For_WooCommerce\WC_Settings_Tab;
 
 use Sift_For_WooCommerce\Sift_For_WooCommerce;
 
+use const Sift_For_WooCommerce\Sift_For_WooCommerce\FILTER_EVENT_ENABLE_PREFIX;
+
 /**
  * Filter to slip in our settings tab.
  *
@@ -217,7 +219,7 @@ function build_events_settings_events_array( array $events): array {
 			$event_id = $event_settings['id'] ?? $event_key;
 			$event_id = str_replace( '-', '_', $event_id );
 			// Allow to disable from sidecar plugin
-			$disabled = apply_filters( 'sift_for_woocommerce_section_events_option_' . $event_id, $event_settings['disabled'] ?? false );
+			$disabled = apply_filters( FILTER_EVENT_ENABLE_PREFIX . $event_id, $event_settings['disabled'] ?? false );
 
 			$description = '';
 			if( isset( $event_settings['desc'] ) ) {
@@ -226,10 +228,10 @@ function build_events_settings_events_array( array $events): array {
 
 			$settings[ $event_key . '_event'] = array(
 				'type' => 'checkbox',
-				'field_name' => 'wc_sift_for_woocommerce_enable_' . $event_id,
+				'field_name' => FILTER_EVENT_ENABLE_PREFIX . $event_id,
 				'disabled' => $disabled,
 				'desc' => __( $event_name . ' '. $description . '<small><a target="_blank" href="'. $event_settings['url'] .'">' . __( '(documentation)', 'sift-for-woocommerce' ) . '</a></small>', 'sift-for-woocommerce' ),
-				'id'   => 'wc_sift_for_woocommerce_enable_' . $event_id,
+				'id'   => FILTER_EVENT_ENABLE_PREFIX . $event_id,
 			);
 		}
 		$settings[ $content_key . '_subtitle_end'] = array(

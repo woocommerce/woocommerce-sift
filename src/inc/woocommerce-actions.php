@@ -5,6 +5,7 @@
 namespace Sift_For_WooCommerce\WooCommerce_Actions;
 
 use WC_Order_Item_Product;
+use const Sift_For_WooCommerce\FILTER_EVENT_ENABLE_PREFIX;
 use Sift_For_WooCommerce\Sift\SiftObjectValidator;
 use Sift_For_WooCommerce\Sift_Order;
 
@@ -38,7 +39,8 @@ class Events {
 		add_action( 'wp_set_password', array( static::class, 'update_password' ), 100, 2 );
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
-		add_action( 'woocommerce_update_order', array( static::class, 'update_order' ), 100, 2 );
+		add_action( 'woocommerce_new_order', array( static::class, 'create_order' ), 100, 2 );
+		add_action( 'woocommerce_update_order', array( static::class, 'update_or_create_order' ), 100, 2 );
 		add_action( 'woocommerce_order_applied_coupon', array( static::class, 'add_promotion' ), 100, 2 );
 
 		/**
@@ -73,6 +75,10 @@ class Events {
 	 * @return void
 	 */
 	public static function logout( string $user_id ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'logout', true ) ) {
+			return;
+		}
+
 		self::add(
 			'$logout',
 			array(
@@ -95,6 +101,10 @@ class Events {
 	 * @return void
 	 */
 	public static function add_promotion( \WC_Coupon $coupon, \WC_Order $order ): void {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'add_promotion', true ) ) {
+			return;
+		}
 
 		$properties = array(
 			'$user_id'    => $order->get_user_id(),
@@ -127,6 +137,11 @@ class Events {
 	 * @return void
 	 */
 	public static function login_success( string $username, object $user ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'login', true ) ) {
+			return;
+		}
+
 		$properties = array(
 			'$user_id'       => (string) $user->ID,
 			'$login_status'  => '$success',
@@ -164,6 +179,11 @@ class Events {
 	 * @return void
 	 */
 	public static function login_failure( string $username, \WP_Error $error ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'login', true ) ) {
+			return;
+		}
+
 		$attempted_user = get_user_by( 'login', $username );
 		$user_id        = null;
 		if ( is_object( $attempted_user ) ) {
@@ -219,6 +239,11 @@ class Events {
 	 * @return void
 	 */
 	public static function create_account( string $user_id ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'create_account', true ) ) {
+			return;
+		}
+
 		$user = get_user_by( 'id', $user_id );
 
 		$properties = array(
@@ -264,6 +289,11 @@ class Events {
 	 * @return void
 	 */
 	public static function update_account( string $user_id, ?\WP_User $old_user_data = null, ?array $new_user_data = null ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_account', true ) ) {
+			return;
+		}
+
 		$user = get_user_by( 'id', $user_id );
 
 		// check if the password changed
@@ -310,6 +340,11 @@ class Events {
 	 * @return void
 	 */
 	public static function update_password( string $new_password, string $user_id ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_password', true ) ) {
+			return;
+		}
+
 		// We are immediately setting this to null, so that it is not inadvertently shared or disclosed.
 		$new_password = null;
 
@@ -347,6 +382,11 @@ class Events {
 	 * @return void
 	 */
 	public static function link_session_to_user( string $session_id, string $user_id ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'link_session_to_user', true ) ) {
+			return;
+		}
+
 		$properties = array(
 			'$user_id'    => $user_id,
 			'$session_id' => $session_id,
@@ -374,6 +414,11 @@ class Events {
 	 * @return void
 	 */
 	public static function add_to_cart( string $cart_item_key ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'add_item_to_cart', true ) ) {
+			return;
+		}
+
 		$cart_item = \WC()->cart->get_cart_item( $cart_item_key );
 		// phpcs:ignore
 		/** @var \WC_Product $product */
@@ -434,6 +479,11 @@ class Events {
 	 * @return void
 	 */
 	public static function remove_from_cart( string $cart_item_key, \WC_Cart $cart ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'remove_item_from_cart', true ) ) {
+			return;
+		}
+
 		$cart_item = $cart->get_cart_item( $cart_item_key );
 		$product   = $cart_item['data'];
 		$user      = wp_get_current_user();
@@ -471,19 +521,49 @@ class Events {
 	}
 
 	/**
+	 * Adds event for order creation
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/create-order
+	 *
+	 * @param string $order_id
+	 * @param \WC_Order $order
+	 *
+	 * @return void
+	 */
+	public static function create_order( string $order_id, \WC_Order $order ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'create_order', true ) ) {
+			return;
+		}
+
+		static::update_or_create_order( $order_id, $order, true );
+	}
+
+	/**
 	 * Adds event for order creation/update.
 	 *
 	 * The $create_order and $update_order events are identical.  When an $update_order event is called it will overwrite
 	 * any existing $create_order event with the same $order_id, so we'll combine the two into a single function.
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-order
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/create-order
 	 *
-	 * @param string    $order_id Order id.
-	 * @param \WC_Order $order    The Order object.
+	 * @param string    $order_id     Order id.
+	 * @param \WC_Order $order        The Order object.
+	 * @param bool      $create_order True if this is called as part of the order creation.
 	 *
 	 * @return void
 	 */
-	public static function update_order( string $order_id, \WC_Order $order ) {
+	public static function update_or_create_order( string $order_id, \WC_Order $order, bool $create_order = false ) {
+
+		if ( ! in_array( $order->get_status(), self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
+			return;
+		}
+
+		if ( !$create_order && ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_order', true ) ) {
+			return;
+		}
+
 		$user = wp_get_current_user();
 
 		$physical_or_electronic = '$electronic';
@@ -559,7 +639,7 @@ class Events {
 		}
 
 		self::add(
-			'$update_order',
+			$create_order ? '$create_order': '$update_order',
 			$properties
 		);
 	}
@@ -598,6 +678,11 @@ class Events {
 	 * @return void
 	 */
 	public static function transaction( \WC_Order $order, string $status, string $transaction_type ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'transaction', true ) ) {
+			return;
+		}
+
 		$properties = array(
 			'$user_id'            => (string) $order->get_user_id(),
 			'$amount'             => self::get_transaction_micros( floatval( $order->get_total() ) ), // Gotta multiply it up to give an integer.
@@ -633,6 +718,10 @@ class Events {
 	 * @return void
 	 */
 	public static function change_order_status( string $order_id, \WC_Order $order, array $status_transition ) {
+
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'order_status', true ) ) {
+			return;
+		}
 
 		$properties = array(
 			'$user_id'      => (string) $order->get_user_id(),
