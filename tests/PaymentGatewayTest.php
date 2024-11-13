@@ -1,8 +1,6 @@
 <?php
 /**
  * Class PaymentGatewayTest
- *
- * @package Sift_Decisions
  */
 
 use Sift_For_WooCommerce\Sift_For_WooCommerce\Payment_Gateway;
