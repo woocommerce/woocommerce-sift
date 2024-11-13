@@ -920,17 +920,17 @@ class Events {
 	public static function get_order_payment_methods( \WC_Order $order ): array {
 		$sift_order = new Sift_Order( $order );
 		return $sift_order->get_payment_methods();
-  }
-  
-  /**
-	 * Return the amount of transaction "micros"
-	 *
-	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
-	 *
-	 * @param float $price The price to format.
-	 *
-	 * @return integer
-	 */
+	}
+
+	/**
+		* Return the amount of transaction "micros"
+		*
+		* @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
+		*
+		* @param float $price The price to format.
+		*
+		* @return integer
+		*/
 	public static function get_transaction_micros( float $price ) {
 		$currencies_without_decimals = array( 'JPY' );
 
