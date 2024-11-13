@@ -4,6 +4,9 @@ namespace Sift_For_WooCommerce\Sift_For_WooCommerce\PaymentGateways;
 
 use Sift_For_WooCommerce\Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
 
+/**
+ * Utility functions used by multiple filters when working with the woocommerce-gateway-stripe plugin.
+ */
 class WooCommerce_Gateway_Stripe_Utils {
 
 	/**
