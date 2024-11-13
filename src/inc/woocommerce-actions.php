@@ -44,6 +44,7 @@ class Events {
 		add_action( 'woocommerce_new_order', array( static::class, 'create_order' ), 100, 2 );
 		add_action( 'woocommerce_update_order', array( static::class, 'update_or_create_order' ), 100, 2 );
 		add_action( 'woocommerce_order_applied_coupon', array( static::class, 'add_promotion' ), 100, 2 );
+		add_action( 'sift_for_woocommerce_chargeback', array( __CLASS__, 'chargeback' ), 100, 3 );
 
 		/**
 		 * We need to break this out into separate actions so we have the $status_transition available.
