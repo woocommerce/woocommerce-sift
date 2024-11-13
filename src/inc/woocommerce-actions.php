@@ -75,7 +75,7 @@ class Events {
 	 * @return void
 	 */
 	public static function logout( string $user_id ) {
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'logout', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'logout', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -102,7 +102,7 @@ class Events {
 	 */
 	public static function add_promotion( \WC_Coupon $coupon, \WC_Order $order ): void {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'add_promotion', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'add_promotion', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -138,7 +138,7 @@ class Events {
 	 */
 	public static function login_success( string $username, object $user ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'login', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'login', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -180,7 +180,7 @@ class Events {
 	 */
 	public static function login_failure( string $username, \WP_Error $error ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'login', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'login', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -240,7 +240,7 @@ class Events {
 	 */
 	public static function create_account( string $user_id ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'create_account', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'create_account', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -290,7 +290,7 @@ class Events {
 	 */
 	public static function update_account( string $user_id, ?\WP_User $old_user_data = null, ?array $new_user_data = null ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_account', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_account', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -341,7 +341,7 @@ class Events {
 	 */
 	public static function update_password( string $new_password, string $user_id ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_password', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_password', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -383,7 +383,7 @@ class Events {
 	 */
 	public static function link_session_to_user( string $session_id, string $user_id ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'link_session_to_user', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'link_session_to_user', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -415,7 +415,7 @@ class Events {
 	 */
 	public static function add_to_cart( string $cart_item_key ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'add_item_to_cart', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'add_item_to_cart', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -480,7 +480,7 @@ class Events {
 	 */
 	public static function remove_from_cart( string $cart_item_key, \WC_Cart $cart ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'remove_item_from_cart', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'remove_item_from_cart', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -525,14 +525,14 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/create-order
 	 *
-	 * @param string $order_id
-	 * @param \WC_Order $order
+	 * @param string    $order_id Order id.
+	 * @param \WC_Order $order    The Order object.
 	 *
 	 * @return void
 	 */
 	public static function create_order( string $order_id, \WC_Order $order ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'create_order', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'create_order', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -550,7 +550,7 @@ class Events {
 	 *
 	 * @param string    $order_id     Order id.
 	 * @param \WC_Order $order        The Order object.
-	 * @param bool      $create_order True if this is called as part of the order creation.
+	 * @param boolean   $create_order True if this is called as part of the order creation.
 	 *
 	 * @return void
 	 */
@@ -560,7 +560,7 @@ class Events {
 			return;
 		}
 
-		if ( !$create_order && ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_order', true ) ) {
+		if ( ! $create_order && ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_order', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -639,7 +639,7 @@ class Events {
 		}
 
 		self::add(
-			$create_order ? '$create_order': '$update_order',
+			$create_order ? '$create_order' : '$update_order',
 			$properties
 		);
 	}
@@ -679,7 +679,7 @@ class Events {
 	 */
 	public static function transaction( \WC_Order $order, string $status, string $transaction_type ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'transaction', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'transaction', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -719,7 +719,7 @@ class Events {
 	 */
 	public static function change_order_status( string $order_id, \WC_Order $order, array $status_transition ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'order_status', true ) ) {
+		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'order_status', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 

@@ -30,8 +30,13 @@ function settings_tab() {
 	woocommerce_admin_fields( get_sift_for_woocommerce_events_settings() );
 }
 
+/**
+ * Enqueue the script that allow syncing chackboxes for events in admin.
+ *
+ * @return void
+ */
 function enqueue_checkboxes_sync_js() {
-	wp_enqueue_script( 'checkboxes-sync', plugin_dir_url( __FILE__ ) . 'checkboxes-sync.js', array(), '1.0' );
+	wp_enqueue_script( 'checkboxes-sync', plugin_dir_url( __FILE__ ) . 'checkboxes-sync.js', array(), '1.0', array( 'in_footer' => true ) );
 }
 
 /**
@@ -42,7 +47,6 @@ function enqueue_checkboxes_sync_js() {
 function update_settings() {
 	woocommerce_update_options( get_sift_for_woocommerce_sift_settings() );
 	woocommerce_update_options( get_sift_for_woocommerce_events_settings() );
-
 }
 
 /**
@@ -121,64 +125,66 @@ function get_sift_for_woocommerce_events_settings() {
 	$events = array(
 		'Content Abuse' => array(
 			'$create-content'           => array(
-				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-content'
+				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-content',
 			),
 			'$update_content'           => array(
-				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/update-content'
+				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/update-content',
 			),
 			'$content_status'           => array(
-				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/content_status'
+				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/content_status',
 			),
 			'$flag-content'             => array(
-				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/flag-content'
+				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/flag-content',
 			),
 			'$create_content (review)'  => array(
 				'key' => 'create_content_review',
 				'id'  => 'create-content', // Allow preventing duplication with keys
-				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-content/review'
+				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-content/review',
 			),
 			'$create_content (message)' => array(
 				'key' => 'create_content_message',
 				'id'  => 'create-content', // Allow preventing duplication with keys
-				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-content/message'
-			)
-		),
-		'Promo Abuse' => array(
-			'$create-account' => array(
-				'desc'     => __( 'if promotions are added at account creation.', 'sift-for-woocommerce' ),
-				'url'      => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-account'
+				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-content/message',
 			),
-			'$create-order' => array(
-				'desc'     => __('if promotions are applied on the order.', 'sift-for-woocommerce' ),
-				'url'      => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-order'
+		),
+		'Promo Abuse'   => array(
+			'$create-account' => array(
+				'desc' => __( 'if promotions are added at account creation.', 'sift-for-woocommerce' ),
+				'url'  => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-account',
+			),
+			'$create-order'   => array(
+				'desc' => __( 'if promotions are applied on the order.', 'sift-for-woocommerce' ),
+				'url'  => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-order',
 			),
 			'$add-promotion'  => array(
 				'desc' => __( 'if promotions are applied as a separate event.', 'sift-for-woocommerce' ),
-				'url'  => 'https://developers.sift.com/docs/curl/events-api/reserved-events/add-promotion'
-			)
+				'url'  => 'https://developers.sift.com/docs/curl/events-api/reserved-events/add-promotion',
+			),
 		),
 		'Payment Abuse' => array(
 			'$transaction'  => array( 'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/transaction' ),
 			'$create-order' => array(
 				'key' => 'create_order_payment_abuse',
 				'id'  => 'create-order',
-				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-order' ),
+				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-order',
+			),
 			'$update-order' => array( 'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/update-order' ),
-			'$chargeback'   => array( 'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/chargeback' )
+			'$chargeback'   => array( 'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/chargeback' ),
 		),
 		'Account Abuse' => array(
 			'$create-account' => array(
 				'key' => 'create_account_account_abuse',
 				'id'  => 'create-account',
-				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-account' ),
+				'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/create-account',
+			),
 			'$update-account' => array( 'url' => 'https://developers.sift.com/docs/curl/events-api/reserved-events/update-account' ),
-		)
+		),
 	);
 
 	$events_settings_array = build_events_settings_events_array( $events );
 
 	$settings = array(
-		'section_title'    => array(
+		'section_title' => array(
 			'name' => __( 'Sift Events', 'sift-for-woocommerce' ),
 			'type' => 'title',
 			'desc' => __( 'The events sent to Sift <a target="_blank" href="https://developers.sift.com/tutorials/add-an-abuse-type">https://developers.sift.com/tutorials/add-an-abuse-type</a>', 'sift-for-woocommerce' ),
@@ -187,63 +193,68 @@ function get_sift_for_woocommerce_events_settings() {
 	);
 
 	foreach ( array_keys( $events_settings_array ) as $key ) {
-		$settings[ $key ] = $events_settings_array[$key];
+		$settings[ $key ] = $events_settings_array[ $key ];
 	}
 
 	$settings['section_end'] = array(
-			'type' => 'sectionend',
-			'id'   => 'wc_sift_for_woocommerce_section_events_end',
+		'type' => 'sectionend',
+		'id'   => 'wc_sift_for_woocommerce_section_events_end',
 	);
 
 	return apply_filters( 'sift_for_woocommerce_events_settings', $settings ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 }
 
 /**
- * @param array $events
+ * Build events settings for admin.
+ *
+ * @param array $events_settings Event settings.
  *
  * @return array[]
  */
-function build_events_settings_events_array( array $events): array {
+function build_events_settings_events_array( array $events_settings ): array {
 
-	$settings= array();
-	foreach ( array_keys( $events ) as $abuse_key ) {
+	$settings = array();
+	foreach ( array_keys( $events_settings ) as $abuse_key ) {
 		$content_key = str_replace( ' ', '_', strtolower( $abuse_key ) );
-		$settings[ $content_key . '_subtitle'] = array(
+
+		$settings[ $content_key . '_subtitle' ] = array(
 			'type' => 'title',
-			'desc' => '<h4>' . __( $abuse_key, 'sift-for-woocommerce' ) . '</h4>',
+			'desc' => '<h4>' . $abuse_key . '</h4>',
 			'id'   => 'wc_sift_for_woocommerce_section_events_title_' . $content_key,
 		);
-		foreach ( $events[ $abuse_key ] as $event_name => $event_settings ) {
+
+		foreach ( $events_settings[ $abuse_key ] as $event_name => $event_settings ) {
 			$event_key = $event_settings['key'] ?? str_replace( array( ' ', '(', ')' ), '_', strtolower( $event_name ) );
 			$event_key = str_replace( '$', '', $event_key );
+
 			$event_id = $event_settings['id'] ?? $event_key;
 			$event_id = str_replace( '-', '_', $event_id );
+
 			// Allow to disable from sidecar plugin
-			$disabled = apply_filters( FILTER_EVENT_ENABLE_PREFIX . $event_id, $event_settings['disabled'] ?? false );
+			$disabled = apply_filters( FILTER_EVENT_ENABLE_PREFIX . $event_id, $event_settings['disabled'] ?? false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 
 			$description = '';
-			if( isset( $event_settings['desc'] ) ) {
+			if ( isset( $event_settings['desc'] ) ) {
 				$description = ' - <i>' . $event_settings['desc'] . '</i> ';
 			}
 
-			$settings[ $event_key . '_event'] = array(
-				'type' => 'checkbox',
+			$settings[ $event_key . '_event' ] = array(
+				'type'       => 'checkbox',
 				'field_name' => FILTER_EVENT_ENABLE_PREFIX . $event_id,
-				'disabled' => $disabled,
-				'desc' => __( $event_name . ' '. $description . '<small><a target="_blank" href="'. $event_settings['url'] .'">' . __( '(documentation)', 'sift-for-woocommerce' ) . '</a></small>', 'sift-for-woocommerce' ),
-				'id'   => FILTER_EVENT_ENABLE_PREFIX . $event_id,
+				'disabled'   => $disabled,
+				'desc'       => $event_name . ' ' . $description . '<small><a target="_blank" href="' . $event_settings['url'] . '">' . __( '(documentation)', 'sift-for-woocommerce' ) . '</a></small>',
+				'id'         => FILTER_EVENT_ENABLE_PREFIX . $event_id,
 			);
 		}
-		$settings[ $content_key . '_subtitle_end'] = array(
-			'name' => __( $abuse_key, 'sift-for-woocommerce' ),
+		$settings[ $content_key . '_subtitle_end' ] = array(
+			'name' => $abuse_key,
 			'type' => 'sectionend',
-			'desc' => __( $abuse_key, 'sift-for-woocommerce' ),
+			'desc' => $abuse_key,
 			'id'   => 'wc_sift_for_woocommerce_section_events_end_' . $content_key,
 		);
 	}
 
 	return $settings;
-
 }
 
 /**
