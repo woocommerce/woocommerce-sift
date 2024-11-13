@@ -30,6 +30,25 @@ class Stripe {
 	}
 
 	/**
+	 * Get the order ID from the Stripe charge ID.
+	 *
+	 * @param string $charge_id The Stripe charge ID.
+	 *
+	 * @return int|null The order ID, or null if not found.
+	 */
+	public static function get_order_from_charge_id( string $charge_id ): ?int {
+		$response = \WC_Stripe_API::request( array(), "charges/$charge_id", 'GET' );
+
+		if ( empty( $response ) || ! empty( $response->error ) ) {
+			return null;
+		}
+
+		$order_id = $response->metadata->order_id ?? null;
+
+		return $order_id ? (int) $order_id : null;
+	}
+
+	/**
 	 * Get payment method from order.
 	 *
 	 * @param \WC_Order $order The WC Order.
@@ -252,5 +271,41 @@ class Stripe {
 				return '$electronic_fund_transfer';
 		}
 		return null;
+	}
+
+	/**
+	 * Convert a dispute reason from a string that Stripe would use to a string that Sift would use.
+	 *
+	 * @param string $dispute_reason A dispute reason string that Stripe would use.
+	 *
+	 * @return string|null A dispute reason string that Sift would use.
+	 */
+	public static function convert_dispute_reason_to_sift_chargeback_reason( string $dispute_reason ): ?string {
+		switch ( $dispute_reason ) {
+			case 'fraudulent':
+				return '$fraud';
+			case 'duplicate':
+				return '$duplicate';
+			case 'product_not_received':
+				return '$product_not_received';
+			case 'product_unacceptable':
+				return '$product_unacceptable';
+			case 'subscription_canceled':
+				return '$cancel_subscription';
+			case 'debit_not_authorized':
+				return '$authorization';
+			case 'bank_cannot_process':
+			case 'check_returned':
+			case 'credit_not_processed':
+			case 'general':
+			case 'incorrect_account_details':
+			case 'insufficient_funds':
+			case 'unrecognized':
+				return '$processing_errors';
+			case 'customer_initiated':
+				return '$consumer_disputes';
+			default:
+				return null;
+		}
 	}
 }
