@@ -39,6 +39,7 @@ class Sift_For_WooCommerce {
 		add_filter( 'woocommerce_settings_tabs_array', __NAMESPACE__ . '\WC_Settings_Tab\add_settings_tab', 50 );
 		add_action( 'woocommerce_settings_tabs_sift_for_woocommerce', __NAMESPACE__ . '\WC_Settings_Tab\settings_tab' );
 		add_action( 'woocommerce_update_options_sift_for_woocommerce', __NAMESPACE__ . '\WC_Settings_Tab\update_settings' );
+		add_action( 'admin_enqueue_scripts', __NAMESPACE__ .'\WC_Settings_Tab\enqueue_checkboxes_sync_js' );
 
 		add_action( 'wp_body_open', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Core's implementation! https://make.wordpress.org/themes/2019/03/29/addition-of-new-wp_body_open-hook/
 		add_action( 'genesis_before', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Genesis
