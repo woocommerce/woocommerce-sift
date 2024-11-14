@@ -70,11 +70,11 @@ class PaymentTypeTest extends WP_UnitTestCase {
 				'is_valid'     => true,
 				'sift_slug'    => '$credit_card',
 			),
-			'Transact\'s "sepa_debit" type is an invalid payment type' => array(
+			'Transact\'s "sepa_debit" type is a valid payment type' => array(
 				'gateway'      => $transact_gateway,
 				'payment_type' => 'sepa_debit',
-				'is_valid'     => false,
-				'sift_slug'    => null,
+				'is_valid'     => true,
+				'sift_slug'    => '$sepa_direct_debit',
 			),
 		);
 	}
