@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types=1 );
 
 namespace Sift_For_WooCommerce\Tracking_Js;
 
