@@ -34,7 +34,7 @@ class Stripe {
 	 *
 	 * @param string $charge_id The Stripe charge ID.
 	 *
-	 * @return int|null The order ID, or null if not found.
+	 * @return integer|null The order ID, or null if not found.
 	 */
 	public static function get_order_from_charge_id( string $charge_id ): ?int {
 		$response = \WC_Stripe_API::request( array(), "charges/$charge_id", 'GET' );

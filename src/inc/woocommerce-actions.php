@@ -681,11 +681,12 @@ class Events {
 
 	/**
 	 * Adds and event for chargebacks
+	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/chargeback
 	 *
-	 * @param string $order_id Order ID.
-	 * @param \WC_Order $order The order object.
-	 * @param array $chargeback_data Chargeback data.
+	 * @param string    $order_id          Order ID.
+	 * @param \WC_Order $order             The order object.
+	 * @param string    $chargeback_reason Chargeback data.
 	 *
 	 * @return void
 	 */
