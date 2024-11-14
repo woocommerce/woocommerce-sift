@@ -5,7 +5,6 @@ add_filter( 'sift_for_woocommerce_woocommerce_payments_payment_gateway_string', 
 add_filter(
 	'sift_for_woocommerce_woocommerce_payments_payment_method_details_from_order',
 	function ( $value, \WC_Order $order ) {
-		echo '[getting payment method details from order]';
 		try {
 			$charge_id  = \WC_Payments::get_order_service()->get_charge_id_for_order( $order );
 			$api_client = \WC_Payments::get_payments_api_client();
@@ -20,7 +19,6 @@ add_filter(
 add_filter(
 	'sift_for_woocommerce_woocommerce_payments_charge_details_from_order',
 	function ( $value, \WC_Order $order ) {
-		echo '[getting charge details from order]';
 		try {
 			$charge_id  = \WC_Payments::get_order_service()->get_charge_id_for_order( $order );
 			$api_client = \WC_Payments::get_payments_api_client();
