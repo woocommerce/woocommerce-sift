@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Tests\Mocks;
+namespace Sift_For_WooCommerce\Tests\Mocks;
 
-use function Sift_For_WooCommerce\Sift_For_WooCommerce\Tests\Mocks\Utils\build_mock_stripe_payment_method_object;
+use function Sift_For_WooCommerce\Tests\Mocks\Utils\build_mock_stripe_payment_method_object;
 
 require_once __DIR__ . '/utils.php';
 

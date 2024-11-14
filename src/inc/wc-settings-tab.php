@@ -2,9 +2,9 @@
 
 // phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\WC_Settings_Tab;
+namespace Sift_For_WooCommerce\WC_Settings_Tab;
 
-use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift_For_WooCommerce;
+use Sift_For_WooCommerce\Sift_For_WooCommerce;
 
 /**
  * Filter to slip in our settings tab.

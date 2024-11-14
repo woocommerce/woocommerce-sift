@@ -7,7 +7,7 @@
 
 // phpcs:disable Universal.Arrays.DisallowShortArraySyntax.Found
 
-use Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions\Events;
+use Sift_For_WooCommerce\WooCommerce_Actions\Events;
 
 /**
  * Events test case.

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce;
+namespace Sift_For_WooCommerce;
 
 /**
  * An abstract class which is the basis for a string or object representing a property as a complex data type in the Sift API.

@@ -3,7 +3,7 @@
  * Class PaymentGatewayTest
  */
 
-use Sift_For_WooCommerce\Sift_For_WooCommerce\Payment_Gateway;
+use Sift_For_WooCommerce\Payment_Gateway;
 
 require_once __DIR__ . '/../src/inc/payment-gateway.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/index.php';

@@ -3,7 +3,7 @@
  * Class StripeLibTest
  */
 
-use Sift_For_WooCommerce\Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
+use Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
 
 require_once __DIR__ . '/../src/inc/payment-gateways/lib/stripe.php';
 

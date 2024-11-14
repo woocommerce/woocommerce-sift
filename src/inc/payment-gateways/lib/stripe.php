@@ -1,6 +1,6 @@
 <?php declare( strict_types=1 );
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\PaymentGateways\Lib;
+namespace Sift_For_WooCommerce\PaymentGateways\Lib;
 
 /**
  * A class to share Stripe-specific logic with payment gateways that use Stripe in some way.

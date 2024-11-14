@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Tests;
+namespace Sift_For_WooCommerce\Tests;
 
-use Sift_For_WooCommerce\Sift_For_WooCommerce\Payment_Gateway;
-use Sift_For_WooCommerce\Sift_For_WooCommerce\Payment_Method;
-use Sift_For_WooCommerce\Sift_For_WooCommerce\Tests\Mocks\WC_Payments_API_Charge;
+use Sift_For_WooCommerce\Payment_Gateway;
+use Sift_For_WooCommerce\Payment_Method;
+use Sift_For_WooCommerce\Tests\Mocks\WC_Payments_API_Charge;
 
-use function Sift_For_WooCommerce\Sift_For_WooCommerce\Tests\Mocks\Utils\build_mock_stripe_payment_method_object;
+use function Sift_For_WooCommerce\Tests\Mocks\Utils\build_mock_stripe_payment_method_object;
 
 require_once __DIR__ . '/../src/inc/sift-property.php';
 require_once __DIR__ . '/../src/inc/payment-gateway.php';
