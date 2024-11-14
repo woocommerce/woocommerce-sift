@@ -12,7 +12,7 @@ namespace Sift_For_WooCommerce\Sift_For_WooCommerce\WC_Settings_Tab;
  * @return array
  */
 function add_settings_tab( array $settings_tabs ) {
-	$settings_tabs['sift_for_woocommerce'] = __( 'Sift Decisions', 'sift-for-woocommerce' );
+	$settings_tabs['sift_for_woocommerce'] = __( 'Sift for WooCommerce', 'sift-for-woocommerce' );
 	return $settings_tabs;
 }
 
