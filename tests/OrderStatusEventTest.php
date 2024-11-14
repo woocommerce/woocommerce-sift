@@ -69,8 +69,8 @@ class OrderStatusEventTest extends EventTest {
 		$order->update_status( 'gold', '', true );
 		$events = static::filter_events( [ 'event' => '$update_order' ] );
 		static::assertEquals( 0, count( $events ), 'An $update_order event was found' );
-		static::assertGreaterThanOrEqual( 1, count( static::$errors) , count(static::$errors) . ' Errors were found instead of 1' );
-		static::assertTrue( str_starts_with( static::$errors[0], 'Unsupported status change from cancelled to gold' ),  'Does not start with Gold status' );
+		static::assertGreaterThanOrEqual( 1, count( static::$errors ), count( static::$errors ) . ' Errors were found instead of 1' );
+		static::assertTrue( str_starts_with( static::$errors[0], 'Unsupported status change from cancelled to gold' ), 'Does not start with Gold status' );
 
 		// Clean up
 		remove_filter( 'wc_order_statuses', $gold_status_filter );
