@@ -29,7 +29,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	 * @throws \Exception If an error log occurs.
 	 */
 	public static function log_watcher( $message, $level ) {
-		// if an error log occurs, throw an exception
+		// if an error log occurs, add it to the list
 		if ( 'error' === $level ) {
 			static::$errors[] = $message;
 		}
