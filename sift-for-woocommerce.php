@@ -44,7 +44,7 @@ if ( ! is_file( __DIR__ . '/vendor/autoload.php' ) ) {
 	add_action(
 		'admin_notices',
 		static function () {
-			$message      = __( 'It seems like <strong>Sift Decisions</strong> is corrupted. Please reinstall!', 'sift-for-woocommerce' );
+			$message      = __( 'It seems like <strong>Sift for WooCommerce</strong> is corrupted. Please reinstall!', 'sift-for-woocommerce' );
 			$html_message = wp_sprintf( '<div class="error notice wpcomsp-scaffold-error">%s</div>', wpautop( $message ) );
 			echo wp_kses_post( $html_message );
 		}

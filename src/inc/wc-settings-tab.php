@@ -4,6 +4,8 @@
 
 namespace Sift_For_WooCommerce\Sift_For_WooCommerce\WC_Settings_Tab;
 
+use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift_For_WooCommerce;
+
 /**
  * Filter to slip in our settings tab.
  *
@@ -12,7 +14,7 @@ namespace Sift_For_WooCommerce\Sift_For_WooCommerce\WC_Settings_Tab;
  * @return array
  */
 function add_settings_tab( array $settings_tabs ) {
-	$settings_tabs['sift_for_woocommerce'] = __( 'Sift Decisions', 'sift-for-woocommerce' );
+	$settings_tabs['sift_for_woocommerce'] = __( 'Sift for WooCommerce', 'sift-for-woocommerce' );
 	return $settings_tabs;
 }
 
@@ -122,7 +124,7 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 
 	// TODO: Maybe find a way to leverage the Sift PHP API Client to fire these requests, rather than ad-hoc'ing together an alternate solution.
 
-	$client   = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
+	$client   = Sift_For_WooCommerce::get_api_client();
 	$response = $client->listAllWebhooks();
 
 	$code   = $response->httpStatusCode;
