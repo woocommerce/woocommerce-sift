@@ -531,7 +531,7 @@ class Events {
 			'$order_id'        => $order_id,
 			'$verification_phone_number'
 				=> $order->get_billing_phone(),
-			'$amount'          => self::get_transaction_micros( $order->get_total() ),
+			'$amount'          => self::get_transaction_micros( floatval( $order->get_total() ) ),
 			'$currency_code'   => get_woocommerce_currency(),
 			'$items'           => $items,
 			'$payment_methods' => self::get_order_payment_methods( $order ),
@@ -600,7 +600,7 @@ class Events {
 	public static function transaction( \WC_Order $order, string $status, string $transaction_type ) {
 		$properties = array(
 			'$user_id'            => (string) $order->get_user_id(),
-			'$amount'             => self::get_transaction_micros( $order->get_total() ), // Gotta multiply it up to give an integer.
+			'$amount'             => self::get_transaction_micros( floatval( $order->get_total() ) ), // Gotta multiply it up to give an integer.
 			'$currency_code'      => $order->get_currency(),
 			'$order_id'           => (string) $order->get_id(),
 			'$transaction_type'   => $transaction_type,
