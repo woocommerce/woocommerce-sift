@@ -1,9 +1,10 @@
-<?php declare( strict_types=1 );
+<?php
 /**
  * Class PaymentGatewayTest
  *
  * @package Sift_Decisions
  */
+declare( strict_types=1 );
 
 use Sift_For_WooCommerce\Payment_Gateway;
 use Sift_For_WooCommerce\Payment_Type;

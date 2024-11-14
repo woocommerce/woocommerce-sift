@@ -1,9 +1,10 @@
-<?php declare( strict_types=1 );
+<?php
 /**
  * Class UpdateAccountEventTest
  *
  * @package Sift_For_WooCommerce
  */
+declare( strict_types=1 );
 
 require_once 'EventTest.php';
 

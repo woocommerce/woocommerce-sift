@@ -1,4 +1,4 @@
-<?php declare( strict_types=1 );
+<?php
 /**
  * Sift for WooCommerce
  *
@@ -24,6 +24,7 @@
  * Text Domain:             sift-for-woocommerce
  * Domain Path:             /languages
  **/
+declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 

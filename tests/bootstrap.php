@@ -1,4 +1,4 @@
-<?php declare( strict_types=1 );
+<?php
 /**
  * PHPUnit bootstrap file.
  *
@@ -6,6 +6,7 @@
  *
  * phpcs:disable
  */
+declare( strict_types=1 );
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 

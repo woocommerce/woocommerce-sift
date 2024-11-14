@@ -1,7 +1,8 @@
-<?php declare( strict_types=1 );
+<?php
 /**
  * Class StripeLibTest
  */
+declare( strict_types=1 );
 
 use Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
 

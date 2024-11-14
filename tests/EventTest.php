@@ -1,9 +1,10 @@
-<?php declare( strict_types=1 );
+<?php
 /**
  * Class EventTest
  *
  * @package Sift_For_WooCommerce
  */
+declare( strict_types=1 );
 
 // phpcs:disable Universal.Arrays.DisallowShortArraySyntax.Found
 
