@@ -1,4 +1,4 @@
-<?php
+<?php declare( strict_types=1 );
 /*
  * Plugin Name: Simple Test Gateway for WooCommerce
  * Description: A simple payment gateway that approves all checkouts in test mode

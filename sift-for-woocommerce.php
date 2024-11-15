@@ -1,10 +1,10 @@
 <?php
 /**
- * The Team51 Plugin Scaffold bootstrap file.
+ * Sift for WooCommerce
  *
  * @since       1.0.0
  * @version     1.0.0
- * @author      WordPress.com Special Projects
+ * @author      WooCommerce
  * @license     GPL-3.0-or-later
  *
  * @noinspection    ALL
@@ -13,17 +13,18 @@
  * Plugin Name:             Sift For WooCommerce
  * Plugin URI:              https://wpspecialprojects.wordpress.com
  * Description:             A plugin to integrate WooCommerce with Sift Science Fraud Detection
- * Version:                 0.0.1-alpha
+ * Version:                 1.0.0
  * Requires at least:       6.2
  * Tested up to:            6.2
  * Requires PHP:            8.0
- * Author:                  georgestephanis
- * Author URI:              https://wpspecialprojects.wordpress.com
+ * Author:                  WooCommerce
+ * Author URI:              https://github.com/woocommerce/sift-for-woocommerce
  * License:                 GPL v3 or later
  * License URI:             https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain:             sift-for-woocommerce
  * Domain Path:             /languages
  **/
+declare( strict_types=1 );
 
 defined( 'ABSPATH' ) || exit;
 
@@ -55,4 +56,4 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 require_once __DIR__ . '/src/sift-for-woocommerce.php';
 
-\Sift_For_WooCommerce\Sift_For_WooCommerce\Sift_For_WooCommerce::get_instance();
+\Sift_For_WooCommerce\Sift_For_WooCommerce::get_instance();

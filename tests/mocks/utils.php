@@ -1,6 +1,6 @@
-<?php declare(strict_types=1);
+<?php declare( strict_types=1 );
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Tests\Mocks\Utils;
+namespace Sift_For_WooCommerce\Tests\Mocks\Utils;
 
 /**
  * Build an object (or array) which represents the payment method returned by the Stripe API.

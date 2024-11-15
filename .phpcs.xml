@@ -21,7 +21,7 @@
 				<element value="sift_decision_"/>
 				<element value="sift_decisions_"/>
 				<element value="wc_sift_decisions"/>
-				<element value="Sift_For_WooCommerce\Sift_For_WooCommerce"/>
+				<element value="Sift_For_WooCommerce"/>
 			</property>
 		</properties>
 	</rule>

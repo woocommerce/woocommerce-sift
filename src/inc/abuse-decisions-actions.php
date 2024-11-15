@@ -1,6 +1,6 @@
 <?php
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Abuse_Decision_Actions;
+namespace Sift_For_WooCommerce\Abuse_Decision_Actions;
 
 /**
  * Unblock a user from making purchases if Sift indicates that they are no longer a fraud risk.

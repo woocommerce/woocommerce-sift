@@ -4,12 +4,13 @@
  *
  * @package Sift_For_WooCommerce
  */
+declare( strict_types=1 );
 
 require_once 'EventTest.php';
 
 // phpcs:disable Universal.Arrays.DisallowShortArraySyntax.Found, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 
-use Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions\Events;
+use Sift_For_WooCommerce\WooCommerce_Actions\Events;
 
 /**
  * Test case.

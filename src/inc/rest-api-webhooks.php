@@ -1,6 +1,6 @@
-<?php
+<?php declare( strict_types=1 );
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Rest_Api_Webhooks;
+namespace Sift_For_WooCommerce\Rest_Api_Webhooks;
 
 /**
  * Register the routes for our webhook catchers with the REST API.

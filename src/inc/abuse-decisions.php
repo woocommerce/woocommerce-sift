@@ -1,9 +1,8 @@
-<?php
+<?php declare( strict_types=1 );
 
+namespace Sift_For_WooCommerce\Abuse_Decisions;
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Abuse_Decisions;
-
-use function Sift_For_WooCommerce\Sift_For_WooCommerce\Abuse_Decision_Actions\{
+use function Sift_For_WooCommerce\Abuse_Decision_Actions\{
 	unblock_user_from_purchases,
 	void_and_refund_user_orders,
 	cancel_and_remove_user_subscriptions,

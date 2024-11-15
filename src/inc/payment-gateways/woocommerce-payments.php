@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php declare( strict_types=1 );
 
 add_filter( 'sift_for_woocommerce_woocommerce_payments_payment_gateway_string', fn() => '$stripe' );
 
@@ -29,7 +29,7 @@ add_filter(
 	}
 );
 
-add_filter( 'sift_for_woocommerce_woocommerce_payments_payment_type_string', array( \Sift_For_WooCommerce\Sift_For_WooCommerce\PaymentGateways\Lib\Stripe::class, 'convert_payment_type_to_sift_payment_type' ) );
+add_filter( 'sift_for_woocommerce_woocommerce_payments_payment_type_string', array( \Sift_For_WooCommerce\PaymentGateways\Lib\Stripe::class, 'convert_payment_type_to_sift_payment_type' ) );
 add_filter( 'sift_for_woocommerce_woocommerce_payments_card_last4', fn( $value, $woocommerce_payments_payment_method_details ) => $woocommerce_payments_payment_method_details['card']['last4'] ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_woocommerce_payments_card_bin', fn( $value, $woocommerce_payments_payment_method_details ) => $woocommerce_payments_payment_method_details['card']['iin'] ?? $value, 10, 2 );
 

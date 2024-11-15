@@ -1,8 +1,8 @@
 <?php declare( strict_types=1 );
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\PaymentGateways;
+namespace Sift_For_WooCommerce\PaymentGateways;
 
-use Sift_For_WooCommerce\Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
+use Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
 
 /**
  * Utility functions used by multiple filters when working with the woocommerce-gateway-stripe plugin.

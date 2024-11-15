@@ -1,6 +1,6 @@
 <?php declare( strict_types=1 );
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce;
+namespace Sift_For_WooCommerce;
 
 /**
  * A class representing a Woo order which normalizes order-related data according to expectations in the Sift API.

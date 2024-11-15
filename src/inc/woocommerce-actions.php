@@ -1,12 +1,12 @@
-<?php
+<?php declare( strict_types=1 );
 
 // phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions;
+namespace Sift_For_WooCommerce\WooCommerce_Actions;
 
 use WC_Order_Item_Product;
-use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift\SiftObjectValidator;
-use Sift_For_WooCommerce\Sift_For_WooCommerce\Sift_Order;
+use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+use Sift_For_WooCommerce\Sift_Order;
 
 /**
  * Class Events
@@ -139,6 +139,10 @@ class Events {
 			'$time'          => intval( 1000 * microtime( true ) ),
 		);
 
+		if ( empty( $properties['$session_id'] ) ) {
+			unset( $properties['$session_id'] );
+		}
+
 		try {
 			SiftObjectValidator::validate_login( $properties );
 		} catch ( \Exception $e ) {
@@ -161,6 +165,10 @@ class Events {
 	 */
 	public static function login_failure( string $username, \WP_Error $error ) {
 		$attempted_user = get_user_by( 'login', $username );
+		$user_id        = null;
+		if ( is_object( $attempted_user ) ) {
+			$user_id = (string) $attempted_user->ID ?? null;
+		}
 
 		switch ( $error->get_error_code() ) {
 			case 'invalid_email':
@@ -178,7 +186,7 @@ class Events {
 				$failure_reason = null;
 		}
 		$properties = array(
-			'$user_id'      => (string) $attempted_user->ID ?? null,
+			'$user_id'      => $user_id,
 			'$login_status' => '$failure',
 			'$session_id'   => WC()->session->get_customer_unique_id(),
 			'$browser'      => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
@@ -523,7 +531,7 @@ class Events {
 			'$order_id'        => $order_id,
 			'$verification_phone_number'
 				=> $order->get_billing_phone(),
-			'$amount'          => self::get_transaction_micros( $order->get_total() ),
+			'$amount'          => self::get_transaction_micros( floatval( $order->get_total() ) ),
 			'$currency_code'   => get_woocommerce_currency(),
 			'$items'           => $items,
 			'$payment_methods' => self::get_order_payment_methods( $order ),
@@ -592,7 +600,7 @@ class Events {
 	public static function transaction( \WC_Order $order, string $status, string $transaction_type ) {
 		$properties = array(
 			'$user_id'            => (string) $order->get_user_id(),
-			'$amount'             => self::get_transaction_micros( $order->get_total() ), // Gotta multiply it up to give an integer.
+			'$amount'             => self::get_transaction_micros( floatval( $order->get_total() ) ), // Gotta multiply it up to give an integer.
 			'$currency_code'      => $order->get_currency(),
 			'$order_id'           => (string) $order->get_id(),
 			'$transaction_type'   => $transaction_type,

@@ -1,6 +1,6 @@
-<?php
+<?php declare( strict_types=1 );
 
-namespace Sift_For_WooCommerce\Sift_For_WooCommerce\Tracking_Js;
+namespace Sift_For_WooCommerce\Tracking_Js;
 
 /**
  * This function can run multiple times, but will only print once.

@@ -4,10 +4,11 @@
  *
  * @package Sift_For_WooCommerce
  */
+declare( strict_types=1 );
 
 // phpcs:disable Universal.Arrays.DisallowShortArraySyntax.Found
 
-use Sift_For_WooCommerce\Sift_For_WooCommerce\WooCommerce_Actions\Events;
+use Sift_For_WooCommerce\WooCommerce_Actions\Events;
 
 /**
  * Events test case.
