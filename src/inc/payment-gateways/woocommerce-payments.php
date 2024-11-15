@@ -69,20 +69,21 @@ function process_before_event_delivery( string $event_type, $event_body ) {
  *
  * @return void
  */
-public function send_chargeback_to_sift( $event ): void {
-	$charge_id      = $event->charge ?? null;
-	$dispute_reason = $event->reason ?? null;
+function send_chargeback_to_sift( $event ): void {
+	$payment_intent_id = $event->payment_intent ?? null;
+	$dispute_reason    = $event->reason ?? null;
 
-	if ( ! $charge_id || ! $dispute_reason ) {
+	if ( ! $payment_intent_id || ! $dispute_reason ) {
 		wc_get_logger()->error( 'Missing charge ID or dispute reason in the Stripe dispute event.' );
 		return;
 	}
 
 	// Get the order ID from the Stripe charge ID.
-	$api_client = \WC_Payments::get_payments_api_client();
-	$order_id = self::get_order_from_charge_id( $charge_id );
+	$api_client     = \WC_Payments::get_payments_api_client();
+	$payment_intent = $api_client->get_intent( $payment_intent_id );
+	$order_id       = $payment_intent->metadata->order_key ?? null;
 	if ( ! $order_id ) {
-		wc_get_logger()->error( 'Order ID not found for the Stripe charge ID: ' . esc_html( $charge_id ) );
+		wc_get_logger()->error( 'Order ID not found for the Stripe payment intent ID: ' . esc_html( $payment_intent_id ) );
 		return;
 	}
 
