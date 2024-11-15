@@ -309,38 +309,43 @@ class Stripe {
 		}
 	}
 
+	/**
+	 * Send a chargeback event to Sift.
+	 *
+	 * @param object $event The Stripe event object.
+	 *
+	 * @return void
+	 */
 	public static function send_chargeback_to_sift( $event ): void {
-		// Extract the charge ID and the original dispute reason.
-		$charge_id        = $event->charge ?? null;
-		$dispute_reason   = $event->reason ?? null;
+		$charge_id      = $event->charge ?? null;
+		$dispute_reason = $event->reason ?? null;
 
 		if ( ! $charge_id || ! $dispute_reason ) {
 			wc_get_logger()->error( 'Missing charge ID or dispute reason in the Stripe dispute event.' );
 			return;
 		}
 
-		// Get the order ID from the Stripe charge ID using the helper method from the Stripe class.
+		// Get the order ID from the Stripe charge ID.
 		$order_id = self::get_order_from_charge_id( $charge_id );
 		if ( ! $order_id ) {
 			wc_get_logger()->error( 'Order ID not found for the Stripe charge ID: ' . esc_html( $charge_id ) );
 			return;
 		}
 
-		// Get the WooCommerce order object.
 		$order = wc_get_order( $order_id );
 		if ( ! $order instanceof WC_Order ) {
 			wc_get_logger()->error( 'WooCommerce order not found for Order ID: ' . esc_html( $order_id ) );
 			return;
 		}
 
-		// Convert the Stripe dispute reason to the Sift chargeback reason using the helper method from the Stripe class.
+		// Convert the Stripe dispute reason to the Sift chargeback reason
 		$chargeback_reason = self::convert_dispute_reason_to_sift_chargeback_reason( $dispute_reason );
 		if ( ! $chargeback_reason ) {
 			wc_get_logger()->error( 'Unable to convert Stripe dispute reason to Sift chargeback reason: ' . esc_html( $dispute_reason ) );
 			return;
 		}
 
-		// Call the action to handle the chargeback event.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		do_action( 'sift_for_woocommerce_chargeback', $order_id, $order, $chargeback_reason );
 	}
 }
