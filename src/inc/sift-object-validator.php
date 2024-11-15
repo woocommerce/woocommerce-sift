@@ -1451,6 +1451,32 @@ class SiftObjectValidator {
 	}
 
 	/**
+	 * Validate a $chargeback event.
+	 *
+	 * @param array $data The event to validate.
+	 *
+	 * @return mixed
+	 * @throws \Exception If the event is invalid.
+	 */
+	public static function validate_chargeback( $data ) {
+		$validator_map = array(
+			'$order_id'          => array( __CLASS__, 'validate_id' ),
+			'$user_id'           => array( __CLASS__, 'validate_id' ),
+			'$chargeback_reason' => 'is_string',
+		);
+		try {
+			static::validate( $data, $validator_map );
+			// required field: $user_id, $session_id
+			if ( empty( $data['$user_id'] ) || empty( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $user_id or $session_id' );
+			}
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Invalid $link_session_to_user event: ' . esc_html( $e->getMessage() ) );
+		}
+		return true;
+	}
+
+	/**
 	 * Validate a $login event.
 	 *
 	 * @param array $data The event to validate.
