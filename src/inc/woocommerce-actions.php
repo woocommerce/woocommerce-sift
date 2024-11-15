@@ -285,9 +285,9 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-account
 	 *
-	 * @param string   $user_id       User's ID.
-	 * @param \WP_User $old_user_data The old user data.
-	 * @param array    $new_user_data The new user data.
+	 * @param string $user_id User's ID.
+	 * @param \WP_User|null $old_user_data The old user data.
+	 * @param array|null $new_user_data The new user data.
 	 *
 	 * @return void
 	 */

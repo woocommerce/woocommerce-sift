@@ -26,7 +26,9 @@ class DisabledEventTest extends EventTest {
 	 *
 	 * @return void
 	 */
-	private function test_event(string $event_type, $callback) {
+	private function test_event(string $event_type, $callback ) {
+		self::reset_events();
+
 		$callback();
 		self::fail_on_error_logged();
 		self::assertEventSent( $event_type );
@@ -74,11 +76,16 @@ class DisabledEventTest extends EventTest {
 	 * @return void
 	 */
 	public function test_create_account() {
+		$user_id = (string) $this->factory()->user->create();
 		$this->test_event(
 			Sift_Event_Types::$create_account,
-			function () {
-				Events::create_account( '1' );
-			} );
+			fn() => Events::create_account( $user_id )
+		);
+
+		$this->test_event(
+			Sift_Event_Types::$update_account,
+			fn() => Events::update_account( $user_id )
+		);
 	}
 
 	/**
@@ -109,16 +116,50 @@ class DisabledEventTest extends EventTest {
 	}
 
 	/**
-	 * Test that the $create_account event is triggered.
+	 * Test that the $logout event is triggered.
 	 *
 	 * @return void
 	 */
 	public function test_logout() {
+		$user_id = $this->factory()->user->create();
 		$this->test_event(
-			Sift_Event_Types::$create_account,
-			function () {
-				Events::create_account( '1' );
-			} );
+			Sift_Event_Types::$logout,
+			fn() => Events::logout( (string) $user_id ));
+	}
+
+	/**
+	 * Test that the $or event is triggered.
+	 *
+	 * @return void
+	 */
+	public function test_order() {
+		$user_id = $this->factory()->user->create();
+		wp_set_current_user( $user_id );
+		$_REQUEST['woocommerce-process-checkout-nonce'] = wp_create_nonce( 'woocommerce-process_checkout' );
+		add_filter( 'woocommerce_checkout_fields', fn() => [], 10, 0 );
+		add_filter( 'woocommerce_cart_needs_payment', '__return_false' );
+		// Act
+		WC()->cart->add_to_cart( static::$product_id );
+		$co = WC_Checkout::instance();
+		$co->process_checkout();
+		$filters = [ 'event' => '$order_status' ];
+		$events = static::filter_events( $filters );
+		// Let's manually change the status of the order by cancelling it.
+		$order_id = $events[0]['properties.$order_id'];
+		$order    = wc_get_order( $order_id );
+		$order->update_status( 'cancelled', '', true );
+
+		$this->test_event(
+			Sift_Event_Types::$create_order,
+			fn() => Events::create_order( (string) $order->get_id(), $order ));
+
+		$this->test_event(
+			Sift_Event_Types::$update_order,
+			fn() => Events::update_or_create_order( (string) $order->get_id(), $order ));
+
+		$this->test_event(
+			Sift_Event_Types::$transaction,
+			fn() => Events::transaction( $order, '$success', '$sale' ));
 	}
 
 
