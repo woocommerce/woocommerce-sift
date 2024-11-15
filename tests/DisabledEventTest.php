@@ -36,13 +36,13 @@ class DisabledEventTest extends EventTest {
 		self::reset_events();
 
 		// Disable the event
-		add_filter( Sift_Event_Types::get_filter_for_event_type( $event_type ), '__return_false' );
+		add_filter( Sift_Event_Types::get_filter_for_enabled_event_type( $event_type ), '__return_false' );
 		$callback();
 		self::fail_on_error_logged();
 		self::assertNoEventSent( $event_type );
 
 		// Enable the event
-		remove_filter( Sift_Event_Types::get_filter_for_event_type( $event_type ), '__return_false' );
+		remove_filter( Sift_Event_Types::get_filter_for_enabled_event_type( $event_type ), '__return_false' );
 		$callback();
 		self::fail_on_error_logged();
 		self::assertEventSent( $event_type );

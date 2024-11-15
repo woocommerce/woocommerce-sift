@@ -190,7 +190,7 @@ class Sift_Event_Types {
 	 *
 	 * @return string
 	 */
-	public static function get_filter_for_event_type( string $event_type ): string {
+	public static function get_filter_for_enabled_event_type( string $event_type ): string {
 		return self::get_option_for_event_type( $event_type );
 	}
 
@@ -201,7 +201,7 @@ class Sift_Event_Types {
 	 * @return boolean
 	 */
 	public static function can_event_be_sent( string $event_type ) {
-		$event_enabled_filter =  self::get_filter_for_event_type( $event_type );
+		$event_enabled_filter =  self::get_filter_for_enabled_event_type( $event_type );
 
 		$enabled = apply_filters( $event_enabled_filter, true );
 
