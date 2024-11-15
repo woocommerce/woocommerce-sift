@@ -288,7 +288,7 @@ function build_events_settings_events_array( array $events_settings ): array {
 
 		foreach ( $events_settings[ $abuse_key ] as  $event_settings ) {
 			$event_name=  $event_settings['event_name'];
-			$filter_enabled_event_type = Sift_Event_Types::get_enabled_filter_for_event_type( $event_name );
+			$filter_enabled_event_type = Sift_Event_Types::get_option_for_event_type( $event_name );
 			// Allow to disable from sidecar plugin
 			$disabled = apply_filters( $filter_enabled_event_type, $event_settings['disabled'] ?? false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 

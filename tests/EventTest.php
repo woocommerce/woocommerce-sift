@@ -8,6 +8,7 @@ declare( strict_types=1 );
 
 // phpcs:disable Universal.Arrays.DisallowShortArraySyntax.Found
 
+use Sift_For_WooCommerce\Sift_Events_Types\Sift_Event_Types;
 use Sift_For_WooCommerce\WooCommerce_Actions\Events;
 
 /**
@@ -48,6 +49,22 @@ abstract class EventTest extends WP_UnitTestCase {
 		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.9';
 
 		add_filter( 'woocommerce_logger_log_message', array( __CLASS__, 'log_watcher' ), 10, 2 );
+
+		// We enable all the event types by default
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$add_item_to_cart ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$remove_item_from_cart ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$link_session_to_user ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$create_order ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$update_order ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$update_password ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$chargeback ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$transaction ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$order_status ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$create_account ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$update_account ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$add_promotion ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$login ), true );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$logout ), true );
 	}
 
 	/**
@@ -110,7 +127,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	 */
 	public function set_up() {
 		parent::set_up();
-		Events::$to_send = [];
+		self::reset_events();
 		static::$errors  = [];
 		wc_clear_notices();
 	}
@@ -121,7 +138,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function tear_down() {
-		Events::$to_send = [];
+		self::reset_events();
 		WC()->cart->empty_cart();
 		static::$errors = [];
 		parent::tear_down();
@@ -160,6 +177,15 @@ abstract class EventTest extends WP_UnitTestCase {
 	 */
 	public static function filter_events( $filters = [] ) {
 		return iterator_to_array( static::filter_events_gen( $filters ) );
+	}
+
+	/**
+	 * Reset events.
+	 *
+	 * @return void
+	 */
+	public static function reset_events() {
+		Sift_For_WooCommerce\WooCommerce_Actions\Events::$to_send = [];
 	}
 
 	/**

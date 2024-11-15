@@ -15,7 +15,7 @@ use Sift_For_WooCommerce\WooCommerce_Actions\Events;
 /**
  * Test case.
  */
-class UpdatePasswordEventTest extends EventTest {
+class DisbaledEventTest extends EventTest {
 	/**
 	 * Test that the $update_password event is triggered.
 	 *

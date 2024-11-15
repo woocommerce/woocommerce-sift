@@ -46,7 +46,7 @@ class OrderStatusEventTest extends EventTest {
 			]
 		);
 		// Reset events.
-		Events::$to_send = [];
+		self::reset_events();
 
 		// Let's manually change the status of the order by cancelling it.
 		$order_id = $events[0]['properties.$order_id'];
@@ -61,7 +61,7 @@ class OrderStatusEventTest extends EventTest {
 			]
 		);
 		// Reset events.
-		Events::$to_send = [];
+		self::reset_events();
 
 		// Let's try an unsupported status.
 		$gold_status_filter = fn( $statuses ) => array_merge( $statuses, [ 'wc-gold' => 'Gold' ] );

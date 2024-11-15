@@ -78,7 +78,7 @@ class Events {
 	 * @return void
 	 */
 	public static function logout( string $user_id ) {
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'logout', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$logout ) ) {
 			return;
 		}
 
@@ -105,7 +105,7 @@ class Events {
 	 */
 	public static function add_promotion( \WC_Coupon $coupon, \WC_Order $order ): void {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'add_promotion', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$add_promotion ) ) {
 			return;
 		}
 
@@ -141,7 +141,7 @@ class Events {
 	 */
 	public static function login_success( string $username, object $user ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'login', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$login ) ) {
 			return;
 		}
 
@@ -183,7 +183,7 @@ class Events {
 	 */
 	public static function login_failure( string $username, \WP_Error $error ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'login', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$login ) ) {
 			return;
 		}
 
@@ -243,7 +243,7 @@ class Events {
 	 */
 	public static function create_account( string $user_id ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'create_account', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$create_account ) ) {
 			return;
 		}
 
@@ -293,7 +293,7 @@ class Events {
 	 */
 	public static function update_account( string $user_id, ?\WP_User $old_user_data = null, ?array $new_user_data = null ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_account', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$update_account ) ) {
 			return;
 		}
 
@@ -344,12 +344,12 @@ class Events {
 	 */
 	public static function update_password( string $new_password, string $user_id ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_password', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
-			return;
-		}
-
 		// We are immediately setting this to null, so that it is not inadvertently shared or disclosed.
 		$new_password = null;
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$update_password ) ) {
+			return;
+		}
 
 		$user = get_user_by( 'id', $user_id );
 
@@ -386,7 +386,7 @@ class Events {
 	 */
 	public static function link_session_to_user( string $session_id, string $user_id ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'link_session_to_user', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$link_session_to_user ) ) {
 			return;
 		}
 
@@ -418,7 +418,7 @@ class Events {
 	 */
 	public static function add_to_cart( string $cart_item_key ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'add_item_to_cart', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$add_item_to_cart ) ) {
 			return;
 		}
 
@@ -483,7 +483,7 @@ class Events {
 	 */
 	public static function remove_item_from_cart( string $cart_item_key, \WC_Cart $cart ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'remove_item_from_cart', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$remove_item_from_cart ) ) {
 			return;
 		}
 
@@ -535,7 +535,7 @@ class Events {
 	 */
 	public static function create_order( string $order_id, \WC_Order $order ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'create_order', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$create_order ) ) {
 			return;
 		}
 
@@ -563,7 +563,7 @@ class Events {
 			return;
 		}
 
-		if ( ! $create_order && ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'update_order', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! $create_order && ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$update_order ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
 		}
 
@@ -648,28 +648,6 @@ class Events {
 	}
 
 	/**
-	 * Log error for unsupported status changes.
-	 *
-	 * @param string $order_id Order ID.
-	 * @param string $from     From status.
-	 * @param string $to       To status.
-	 *
-	 * @return void
-	 */
-	public static function maybe_log_change_order_status( string $order_id, string $from, string $to ) {
-		if ( ! in_array( $to, self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
-			wc_get_logger()->error(
-				sprintf(
-					'Unsupported status change from %s to %s for order %s.',
-					$from,
-					$to,
-					$order_id
-				)
-			);
-		}
-	}
-
-	/**
 	 * Adds the event for transaction
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction
@@ -682,7 +660,7 @@ class Events {
 	 */
 	public static function transaction( \WC_Order $order, string $status, string $transaction_type ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'transaction', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$transaction ) ) {
 			return;
 		}
 
@@ -722,7 +700,7 @@ class Events {
 	 */
 	public static function change_order_status( string $order_id, \WC_Order $order, array $status_transition ) {
 
-		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'order_status', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$order_status ) ) {
 			return;
 		}
 
@@ -1041,4 +1019,27 @@ class Events {
 			'properties' => $properties,
 		);
 	}
+
+	/**
+	 * Log error for unsupported status changes.
+	 *
+	 * @param string $order_id Order ID.
+	 * @param string $from     From status.
+	 * @param string $to       To status.
+	 *
+	 * @return void
+	 */
+	public static function maybe_log_change_order_status( string $order_id, string $from, string $to ) {
+		if ( ! in_array( $to, self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
+			wc_get_logger()->error(
+				sprintf(
+					'Unsupported status change from %s to %s for order %s.',
+					$from,
+					$to,
+					$order_id
+				)
+			);
+		}
+	}
+
 }

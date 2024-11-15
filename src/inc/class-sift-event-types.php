@@ -175,12 +175,42 @@ class Sift_Event_Types {
 
 
 	/**
+	 * Return enable option name for event type
+	 * @param string $event_type
+	 *
+	 * @return string
+	 */
+	public static function get_option_for_event_type( string $event_type ): string {
+		return FILTER_EVENT_ENABLE_PREFIX . substr( $event_type, 1 );
+	}
+
+	/**
 	 * Return filter name for event type
 	 * @param string $event_type
 	 *
 	 * @return string
 	 */
-	public static function get_enabled_filter_for_event_type( string $event_type ): string {
-		return FILTER_EVENT_ENABLE_PREFIX . substr( $event_type, 1 );
+	public static function get_filter_for_event_type( string $event_type ): string {
+		return self::get_option_for_event_type( $event_type );
 	}
+
+	/**
+	 * Can the event be sent
+	 * @param string $event_type
+	 *
+	 * @return boolean
+	 */
+	public static function can_event_be_sent( string $event_type ) {
+		$event_enabled_filter =  self::get_filter_for_event_type( $event_type );
+
+		$enabled = apply_filters( $event_enabled_filter, true );
+
+		if ( !$enabled ) {
+			return false;
+		}
+
+		return !! get_option( self::get_option_for_event_type( $event_type ), false );
+	}
+
+
 }
