@@ -9,7 +9,6 @@ use WC_Order_Item_Product;
 
 use Sift_For_WooCommerce\Sift_Order;
 use Sift_For_WooCommerce\Sift\SiftObjectValidator;
-use const Sift_For_WooCommerce\FILTER_EVENT_ENABLE_PREFIX;
 
 
 /**
@@ -285,9 +284,9 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-account
 	 *
-	 * @param string $user_id User's ID.
+	 * @param string        $user_id       User's ID.
 	 * @param \WP_User|null $old_user_data The old user data.
-	 * @param array|null $new_user_data The new user data.
+	 * @param array|null    $new_user_data The new user data.
 	 *
 	 * @return void
 	 */
@@ -1041,5 +1040,4 @@ class Events {
 			);
 		}
 	}
-
 }

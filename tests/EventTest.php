@@ -128,7 +128,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	public function set_up() {
 		parent::set_up();
 		self::reset_events();
-		static::$errors  = [];
+		static::$errors = [];
 		wc_clear_notices();
 	}
 

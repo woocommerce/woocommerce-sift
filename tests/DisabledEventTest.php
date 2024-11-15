@@ -21,12 +21,12 @@ class DisabledEventTest extends EventTest {
 	/**
 	 * Generic function to test event disabling
 	 *
-	 * @param string $event_type
-	 * @param $callback
+	 * @param string   $event_type Event type.
+	 * @param callable $callback   Function to call.
 	 *
 	 * @return void
 	 */
-	private function test_event(string $event_type, $callback ) {
+	private function test_event( string $event_type, callable $callback ) {
 		self::reset_events();
 
 		$callback();
@@ -54,7 +54,6 @@ class DisabledEventTest extends EventTest {
 		$callback();
 		self::fail_on_error_logged();
 		self::assertNoEventSent( $event_type );
-
 	}
 
 	/**
@@ -67,7 +66,8 @@ class DisabledEventTest extends EventTest {
 			Sift_Event_Types::$update_password,
 			function () {
 				Events::update_password( 'test', '1' );
-			} );
+			}
+		);
 	}
 
 	/**
@@ -99,7 +99,8 @@ class DisabledEventTest extends EventTest {
 
 		$this->test_event(
 			Sift_Event_Types::$login,
-			fn() => Events::login_success( $user->login, $user ) );
+			fn() => Events::login_success( $user->login, $user )
+		);
 	}
 
 	/**
@@ -112,7 +113,8 @@ class DisabledEventTest extends EventTest {
 		$user    = get_user_by( 'ID', $user_id );
 		$this->test_event(
 			Sift_Event_Types::$login,
-			fn() => Events::login_failure( $user->user_login, new WP_Error( 'invalid_email' ) ) );
+			fn() => Events::login_failure( $user->user_login, new WP_Error( 'invalid_email' ) )
+		);
 	}
 
 	/**
@@ -124,7 +126,8 @@ class DisabledEventTest extends EventTest {
 		$user_id = $this->factory()->user->create();
 		$this->test_event(
 			Sift_Event_Types::$logout,
-			fn() => Events::logout( (string) $user_id ));
+			fn() => Events::logout( (string) $user_id )
+		);
 	}
 
 	/**
@@ -143,7 +146,7 @@ class DisabledEventTest extends EventTest {
 		$co = WC_Checkout::instance();
 		$co->process_checkout();
 		$filters = [ 'event' => '$order_status' ];
-		$events = static::filter_events( $filters );
+		$events  = static::filter_events( $filters );
 		// Let's manually change the status of the order by cancelling it.
 		$order_id = $events[0]['properties.$order_id'];
 		$order    = wc_get_order( $order_id );
@@ -151,15 +154,18 @@ class DisabledEventTest extends EventTest {
 
 		$this->test_event(
 			Sift_Event_Types::$create_order,
-			fn() => Events::create_order( (string) $order->get_id(), $order ));
+			fn() => Events::create_order( (string) $order->get_id(), $order )
+		);
 
 		$this->test_event(
 			Sift_Event_Types::$update_order,
-			fn() => Events::update_or_create_order( (string) $order->get_id(), $order ));
+			fn() => Events::update_or_create_order( (string) $order->get_id(), $order )
+		);
 
 		$this->test_event(
 			Sift_Event_Types::$transaction,
-			fn() => Events::transaction( $order, '$success', '$sale' ));
+			fn() => Events::transaction( $order, '$success', '$sale' )
+		);
 	}
 
 
@@ -170,7 +176,7 @@ class DisabledEventTest extends EventTest {
 	 *
 	 * @return void
 	 */
-	public static function assertEventSent(string $event_type) {
+	public static function assertEventSent( string $event_type ) {
 		$events = static::filter_events(
 			[
 				'event' => $event_type,
@@ -186,7 +192,7 @@ class DisabledEventTest extends EventTest {
 	 *
 	 * @return void
 	 */
-	public static function assertNoEventSent(string $event_type) {
+	public static function assertNoEventSent( string $event_type ) {
 		$events = static::filter_events(
 			[
 				'event' => $event_type,

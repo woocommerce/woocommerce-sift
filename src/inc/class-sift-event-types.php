@@ -2,8 +2,6 @@
 
 namespace Sift_For_WooCommerce\Sift_Events_Types;
 
-use const Sift_For_WooCommerce\FILTER_EVENT_ENABLE_PREFIX;
-
 /**
  * List Sift event types
  */
@@ -176,17 +174,19 @@ class Sift_Event_Types {
 
 	/**
 	 * Return enable option name for event type
-	 * @param string $event_type
+	 *
+	 * @param string $event_type Event type.
 	 *
 	 * @return string
 	 */
 	public static function get_option_for_event_type( string $event_type ): string {
-		return FILTER_EVENT_ENABLE_PREFIX . substr( $event_type, 1 );
+		return 'wc_sift_for_woocommerce_enable_' . substr( $event_type, 1 );
 	}
 
 	/**
 	 * Return filter name for event type
-	 * @param string $event_type
+	 *
+	 * @param string $event_type Event type.
 	 *
 	 * @return string
 	 */
@@ -196,21 +196,20 @@ class Sift_Event_Types {
 
 	/**
 	 * Can the event be sent
-	 * @param string $event_type
+	 *
+	 * @param string $event_type Event type.
 	 *
 	 * @return boolean
 	 */
 	public static function can_event_be_sent( string $event_type ) {
-		$event_enabled_filter =  self::get_filter_for_enabled_event_type( $event_type );
+		$event_enabled_filter = self::get_filter_for_enabled_event_type( $event_type );
 
-		$enabled = apply_filters( $event_enabled_filter, true );
+		$enabled = apply_filters( $event_enabled_filter, true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 
-		if ( !$enabled ) {
+		if ( ! $enabled ) {
 			return false;
 		}
 
-		return !! get_option( self::get_option_for_event_type( $event_type ), false );
+		return (bool) get_option( self::get_option_for_event_type( $event_type ), false );
 	}
-
-
 }
