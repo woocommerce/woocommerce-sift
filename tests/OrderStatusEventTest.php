@@ -46,7 +46,7 @@ class OrderStatusEventTest extends EventTest {
 			]
 		);
 		// Reset events.
-		Events::$to_send = [];
+		self::reset_events();
 
 		// Let's manually change the status of the order by cancelling it.
 		$order_id = $events[0]['properties.$order_id'];
@@ -61,14 +61,16 @@ class OrderStatusEventTest extends EventTest {
 			]
 		);
 		// Reset events.
-		Events::$to_send = [];
+		self::reset_events();
 
 		// Let's try an unsupported status.
 		$gold_status_filter = fn( $statuses ) => array_merge( $statuses, [ 'wc-gold' => 'Gold' ] );
 		add_filter( 'wc_order_statuses', $gold_status_filter );
 		$order->update_status( 'gold', '', true );
-		UpdateOrderEventTest::assertUpdateOrderEventTriggered();
-		static::assertNotEmpty( static::$errors, 'No error logged for unsupported status' );
+		$events = static::filter_events( [ 'event' => '$update_order' ] );
+		static::assertEquals( 0, count( $events ), 'An $update_order event was found' );
+		static::assertGreaterThanOrEqual( 1, count( static::$errors ), count( static::$errors ) . ' Errors were found instead of 1' );
+		static::assertTrue( str_starts_with( static::$errors[0], 'Unsupported status change from cancelled to gold' ), 'Does not start with Gold status' );
 
 		// Clean up
 		remove_filter( 'wc_order_statuses', $gold_status_filter );

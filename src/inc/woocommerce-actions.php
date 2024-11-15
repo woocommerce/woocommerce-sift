@@ -4,9 +4,12 @@
 
 namespace Sift_For_WooCommerce\WooCommerce_Actions;
 
+use Sift_For_WooCommerce\Sift_Events_Types\Sift_Event_Types;
 use WC_Order_Item_Product;
-use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+
 use Sift_For_WooCommerce\Sift_Order;
+use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+
 
 /**
  * Class Events
@@ -37,8 +40,9 @@ class Events {
 		add_action( 'profile_update', array( static::class, 'update_account' ), 100, 3 );
 		add_action( 'wp_set_password', array( static::class, 'update_password' ), 100, 2 );
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
-		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
-		add_action( 'woocommerce_update_order', array( static::class, 'update_order' ), 100, 2 );
+		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_item_from_cart' ), 100, 2 );
+		add_action( 'woocommerce_new_order', array( static::class, 'create_order' ), 100, 2 );
+		add_action( 'woocommerce_update_order', array( static::class, 'update_or_create_order' ), 100, 2 );
 		add_action( 'woocommerce_order_applied_coupon', array( static::class, 'add_promotion' ), 100, 2 );
 
 		/**
@@ -73,6 +77,10 @@ class Events {
 	 * @return void
 	 */
 	public static function logout( string $user_id ) {
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$logout ) ) {
+			return;
+		}
+
 		self::add(
 			'$logout',
 			array(
@@ -96,6 +104,10 @@ class Events {
 	 */
 	public static function add_promotion( \WC_Coupon $coupon, \WC_Order $order ): void {
 
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$add_promotion ) ) {
+			return;
+		}
+
 		$properties = array(
 			'$user_id'    => $order->get_user_id(),
 			'$promotions' => array(
@@ -113,7 +125,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$add_promotion', $properties );
+		self::add( Sift_Event_Types::$add_promotion, $properties );
 	}
 
 	/**
@@ -127,11 +139,16 @@ class Events {
 	 * @return void
 	 */
 	public static function login_success( string $username, object $user ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$login ) ) {
+			return;
+		}
+
 		$properties = array(
 			'$user_id'       => (string) $user->ID,
 			'$login_status'  => '$success',
 			'$session_id'    => WC()->session->get_customer_unique_id(),
-			'$user_email'    => $user->user_email ? $user->user_email : null,
+			'$user_email'    => $user->user_email ?? null,
 			'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 			'$username'      => $username,
 			'$account_types' => $user->roles,
@@ -150,7 +167,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$login', $properties );
+		self::add( Sift_Event_Types::$login, $properties );
 	}
 
 	/**
@@ -164,6 +181,11 @@ class Events {
 	 * @return void
 	 */
 	public static function login_failure( string $username, \WP_Error $error ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$login ) ) {
+			return;
+		}
+
 		$attempted_user = get_user_by( 'login', $username );
 		$user_id        = null;
 		if ( is_object( $attempted_user ) ) {
@@ -206,7 +228,7 @@ class Events {
 			$properties['$failure_reason'] = $failure_reason;
 		}
 
-		self::add( '$login', $properties );
+		self::add( Sift_Event_Types::$login, $properties );
 	}
 
 	/**
@@ -219,6 +241,11 @@ class Events {
 	 * @return void
 	 */
 	public static function create_account( string $user_id ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$create_account ) ) {
+			return;
+		}
+
 		$user = get_user_by( 'id', $user_id );
 
 		$properties = array(
@@ -247,7 +274,7 @@ class Events {
 		}
 
 		self::add(
-			'$create_account',
+			Sift_Event_Types::$create_account,
 			$properties
 		);
 	}
@@ -257,13 +284,18 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-account
 	 *
-	 * @param string   $user_id       User's ID.
-	 * @param \WP_User $old_user_data The old user data.
-	 * @param array    $new_user_data The new user data.
+	 * @param string        $user_id       User's ID.
+	 * @param \WP_User|null $old_user_data The old user data.
+	 * @param array|null    $new_user_data The new user data.
 	 *
 	 * @return void
 	 */
 	public static function update_account( string $user_id, ?\WP_User $old_user_data = null, ?array $new_user_data = null ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$update_account ) ) {
+			return;
+		}
+
 		$user = get_user_by( 'id', $user_id );
 
 		// check if the password changed
@@ -296,7 +328,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$update_account', $properties );
+		self::add( Sift_Event_Types::$update_account, $properties );
 	}
 
 	/**
@@ -310,8 +342,13 @@ class Events {
 	 * @return void
 	 */
 	public static function update_password( string $new_password, string $user_id ) {
+
 		// We are immediately setting this to null, so that it is not inadvertently shared or disclosed.
 		$new_password = null;
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$update_password ) ) {
+			return;
+		}
 
 		$user = get_user_by( 'id', $user_id );
 
@@ -333,7 +370,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$update_password', $properties );
+		self::add( Sift_Event_Types::$update_password, $properties );
 	}
 
 	/**
@@ -347,6 +384,11 @@ class Events {
 	 * @return void
 	 */
 	public static function link_session_to_user( string $session_id, string $user_id ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$link_session_to_user ) ) {
+			return;
+		}
+
 		$properties = array(
 			'$user_id'    => $user_id,
 			'$session_id' => $session_id,
@@ -361,7 +403,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$link_session_to_user', $properties );
+		self::add( Sift_Event_Types::$link_session_to_user, $properties );
 	}
 
 	/**
@@ -374,6 +416,11 @@ class Events {
 	 * @return void
 	 */
 	public static function add_to_cart( string $cart_item_key ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$add_item_to_cart ) ) {
+			return;
+		}
+
 		$cart_item = \WC()->cart->get_cart_item( $cart_item_key );
 		// phpcs:ignore
 		/** @var \WC_Product $product */
@@ -418,7 +465,7 @@ class Events {
 		}
 
 		self::add(
-			'$add_item_to_cart',
+			Sift_Event_Types::$add_item_to_cart,
 			$properties
 		);
 	}
@@ -433,7 +480,12 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function remove_from_cart( string $cart_item_key, \WC_Cart $cart ) {
+	public static function remove_item_from_cart( string $cart_item_key, \WC_Cart $cart ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$remove_item_from_cart ) ) {
+			return;
+		}
+
 		$cart_item = $cart->get_cart_item( $cart_item_key );
 		$product   = $cart_item['data'];
 		$user      = wp_get_current_user();
@@ -467,7 +519,26 @@ class Events {
 			$properties['$item']['$category'] = $category;
 		}
 
-		self::add( '$remove_item_from_cart', $properties );
+		self::add( Sift_Event_Types::$remove_item_from_cart, $properties );
+	}
+
+	/**
+	 * Adds event for order creation
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/create-order
+	 *
+	 * @param string    $order_id Order id.
+	 * @param \WC_Order $order    The Order object.
+	 *
+	 * @return void
+	 */
+	public static function create_order( string $order_id, \WC_Order $order ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$create_order ) ) {
+			return;
+		}
+
+		static::update_or_create_order( $order_id, $order, true );
 	}
 
 	/**
@@ -477,13 +548,24 @@ class Events {
 	 * any existing $create_order event with the same $order_id, so we'll combine the two into a single function.
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/update-order
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/create-order
 	 *
-	 * @param string    $order_id Order id.
-	 * @param \WC_Order $order    The Order object.
+	 * @param string    $order_id     Order id.
+	 * @param \WC_Order $order        The Order object.
+	 * @param boolean   $create_order True if this is called as part of the order creation.
 	 *
 	 * @return void
 	 */
-	public static function update_order( string $order_id, \WC_Order $order ) {
+	public static function update_or_create_order( string $order_id, \WC_Order $order, bool $create_order = false ) {
+
+		if ( ! in_array( $order->get_status(), self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
+			return;
+		}
+
+		if ( ! $create_order && ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$update_order ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+			return;
+		}
+
 		$user = wp_get_current_user();
 
 		$physical_or_electronic = '$electronic';
@@ -559,31 +641,9 @@ class Events {
 		}
 
 		self::add(
-			'$update_order',
+			$create_order ? Sift_Event_Types::$create_order : Sift_Event_Types::$update_order,
 			$properties
 		);
-	}
-
-	/**
-	 * Log error for unsupported status changes.
-	 *
-	 * @param string $order_id Order ID.
-	 * @param string $from     From status.
-	 * @param string $to       To status.
-	 *
-	 * @return void
-	 */
-	public static function maybe_log_change_order_status( string $order_id, string $from, string $to ) {
-		if ( ! in_array( $to, self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
-			wc_get_logger()->error(
-				sprintf(
-					'Unsupported status change from %s to %s for order %s.',
-					$from,
-					$to,
-					$order_id
-				)
-			);
-		}
 	}
 
 	/**
@@ -598,6 +658,11 @@ class Events {
 	 * @return void
 	 */
 	public static function transaction( \WC_Order $order, string $status, string $transaction_type ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$transaction ) ) {
+			return;
+		}
+
 		$properties = array(
 			'$user_id'            => (string) $order->get_user_id(),
 			'$amount'             => self::get_transaction_micros( floatval( $order->get_total() ) ), // Gotta multiply it up to give an integer.
@@ -616,7 +681,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$transaction', $properties );
+		self::add( Sift_Event_Types::$transaction, $properties );
 	}
 
 
@@ -633,6 +698,10 @@ class Events {
 	 * @return void
 	 */
 	public static function change_order_status( string $order_id, \WC_Order $order, array $status_transition ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$order_status ) ) {
+			return;
+		}
 
 		$properties = array(
 			'$user_id'      => (string) $order->get_user_id(),
@@ -683,29 +752,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$order_status', $properties );
-	}
-
-	/**
-	 * Enqueue an event to send.  This will enable sending them all at shutdown.
-	 *
-	 * @param string $event      The event we're recording -- generally will start with a $.
-	 * @param array  $properties An array of the data we're passing along to Sift.  Keys will generally start with a $.
-	 *
-	 * @return void
-	 */
-	public static function add( string $event, array $properties ) {
-		if ( 'localhost' === ( $properties['$site_domain'] ?? '' ) ) {
-			$properties['$site_domain'] = 'george-test-local.woocommerce.com';
-		}
-
-		array_push(
-			self::$to_send,
-			array(
-				'event'      => $event,
-				'properties' => $properties,
-			)
-		);
+		self::add( Sift_Event_Types::$order_status, $properties );
 	}
 
 	/**
@@ -713,7 +760,7 @@ class Events {
 	 *
 	 * @return integer
 	 */
-	public static function count() {
+	private static function count() {
 		return count( self::$to_send );
 	}
 
@@ -766,7 +813,7 @@ class Events {
 	 *
 	 * @return string The detected IP address of the user.
 	 */
-	public static function get_client_ip() {
+	private static function get_client_ip() {
 		$client_ip = false;
 
 		// In order of preference, with the best ones for this purpose first.
@@ -802,7 +849,7 @@ class Events {
 	 *
 	 * @return array The user agent, languages accepted, and current store language.
 	 */
-	public static function get_client_browser() {
+	private static function get_client_browser() {
 		$browser = array(
 			'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
 			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'],
@@ -821,7 +868,7 @@ class Events {
 	 *
 	 * @return array|null
 	 */
-	public static function get_customer_address( int $user_id, string $type = 'billing', string $context = 'view' ) {
+	private static function get_customer_address( int $user_id, string $type = 'billing', string $context = 'view' ) {
 		$customer = new \WC_Customer( $user_id );
 
 		switch ( strtolower( $type ) ) {
@@ -857,7 +904,7 @@ class Events {
 	 *
 	 * @return array|null
 	 */
-	public static function get_order_address( int $order_id, string $type = 'billing' ) {
+	private static function get_order_address( int $order_id, string $type = 'billing' ) {
 		$order = wc_get_order( $order_id );
 
 		if ( empty( $order ) ) {
@@ -901,7 +948,7 @@ class Events {
 	 *
 	 * @return array|null
 	 */
-	public static function get_customer_payment_methods( int $user_id ) {
+	private static function get_customer_payment_methods( int $user_id ) {
 		$payment_methods = array();
 
 		/**
@@ -925,7 +972,7 @@ class Events {
 	 *
 	 * @return array
 	 */
-	public static function get_order_payment_methods( \WC_Order $order ): array {
+	private static function get_order_payment_methods( \WC_Order $order ) {
 		$sift_order = new Sift_Order( $order );
 		return $sift_order->get_payment_methods();
 	}
@@ -950,5 +997,47 @@ class Events {
 
 		// For currencies with decimals
 		return intval( $price * 10000 );
+	}
+
+
+	/**
+	 * Enqueue an event to send.  This will enable sending them all at shutdown.
+	 *
+	 * @param string $event      The event we're recording -- generally will start with a $.
+	 * @param array  $properties An array of the data we're passing along to Sift.  Keys will generally start with a $.
+	 *
+	 * @return void
+	 */
+	public static function add( string $event, array $properties ) {
+		if ( 'localhost' === ( $properties['$site_domain'] ?? '' ) ) {
+			$properties['$site_domain'] = 'george-test-local.woocommerce.com';
+		}
+
+		self::$to_send[] = array(
+			'event'      => $event,
+			'properties' => $properties,
+		);
+	}
+
+	/**
+	 * Log error for unsupported status changes.
+	 *
+	 * @param string $order_id Order ID.
+	 * @param string $from     From status.
+	 * @param string $to       To status.
+	 *
+	 * @return void
+	 */
+	public static function maybe_log_change_order_status( string $order_id, string $from, string $to ) {
+		if ( ! in_array( $to, self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
+			wc_get_logger()->error(
+				sprintf(
+					'Unsupported status change from %s to %s for order %s.',
+					$from,
+					$to,
+					$order_id
+				)
+			);
+		}
 	}
 }

@@ -10,8 +10,6 @@ require_once 'EventTest.php';
 
 // phpcs:disable Universal.Arrays.DisallowShortArraySyntax.Found, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 
-use Sift_For_WooCommerce\WooCommerce_Actions\Events;
-
 /**
  * Test case.
  */
