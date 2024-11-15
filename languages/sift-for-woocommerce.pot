@@ -2,7 +2,7 @@
 # This file is distributed under the GPL v3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Sift Decisions 0.0.1-alpha\n"
+"Project-Id-Version: Sift for WooCommerce 0.0.1-alpha\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/sift-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,7 +16,7 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: src/inc/wc-settings-tab.php:13
-msgid "Sift Decisions"
+msgid "Sift for WooCommerce"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -33,7 +33,7 @@ msgid "georgestephanis"
 msgstr ""
 
 #: sift-for-woocommerce.php:47
-msgid "It seems like <strong>Sift Decisions</strong> is corrupted. Please reinstall!"
+msgid "It seems like <strong>Sift for WooCommerce</strong> is corrupted. Please reinstall!"
 msgstr ""
 
 #: src/inc/wc-settings-tab.php:45

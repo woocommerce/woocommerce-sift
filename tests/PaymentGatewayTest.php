@@ -1,16 +1,16 @@
 <?php
 /**
  * Class PaymentGatewayTest
- *
- * @package Sift_Decisions
  */
 
 use Sift_For_WooCommerce\Sift_For_WooCommerce\Payment_Gateway;
 
 require_once __DIR__ . '/../src/inc/payment-gateway.php';
+require_once __DIR__ . '/../src/inc/payment-gateways/index.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/lib/stripe.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/stripe.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/transact.php';
+require_once __DIR__ . '/../src/inc/payment-gateways/woocommerce-payments.php';
 
 /**
  * Tests for payment gateway interoperability
@@ -52,6 +52,12 @@ class PaymentGatewayTest extends WP_UnitTestCase {
 			'Stripe is a valid payment gateway'      => array(
 				'woo_gateway_id'          => 'stripe',
 				'expected_woo_gateway_id' => 'stripe',
+				'is_valid'                => true,
+				'sift_slug'               => '$stripe',
+			),
+			'WooCommerce Payments is a valid payment gateway' => array(
+				'woo_gateway_id'          => 'woocommerce_payments',
+				'expected_woo_gateway_id' => 'woocommerce_payments',
 				'is_valid'                => true,
 				'sift_slug'               => '$stripe',
 			),

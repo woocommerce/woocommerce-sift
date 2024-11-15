@@ -6,7 +6,7 @@ wp action-scheduler run
 wp wc tool run install_pages --user=admin
 product=$(wp post list --post_type=product --name=sift-for-woocommerce --ids)
 if [[ -z $product ]]; then
-   wp wc product create --name="Sift Decisions" --regular_price=10 --user=admin
+   wp wc product create --name="Sift for WooCommerce" --regular_price=10 --user=admin
 fi
 id=$(wp post list --post_type=page --name=checkout --ids)
 wp post update $id - <<EOF

@@ -1,4 +1,4 @@
-# Sift Decisions
+# Sift for WooCommerce
 
 This plugin will integrate with Sift Science's fraud detection suite and WooCommerce's decisions API.
 
