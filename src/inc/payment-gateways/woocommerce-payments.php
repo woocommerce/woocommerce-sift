@@ -1,5 +1,10 @@
 <?php declare( strict_types=1 );
 
+namespace Sift_For_WooCommerce\Gateways\WooPayments;
+
+use Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
+use Sift_For_WooCommerce\WooCommerce_Actions\Events;
+
 add_filter( 'sift_for_woocommerce_woocommerce_payments_payment_gateway_string', fn() => '$stripe' );
 
 add_action( 'woocommerce_payments_before_webhook_delivery', __NAMESPACE__ . '\process_before_event_delivery', 100, 2 );
@@ -88,17 +93,17 @@ function send_chargeback_to_sift( $event ): void {
 	}
 
 	$order = wc_get_order( $order_id );
-	if ( ! $order instanceof WC_Order ) {
+	if ( ! $order instanceof \WC_Order ) {
 		wc_get_logger()->error( 'WooCommerce order not found for Order ID: ' . esc_html( $order_id ) );
 		return;
 	}
 
 	// Convert the Stripe dispute reason to the Sift chargeback reason
-	$chargeback_reason = self::convert_dispute_reason_to_sift_chargeback_reason( $dispute_reason );
+	$chargeback_reason = Stripe::convert_dispute_reason_to_sift_chargeback_reason( $dispute_reason );
 	if ( ! $chargeback_reason ) {
 		wc_get_logger()->error( 'Unable to convert Stripe dispute reason to Sift chargeback reason: ' . esc_html( $dispute_reason ) );
 		return;
 	}
 
-	Sift_For_WooCommerce\WooCommerce_Actions\Events::chargeback( $order_id, $order, $chargeback_reason );
+	Events::chargeback( $order_id, $order, $chargeback_reason );
 }
