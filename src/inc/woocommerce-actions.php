@@ -5,9 +5,11 @@
 namespace Sift_For_WooCommerce\WooCommerce_Actions;
 
 use WC_Order_Item_Product;
-use const Sift_For_WooCommerce\FILTER_EVENT_ENABLE_PREFIX;
-use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+
 use Sift_For_WooCommerce\Sift_Order;
+use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+use const Sift_For_WooCommerce\FILTER_EVENT_ENABLE_PREFIX;
+
 
 /**
  * Class Events
