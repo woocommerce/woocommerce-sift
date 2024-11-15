@@ -799,10 +799,6 @@ class Events {
 	 * @return void
 	 */
 	public static function add( string $event, array $properties ) {
-		if ( 'localhost' === ( $properties['$site_domain'] ?? '' ) ) {
-			$properties['$site_domain'] = 'george-test-local.woocommerce.com';
-		}
-
 		array_push(
 			self::$to_send,
 			array(
