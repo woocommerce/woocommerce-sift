@@ -803,7 +803,7 @@ class Events {
 			self::$to_send,
 			array(
 				'event'      => $event,
-				'properties' => $properties,
+				'properties' => array_filter( $properties ),
 			)
 		);
 	}
@@ -1050,26 +1050,6 @@ class Events {
 
 		// For currencies with decimals
 		return intval( $price * 10000 );
-	}
-
-
-	/**
-	 * Enqueue an event to send.  This will enable sending them all at shutdown.
-	 *
-	 * @param string $event      The event we're recording -- generally will start with a $.
-	 * @param array  $properties An array of the data we're passing along to Sift.  Keys will generally start with a $.
-	 *
-	 * @return void
-	 */
-	public static function add( string $event, array $properties ) {
-		if ( 'localhost' === ( $properties['$site_domain'] ?? '' ) ) {
-			$properties['$site_domain'] = 'george-test-local.woocommerce.com';
-		}
-
-		self::$to_send[] = array(
-			'event'      => $event,
-			'properties' => array_filter( $properties ),
-		);
 	}
 
 	/**
