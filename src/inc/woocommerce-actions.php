@@ -792,7 +792,7 @@ class Events {
 	 *
 	 * @return boolean
 	 */
-	private static function send() {
+	public static function send() {
 		if ( self::count() > 0 ) {
 			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
 			if ( empty( $client ) ) {
