@@ -2,6 +2,7 @@
 
 namespace Sift_For_WooCommerce;
 
+require_once __DIR__ . '/inc/class-sift-event-types.php';
 require_once __DIR__ . '/inc/wc-settings-tab.php';
 require_once __DIR__ . '/inc/rest-api-webhooks.php';
 require_once __DIR__ . '/inc/tracking-js.php';

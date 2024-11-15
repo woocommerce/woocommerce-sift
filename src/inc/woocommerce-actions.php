@@ -4,6 +4,7 @@
 
 namespace Sift_For_WooCommerce\WooCommerce_Actions;
 
+use Sift_For_WooCommerce\Sift_Events_Types\Sift_Event_Types;
 use WC_Order_Item_Product;
 
 use Sift_For_WooCommerce\Sift_Order;
@@ -40,7 +41,7 @@ class Events {
 		add_action( 'profile_update', array( static::class, 'update_account' ), 100, 3 );
 		add_action( 'wp_set_password', array( static::class, 'update_password' ), 100, 2 );
 		add_action( 'woocommerce_add_to_cart', array( static::class, 'add_to_cart' ), 100 );
-		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_from_cart' ), 100, 2 );
+		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_item_from_cart' ), 100, 2 );
 		add_action( 'woocommerce_new_order', array( static::class, 'create_order' ), 100, 2 );
 		add_action( 'woocommerce_update_order', array( static::class, 'update_or_create_order' ), 100, 2 );
 		add_action( 'woocommerce_order_applied_coupon', array( static::class, 'add_promotion' ), 100, 2 );
@@ -125,7 +126,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$add_promotion', $properties );
+		self::add( Sift_Event_Types::$add_promotion, $properties );
 	}
 
 	/**
@@ -148,7 +149,7 @@ class Events {
 			'$user_id'       => (string) $user->ID,
 			'$login_status'  => '$success',
 			'$session_id'    => WC()->session->get_customer_unique_id(),
-			'$user_email'    => $user->user_email ? $user->user_email : null,
+			'$user_email'    => $user->user_email ?? null,
 			'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 			'$username'      => $username,
 			'$account_types' => $user->roles,
@@ -167,7 +168,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$login', $properties );
+		self::add( Sift_Event_Types::$login, $properties );
 	}
 
 	/**
@@ -228,7 +229,7 @@ class Events {
 			$properties['$failure_reason'] = $failure_reason;
 		}
 
-		self::add( '$login', $properties );
+		self::add( Sift_Event_Types::$login, $properties );
 	}
 
 	/**
@@ -274,7 +275,7 @@ class Events {
 		}
 
 		self::add(
-			'$create_account',
+			Sift_Event_Types::$create_account,
 			$properties
 		);
 	}
@@ -328,7 +329,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$update_account', $properties );
+		self::add( Sift_Event_Types::$update_account, $properties );
 	}
 
 	/**
@@ -370,7 +371,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$update_password', $properties );
+		self::add( Sift_Event_Types::$update_password, $properties );
 	}
 
 	/**
@@ -403,7 +404,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$link_session_to_user', $properties );
+		self::add( Sift_Event_Types::$link_session_to_user, $properties );
 	}
 
 	/**
@@ -465,7 +466,7 @@ class Events {
 		}
 
 		self::add(
-			'$add_item_to_cart',
+			Sift_Event_Types::$add_item_to_cart,
 			$properties
 		);
 	}
@@ -480,7 +481,7 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function remove_from_cart( string $cart_item_key, \WC_Cart $cart ) {
+	public static function remove_item_from_cart( string $cart_item_key, \WC_Cart $cart ) {
 
 		if ( ! apply_filters( FILTER_EVENT_ENABLE_PREFIX . 'remove_item_from_cart', true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 			return;
@@ -519,7 +520,7 @@ class Events {
 			$properties['$item']['$category'] = $category;
 		}
 
-		self::add( '$remove_item_from_cart', $properties );
+		self::add( Sift_Event_Types::$remove_item_from_cart, $properties );
 	}
 
 	/**
@@ -641,7 +642,7 @@ class Events {
 		}
 
 		self::add(
-			$create_order ? '$create_order' : '$update_order',
+			$create_order ? Sift_Event_Types::$create_order : Sift_Event_Types::$update_order,
 			$properties
 		);
 	}
@@ -703,7 +704,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$transaction', $properties );
+		self::add( Sift_Event_Types::$transaction, $properties );
 	}
 
 
@@ -774,29 +775,7 @@ class Events {
 			return;
 		}
 
-		self::add( '$order_status', $properties );
-	}
-
-	/**
-	 * Enqueue an event to send.  This will enable sending them all at shutdown.
-	 *
-	 * @param string $event      The event we're recording -- generally will start with a $.
-	 * @param array  $properties An array of the data we're passing along to Sift.  Keys will generally start with a $.
-	 *
-	 * @return void
-	 */
-	public static function add( string $event, array $properties ) {
-		if ( 'localhost' === ( $properties['$site_domain'] ?? '' ) ) {
-			$properties['$site_domain'] = 'george-test-local.woocommerce.com';
-		}
-
-		array_push(
-			self::$to_send,
-			array(
-				'event'      => $event,
-				'properties' => $properties,
-			)
-		);
+		self::add( Sift_Event_Types::$order_status, $properties );
 	}
 
 	/**
@@ -804,7 +783,7 @@ class Events {
 	 *
 	 * @return integer
 	 */
-	public static function count() {
+	private static function count() {
 		return count( self::$to_send );
 	}
 
@@ -813,7 +792,7 @@ class Events {
 	 *
 	 * @return boolean
 	 */
-	public static function send() {
+	private static function send() {
 		if ( self::count() > 0 ) {
 			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
 			if ( empty( $client ) ) {
@@ -857,7 +836,7 @@ class Events {
 	 *
 	 * @return string The detected IP address of the user.
 	 */
-	public static function get_client_ip() {
+	private static function get_client_ip() {
 		$client_ip = false;
 
 		// In order of preference, with the best ones for this purpose first.
@@ -893,7 +872,7 @@ class Events {
 	 *
 	 * @return array The user agent, languages accepted, and current store language.
 	 */
-	public static function get_client_browser() {
+	private static function get_client_browser() {
 		$browser = array(
 			'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
 			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'],
@@ -912,7 +891,7 @@ class Events {
 	 *
 	 * @return array|null
 	 */
-	public static function get_customer_address( int $user_id, string $type = 'billing', string $context = 'view' ) {
+	private static function get_customer_address( int $user_id, string $type = 'billing', string $context = 'view' ) {
 		$customer = new \WC_Customer( $user_id );
 
 		switch ( strtolower( $type ) ) {
@@ -948,7 +927,7 @@ class Events {
 	 *
 	 * @return array|null
 	 */
-	public static function get_order_address( int $order_id, string $type = 'billing' ) {
+	private static function get_order_address( int $order_id, string $type = 'billing' ) {
 		$order = wc_get_order( $order_id );
 
 		if ( empty( $order ) ) {
@@ -992,7 +971,7 @@ class Events {
 	 *
 	 * @return array|null
 	 */
-	public static function get_customer_payment_methods( int $user_id ) {
+	private static function get_customer_payment_methods( int $user_id ) {
 		$payment_methods = array();
 
 		/**
@@ -1016,7 +995,7 @@ class Events {
 	 *
 	 * @return array
 	 */
-	public static function get_order_payment_methods( \WC_Order $order ): array {
+	private static function get_order_payment_methods( \WC_Order $order ) {
 		$sift_order = new Sift_Order( $order );
 		return $sift_order->get_payment_methods();
 	}
@@ -1041,5 +1020,25 @@ class Events {
 
 		// For currencies with decimals
 		return intval( $price * 10000 );
+	}
+
+
+	/**
+	 * Enqueue an event to send.  This will enable sending them all at shutdown.
+	 *
+	 * @param string $event      The event we're recording -- generally will start with a $.
+	 * @param array  $properties An array of the data we're passing along to Sift.  Keys will generally start with a $.
+	 *
+	 * @return void
+	 */
+	public static function add( string $event, array $properties ) {
+		if ( 'localhost' === ( $properties['$site_domain'] ?? '' ) ) {
+			$properties['$site_domain'] = 'george-test-local.woocommerce.com';
+		}
+
+		self::$to_send[] = array(
+			'event'      => $event,
+			'properties' => $properties,
+		);
 	}
 }
