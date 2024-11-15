@@ -45,6 +45,7 @@ class Events {
 		add_action( 'woocommerce_update_order', array( static::class, 'update_or_create_order' ), 100, 2 );
 		add_action( 'woocommerce_order_applied_coupon', array( static::class, 'add_promotion' ), 100, 2 );
 		add_action( 'sift_for_woocommerce_chargeback', array( __CLASS__, 'chargeback' ), 100, 3 );
+		add_action( 'woocommerce_payments_before_webhook_delivery', __NAMESPACE__ . '\process_before_event_delivery', 100, 2 );
 
 		/**
 		 * We need to break this out into separate actions so we have the $status_transition available.
@@ -1036,14 +1037,14 @@ class Events {
 	}
 
 	/**
-		* Return the amount of transaction "micros"
-		*
-		* @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
-		*
-		* @param float $price The price to format.
-		*
-		* @return integer
-		*/
+	 * Return the amount of transaction "micros"
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
+	 *
+	 * @param float $price The price to format.
+	 *
+	 * @return integer
+	 */
 	public static function get_transaction_micros( float $price ) {
 		$currencies_without_decimals = array( 'JPY' );
 
@@ -1094,6 +1095,42 @@ class Events {
 					$from,
 					$to,
 					$order_id
+				)
+			);
+		}
+	}
+
+	/**
+	 * Processes events (from Stripe and more) before sending the data elsewhere.
+	 *
+	 * @param string $event_type The type of event.
+	 * @param mixed  $event_body The body of the event.
+	 *
+	 * @return void
+	 */
+	public static function process_before_event_delivery( string $event_type, $event_body ) {
+		$result = null;
+
+		// Using a switch case since we'll likely handle more future event types
+		switch ( $event_type ) {
+			case 'charge.dispute.created':
+				$result = Stripe::send_chargeback_to_sift( $event_body );
+				break;
+			default:
+				$result = new \WP_Error(
+					'sift-for-woocommerce-invalid-event-type',
+					'Sift For WooCommerce Webhook Forwarding: No matching event type found'
+				);
+		}
+
+		// Error handling
+		if ( is_wp_error( $result ) ) {
+			wc_get_logger()->error(
+				'Sift For WooCommerce Webhook Forwarding: Error processing event',
+				array(
+					'event_type' => $event_type,
+					'event_body' => $event_body,
+					'error'      => $result,
 				)
 			);
 		}
