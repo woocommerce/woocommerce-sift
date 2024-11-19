@@ -4,7 +4,6 @@ namespace Sift_For_WooCommerce\Tests;
 
 use Sift_For_WooCommerce\Payment_Gateway;
 use Sift_For_WooCommerce\Payment_Method;
-use Sift_For_WooCommerce\Tests\Mocks\WC_Payments_API_Charge;
 
 use function Sift_For_WooCommerce\Tests\Mocks\Utils\build_mock_stripe_payment_method_object;
 
@@ -16,7 +15,6 @@ require_once __DIR__ . '/../src/inc/payment-gateways/transact.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/woocommerce-payments.php';
 require_once __DIR__ . '/../src/inc/payment-type.php';
 require_once __DIR__ . '/mocks/utils.php';
-require_once __DIR__ . '/mocks/wc-payments-api-charge-mock.php';
 
 /**
  * Tests for payment gateway interoperability
