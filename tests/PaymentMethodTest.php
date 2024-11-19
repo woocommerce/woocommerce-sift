@@ -172,7 +172,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$woocommerce_payments_charge  = new WC_Payments_API_Charge( array() );
+		$woocommerce_payments_charge  = [ 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) ];
 		$order                        = new \WC_Order();
 		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
 		$transact_gateway             = new Payment_Gateway( 'transact', $order );
@@ -221,7 +221,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$woocommerce_payments_charge  = new WC_Payments_API_Charge( array() );
+		$woocommerce_payments_charge  = [ 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) ];
 		$order                        = new \WC_Order();
 		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
 		$transact_gateway             = new Payment_Gateway( 'transact', $order );
@@ -270,7 +270,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$woocommerce_payments_charge  = new WC_Payments_API_Charge( array() );
+		$woocommerce_payments_charge  = [ 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) ];
 		$order                        = new \WC_Order();
 		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
 		$transact_gateway             = new Payment_Gateway( 'transact', $order );
@@ -319,7 +319,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$woocommerce_payments_charge  = new WC_Payments_API_Charge( array() );
+		$woocommerce_payments_charge  = [ 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) ];
 		$order                        = new \WC_Order();
 		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
 		$transact_gateway             = new Payment_Gateway( 'transact', $order );
@@ -368,7 +368,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$woocommerce_payments_charge  = new WC_Payments_API_Charge( array() );
+		$woocommerce_payments_charge  = [ 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) ];
 		$order                        = new \WC_Order();
 		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
 		$transact_gateway             = new Payment_Gateway( 'transact', $order );
@@ -417,7 +417,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$woocommerce_payments_charge  = new WC_Payments_API_Charge( array() );
+		$woocommerce_payments_charge  = [ 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) ];
 		$order                        = new \WC_Order();
 		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
 		$transact_gateway             = new Payment_Gateway( 'transact', $order );
@@ -466,7 +466,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$woocommerce_payments_charge  = new WC_Payments_API_Charge( array() );
+		$woocommerce_payments_charge  = [ 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) ];
 		$order                        = new \WC_Order();
 		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
 		$transact_gateway             = new Payment_Gateway( 'transact', $order );
@@ -515,7 +515,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$woocommerce_payments_charge  = new WC_Payments_API_Charge( array() );
+		$woocommerce_payments_charge  = [ 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) ];
 		$order                        = new \WC_Order();
 		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
 		$transact_gateway             = new Payment_Gateway( 'transact', $order );
