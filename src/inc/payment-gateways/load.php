@@ -3,10 +3,11 @@
 add_action(
 	'woocommerce_init',
 	function () {
-		$gateways = \WC()->payment_gateways->get_available_payment_gateways();
+		$gateways    = \WC()->payment_gateways->get_available_payment_gateways();
+		$gateway_ids = array_keys( $gateways );
 
-		foreach ( $gateways as $gateway ) {
-			switch ( $gateway ) {
+		foreach ( $gateway_ids as $gateway_id ) {
+			switch ( $gateway_id ) {
 				case 'stripe':
 					require_once __DIR__ . '/lib/stripe.php';
 					require_once __DIR__ . '/stripe.php';

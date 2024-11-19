@@ -21,9 +21,7 @@ class Sift_Order {
 	public function __construct( \WC_Order $wc_order ) {
 		$this->wc_order = $wc_order;
 
-		$this->payment_gateway        = new Payment_Gateway( $this->wc_order->get_payment_method(), $this->wc_order );
-		$this->payment_method_details = $this->get_payment_method_details_from_order( $this->payment_gateway->get_woo_gateway_id(), $this->wc_order );
-		$this->charge_details         = $this->get_charge_details_from_order( $this->payment_gateway->get_woo_gateway_id(), $this->wc_order );
+		$this->payment_gateway = new Payment_Gateway( $this->wc_order->get_payment_method(), $this->wc_order );
 	}
 
 	/**
@@ -40,7 +38,11 @@ class Sift_Order {
 	 * @return mixed A value which contains the information that subsequent functions will use to extract payment method info.
 	 */
 	private function get_payment_method_details_from_order() {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_method_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), null, $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! empty( $this->payment_method_details ) ) {
+			return $this->payment_method_details;
+		}
+		$this->payment_method_details = apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_method_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), null, $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return $this->payment_method_details;
 	}
 
 	/**
@@ -58,7 +60,11 @@ class Sift_Order {
 	 * @return mixed A value which contains the information that subsequent functions will use to extract charge / transaction info.
 	 */
 	private function get_charge_details_from_order() {
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_charge_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), null, $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		if ( ! empty( $this->charge_details ) ) {
+			return $this->charge_details;
+		}
+		$this->charge_details = apply_filters( sprintf( 'sift_for_woocommerce_%s_charge_details_from_order', $this->payment_gateway->get_woo_gateway_id() ), null, $this->wc_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		return $this->charge_details;
 	}
 
 	/**
@@ -70,34 +76,34 @@ class Sift_Order {
 		$order_payment_method = array(
 			'$payment_type'                  => Payment_Method::get_payment_type_string( $this->payment_gateway, $this->gateway_payment_type ),
 			'$payment_gateway'               => Payment_Method::get_payment_gateway_string( $this->payment_gateway, $this->wc_order ),
-			'$card_bin'                      => Payment_Method::get_card_bin( $this->payment_gateway, $this->payment_method_details ),
-			'$card_last4'                    => Payment_Method::get_card_last4( $this->payment_gateway, $this->payment_method_details ),
-			'$avs_result_code'               => Payment_Method::get_avs_result_code( $this->payment_gateway, $this->charge_details ),
-			'$cvv_result_code'               => Payment_Method::get_cvv_result_code( $this->payment_gateway, $this->charge_details ),
-			'$verification_status'           => Payment_Method::get_verification_status( $this->payment_gateway, $this->charge_details ),
-			'$routing_number'                => Payment_Method::get_routing_number( $this->payment_gateway, $this->charge_details ),
-			'$shortened_iban_first6'         => Payment_Method::get_shortened_iban_first6( $this->payment_gateway, $this->charge_details ),
-			'$shortened_iban_last4'          => Payment_Method::get_shortened_iban_last4( $this->payment_gateway, $this->charge_details ),
-			'$sepa_direct_debit_mandate'     => Payment_Method::get_sepa_direct_debit_mandate( $this->payment_gateway, $this->charge_details ),
-			'$decline_reason_code'           => Payment_Method::get_decline_reason_code( $this->payment_gateway, $this->charge_details ),
-			'$wallet_address'                => Payment_Method::get_wallet_address( $this->payment_gateway, $this->charge_details ),
-			'$wallet_type'                   => Payment_Method::get_wallet_type( $this->payment_gateway, $this->charge_details ),
-			'$paypal_payer_id'               => Payment_Method::get_paypal_payer_id( $this->payment_gateway, $this->charge_details ),
-			'$paypal_payer_email'            => Payment_Method::get_paypal_payer_email( $this->payment_gateway, $this->charge_details ),
-			'$paypal_payer_status'           => Payment_Method::get_paypal_payer_status( $this->payment_gateway, $this->charge_details ),
-			'$paypal_address_status'         => Payment_Method::get_paypal_address_status( $this->payment_gateway, $this->charge_details ),
-			'$paypal_protection_eligibility' => Payment_Method::get_paypal_protection_eligibility( $this->payment_gateway, $this->charge_details ),
-			'$paypal_payment_status'         => Payment_Method::get_paypal_payment_status( $this->payment_gateway, $this->charge_details ),
-			'$stripe_cvc_check'              => Payment_Method::get_stripe_cvc_check( $this->payment_gateway, $this->charge_details ),
-			'$stripe_address_line1_check'    => Payment_Method::get_stripe_address_line1_check( $this->payment_gateway, $this->charge_details ),
-			'$stripe_address_line2_check'    => Payment_Method::get_stripe_address_line2_check( $this->payment_gateway, $this->charge_details ),
-			'$stripe_address_zip_check'      => Payment_Method::get_stripe_address_zip_check( $this->payment_gateway, $this->charge_details ),
-			'$stripe_funding'                => Payment_Method::get_stripe_funding( $this->payment_gateway, $this->charge_details ),
-			'$stripe_brand'                  => Payment_Method::get_stripe_brand( $this->payment_gateway, $this->charge_details ),
-			'$account_holder_name'           => Payment_Method::get_account_holder_name( $this->payment_gateway, $this->charge_details ),
-			'$account_number_last5'          => Payment_Method::get_account_number_last5( $this->payment_gateway, $this->charge_details ),
-			'$bank_name'                     => Payment_Method::get_bank_name( $this->payment_gateway, $this->charge_details ),
-			'$bank_country'                  => Payment_Method::get_bank_country( $this->payment_gateway, $this->charge_details ),
+			'$card_bin'                      => Payment_Method::get_card_bin( $this->payment_gateway, $this->get_payment_method_details_from_order() ),
+			'$card_last4'                    => Payment_Method::get_card_last4( $this->payment_gateway, $this->get_payment_method_details_from_order() ),
+			'$avs_result_code'               => Payment_Method::get_avs_result_code( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$cvv_result_code'               => Payment_Method::get_cvv_result_code( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$verification_status'           => Payment_Method::get_verification_status( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$routing_number'                => Payment_Method::get_routing_number( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$shortened_iban_first6'         => Payment_Method::get_shortened_iban_first6( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$shortened_iban_last4'          => Payment_Method::get_shortened_iban_last4( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$sepa_direct_debit_mandate'     => Payment_Method::get_sepa_direct_debit_mandate( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$decline_reason_code'           => Payment_Method::get_decline_reason_code( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$wallet_address'                => Payment_Method::get_wallet_address( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$wallet_type'                   => Payment_Method::get_wallet_type( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$paypal_payer_id'               => Payment_Method::get_paypal_payer_id( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$paypal_payer_email'            => Payment_Method::get_paypal_payer_email( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$paypal_payer_status'           => Payment_Method::get_paypal_payer_status( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$paypal_address_status'         => Payment_Method::get_paypal_address_status( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$paypal_protection_eligibility' => Payment_Method::get_paypal_protection_eligibility( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$paypal_payment_status'         => Payment_Method::get_paypal_payment_status( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$stripe_cvc_check'              => Payment_Method::get_stripe_cvc_check( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$stripe_address_line1_check'    => Payment_Method::get_stripe_address_line1_check( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$stripe_address_line2_check'    => Payment_Method::get_stripe_address_line2_check( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$stripe_address_zip_check'      => Payment_Method::get_stripe_address_zip_check( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$stripe_funding'                => Payment_Method::get_stripe_funding( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$stripe_brand'                  => Payment_Method::get_stripe_brand( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$account_holder_name'           => Payment_Method::get_account_holder_name( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$account_number_last5'          => Payment_Method::get_account_number_last5( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$bank_name'                     => Payment_Method::get_bank_name( $this->payment_gateway, $this->get_charge_details_from_order() ),
+			'$bank_country'                  => Payment_Method::get_bank_country( $this->payment_gateway, $this->get_charge_details_from_order() ),
 		);
 
 		return array_filter(
