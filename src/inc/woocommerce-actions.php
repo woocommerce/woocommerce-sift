@@ -1015,7 +1015,7 @@ class Events {
 
 		self::$to_send[] = array(
 			'event'      => $event,
-			'properties' => $properties,
+			'properties' => array_filter( $properties ),
 		);
 	}
 

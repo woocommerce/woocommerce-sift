@@ -100,8 +100,10 @@ class Sift_Order {
 			'$bank_country'                  => Payment_Method::get_bank_country( $this->payment_gateway, $this->charge_details ),
 		);
 
-		return array(
-			array_filter( $order_payment_method, fn( $val ) => ! empty( $val ) ),
+		return array_filter(
+			array(
+				array_filter( $order_payment_method, fn( $val ) => ! empty( $val ) ),
+			)
 		);
 	}
 }
