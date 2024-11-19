@@ -885,7 +885,7 @@ class Events {
 		// Missing parameters -- company, email (For billing, not shipping)
 		return array(
 			'$name'      => $address['first_name'] . ' ' . $address['last_name'],
-			'company'    => $address['company'],
+			'$company'   => $address['company'],
 			'$phone'     => $address['phone'],
 			'$address_1' => $address['address_1'],
 			'$address_2' => $address['address_2'],
@@ -927,7 +927,7 @@ class Events {
 		// Missing parameters -- company, email (For billing, not shipping)
 		return array(
 			'$name'      => $address['first_name'] . ' ' . $address['last_name'],
-			'company'    => $address['company'],
+			'$company'   => $address['company'],
 			'$phone'     => $address['phone'],
 			'$address_1' => $address['address_1'],
 			'$address_2' => $address['address_2'],
@@ -1015,7 +1015,7 @@ class Events {
 
 		self::$to_send[] = array(
 			'event'      => $event,
-			'properties' => $properties,
+			'properties' => array_filter( $properties ),
 		);
 	}
 
