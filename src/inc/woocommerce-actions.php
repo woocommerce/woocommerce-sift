@@ -756,6 +756,59 @@ class Events {
 	}
 
 	/**
+	 * Adds and event for chargebacks
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/chargeback
+	 *
+	 * @param string    $order_id          Order ID.
+	 * @param \WC_Order $order             The order object.
+	 * @param string    $chargeback_reason Chargeback data.
+	 *
+	 * @return void
+	 */
+	public static function chargeback( string $order_id, \WC_Order $order, string $chargeback_reason ) {
+
+		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$chargeback ) ) {
+			return;
+		}
+
+		// Assemble the properties for the chargeback event.
+		$properties = array(
+			'$order_id'          => $order_id,
+			'$user_id'           => (string) $order->get_user_id(),
+			'$chargeback_reason' => $chargeback_reason,
+			'$ip'                => self::get_client_ip(),
+		);
+
+		try {
+			SiftObjectValidator::validate_chargeback( $properties );
+		} catch ( \Exception $e ) {
+			wc_get_logger()->error( esc_html( $e->getMessage() ) );
+			return;
+		}
+
+		self::add( Sift_Event_Types::$chargeback, $properties );
+	}
+
+	/**
+	 * Enqueue an event to send.  This will enable sending them all at shutdown.
+	 *
+	 * @param string $event      The event we're recording -- generally will start with a $.
+	 * @param array  $properties An array of the data we're passing along to Sift.  Keys will generally start with a $.
+	 *
+	 * @return void
+	 */
+	public static function add( string $event, array $properties ) {
+		array_push(
+			self::$to_send,
+			array(
+				'event'      => $event,
+				'properties' => array_filter( $properties ),
+			)
+		);
+	}
+
+	/**
 	 * Return how many events have been registered thus far and are queued up to send.
 	 *
 	 * @return integer
@@ -978,14 +1031,14 @@ class Events {
 	}
 
 	/**
-		* Return the amount of transaction "micros"
-		*
-		* @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
-		*
-		* @param float $price The price to format.
-		*
-		* @return integer
-		*/
+	 * Return the amount of transaction "micros"
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/transaction in the $amount
+	 *
+	 * @param float $price The price to format.
+	 *
+	 * @return integer
+	 */
 	public static function get_transaction_micros( float $price ) {
 		$currencies_without_decimals = array( 'JPY' );
 
@@ -997,26 +1050,6 @@ class Events {
 
 		// For currencies with decimals
 		return intval( $price * 10000 );
-	}
-
-
-	/**
-	 * Enqueue an event to send.  This will enable sending them all at shutdown.
-	 *
-	 * @param string $event      The event we're recording -- generally will start with a $.
-	 * @param array  $properties An array of the data we're passing along to Sift.  Keys will generally start with a $.
-	 *
-	 * @return void
-	 */
-	public static function add( string $event, array $properties ) {
-		if ( 'localhost' === ( $properties['$site_domain'] ?? '' ) ) {
-			$properties['$site_domain'] = 'george-test-local.woocommerce.com';
-		}
-
-		self::$to_send[] = array(
-			'event'      => $event,
-			'properties' => array_filter( $properties ),
-		);
 	}
 
 	/**

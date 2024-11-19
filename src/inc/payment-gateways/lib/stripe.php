@@ -134,4 +134,40 @@ class Stripe {
 		}
 		return null;
 	}
+
+	/**
+	 * Convert a dispute reason from a string that Stripe would use to a string that Sift would use.
+	 *
+	 * @param string $dispute_reason A dispute reason string that Stripe would use.
+	 *
+	 * @return string|null A dispute reason string that Sift would use.
+	 */
+	public static function convert_dispute_reason_to_sift_chargeback_reason( string $dispute_reason ): ?string {
+		switch ( $dispute_reason ) {
+			case 'fraudulent':
+				return '$fraud';
+			case 'duplicate':
+				return '$duplicate';
+			case 'product_not_received':
+				return '$product_not_received';
+			case 'product_unacceptable':
+				return '$product_unacceptable';
+			case 'subscription_canceled':
+				return '$cancel_subscription';
+			case 'debit_not_authorized':
+				return '$authorization';
+			case 'bank_cannot_process':
+			case 'check_returned':
+			case 'credit_not_processed':
+			case 'general':
+			case 'incorrect_account_details':
+			case 'insufficient_funds':
+			case 'unrecognized':
+				return '$processing_errors';
+			case 'customer_initiated':
+				return '$consumer_disputes';
+			default:
+				return null;
+		}
+	}
 }
