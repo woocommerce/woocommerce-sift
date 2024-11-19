@@ -1257,6 +1257,7 @@ class SiftObjectValidator {
 			'$address_1' => 'is_string',
 			'$address_2' => 'is_string',
 			'$city'      => 'is_string',
+			'$company'   => 'is_string',
 			'$region'    => 'is_string',
 			'$country'   => array( __CLASS__, 'validate_country_code' ),
 			'$zipcode'   => 'is_string',
