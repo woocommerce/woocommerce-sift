@@ -249,7 +249,7 @@ function get_sift_for_woocommerce_events_settings() {
 
 			),
 			array(
-				'event_name' => Sift_Event_Types::$flag_content,
+				'event_name'    => Sift_Event_Types::$flag_content,
 				'enabled'       => false,
 				'disabled_text' => __( '(Not implemented yet)', 'sift-for-woocommerce' ),
 			),
