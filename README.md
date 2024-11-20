@@ -46,7 +46,7 @@ YOu can select a test with
 3. Modify WP_DOMAIN, WP_SITEURL and WP_HOME with the new URL `0000-00-00-00.ngrok-free.app`
 4. Run `npm restart`
 5. Go to https://0000-00-00-00.ngrok-free.app/wp-admin and set up your gateway
-6. (optional) for WooPayments, you can use the Sandbox mode in the setup
+6. (optional) for WooPayments, you can use the Sandbox mode in the setup with "I'm setting up a store for someone else."
 
 ### Alternative Testing
 
