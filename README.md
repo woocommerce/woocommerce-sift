@@ -27,7 +27,9 @@ As you develop your plugin, update the README.md file with detailed information 
 
 1. `npm install`
 2. `composer install`
-3. `npm start` -- This starts a local WordPress environment available at <http://localhost:8888>
+3. `npm start`
+4. See `Test with WooPayments or any other gateway` to test
+
 
 ### Run unit tests
 
