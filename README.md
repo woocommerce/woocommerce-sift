@@ -44,8 +44,8 @@ YOu can select a test with
 1. Add a link to the gateway in `.wp-env.json` in the "plugins" list (WooPayments is provided by defaut as well as a dummy Simple_Test_Gateway)
 2. Start ngrok with "ngrok http 80 --host-header=rewrite" and grab the new address in https://0000-00-00-00.ngrok-free.app
 3. Modify WP_DOMAIN, WP_SITEURL and WP_HOME with the new URL `0000-00-00-00.ngrok-free.app`
-4. Run `npm restart`
-5. Go to https://0000-00-00-00.ngrok-free.app/wp-admin/
+4. Run `npm start` to reload the config
+5. Go to https://0000-00-00-00.ngrok-free.app/wp-admin/ (don't miss the last /)
 6. Setup WooCommerce 
 7. Set up your gateway
 6. (optional) for WooPayments, you can use the Sandbox mode in the setup with "I'm setting up a store for someone else."
