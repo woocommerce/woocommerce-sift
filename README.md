@@ -75,3 +75,7 @@ Restart docker.
 ### Modify a variable in wp-config
 
 `wp-env run cli wp config set JETPACK_DEV_DEBUG false --raw`
+
+### Access PHP error
+1. `wp-env run cli bash`
+2. `tail -f /var/www/html/wp-content/debug.log`

@@ -54,6 +54,7 @@
     "check-licenses": "wp-scripts check-licenses",
     "start": "wp-env start",
     "stop": "wp-env destroy",
+    "clean": "wp-env clean development",
     "destroy": "wp-env destroy",
     "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce vendor/bin/phpunit",
     "test:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce bin/test-with-coverage.sh"
