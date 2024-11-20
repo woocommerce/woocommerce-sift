@@ -441,7 +441,7 @@ class Events {
 			'$user_email'   => $user->user_email ?? null,
 			'$session_id'   => \WC()->session->get_customer_unique_id(),
 			'$item'         => array(
-				'$item_id'       => $cart_item_key,
+				'$item_id'       => (string) $cart_item_key,
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_title(),
 				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
@@ -495,7 +495,7 @@ class Events {
 			'$user_email'   => $user->user_email ? $user->user_email : null,
 			'$session_id'   => \WC()->session->get_customer_unique_id(),
 			'$item'         => array(
-				'$item_id'       => $product->get_id(),
+				'$item_id'       => (string) $product->get_id(),
 				'$sku'           => $product->get_sku(),
 				'$product_title' => $product->get_title(),
 				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
@@ -938,7 +938,6 @@ class Events {
 		// Missing parameters -- company, email (For billing, not shipping)
 		return array(
 			'$name'      => $address['first_name'] . ' ' . $address['last_name'],
-			'$company'   => $address['company'],
 			'$phone'     => $address['phone'],
 			'$address_1' => $address['address_1'],
 			'$address_2' => $address['address_2'],
