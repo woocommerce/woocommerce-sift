@@ -1,11 +1,17 @@
 {
   "plugins": [
     "https://downloads.wordpress.org/plugin/woocommerce.9.3.3.zip",
-    "https://github.com/Automattic/woocommerce-payments/releases/download/8.5.0/woocommerce-payments.zip",
+    "https://downloads.wordpress.org/plugin/woocommerce-payments.8.5.0.zip",
     ".",
     "./bin/test-payment-gateway"
   ],
   "lifecycleScripts": {
     "afterStart": "./bin/bootstrap-sift-for-woocommerce.sh"
+  },
+  "port": 80,
+  "config": {
+    "WP_DOMAIN": "localhost",
+    "WP_SITEURL": "https://bd66-80-27-83-70.ngrok-free.app",
+    "WP_HOME": "https://bd66-80-27-83-70.ngrok-free.app"
   }
 }

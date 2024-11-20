@@ -52,7 +52,9 @@
     "packages-update": "wp-scripts packages-update --dist-tag=wp-6.2",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
-    "start": "npm-run-all --parallel start:**",
+    "start": "wp-env start",
+    "stop": "wp-env destroy",
+    "destroy": "wp-env destroy",
     "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce vendor/bin/phpunit",
     "test:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce bin/test-with-coverage.sh"
   }
