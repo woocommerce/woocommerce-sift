@@ -45,7 +45,9 @@ YOu can select a test with
 2. Start ngrok with "ngrok http 80 --host-header=rewrite" and grab the new address in https://0000-00-00-00.ngrok-free.app
 3. Modify WP_DOMAIN, WP_SITEURL and WP_HOME with the new URL `0000-00-00-00.ngrok-free.app`
 4. Run `npm restart`
-5. Go to https://0000-00-00-00.ngrok-free.app/wp-admin and set up your gateway
+5. Go to https://0000-00-00-00.ngrok-free.app/wp-admin/
+6. Setup WooCommerce 
+7. Set up your gateway
 6. (optional) for WooPayments, you can use the Sandbox mode in the setup with "I'm setting up a store for someone else."
 
 ### Alternative Testing
@@ -68,3 +70,8 @@ To get tests working with XDEBUG, it requires a little more work.  Configure you
 #### `Error response from daemon: error while creating mount source path`
 
 Restart docker.
+
+
+### Modify a variable in wp-config
+
+`wp-env run cli wp config set JETPACK_DEV_DEBUG false --raw`
