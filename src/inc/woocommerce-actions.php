@@ -110,6 +110,7 @@ class Events {
 		$user    = wp_get_current_user();
 		$properties = array(
 			'$user_id'    => (string) $user->ID ?? 0,
+			'$session_id' => WC()->session->get_customer_unique_id(),
 			'$promotions' => array(
 				array(
 					'$promotion_id' => $coupon_code,
