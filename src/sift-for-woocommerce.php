@@ -2,8 +2,6 @@
 
 namespace Sift_For_WooCommerce;
 
-use Sift_For_WooCommerce\Sift_Events_Types\Sift_Event_Types;
-
 require_once __DIR__ . '/inc/class-sift-event-types.php';
 require_once __DIR__ . '/inc/wc-settings-tab.php';
 require_once __DIR__ . '/inc/rest-api-webhooks.php';
