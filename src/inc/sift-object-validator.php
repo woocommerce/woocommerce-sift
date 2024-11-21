@@ -891,10 +891,15 @@ class SiftObjectValidator {
 	 * @throws \Exception If the browser is invalid.
 	 */
 	public static function validate_browser( $value ) {
+
+		if( empty( $value ) ) {
+			return true;
+		}
+
 		$validator_map = array(
 			'$user_agent'       => 'is_string',
-			'$accept_language'  => 'is_string',
-			'$content_language' => 'is_string',
+			'$accept_language'  => array( __CLASS__, 'is_string_or_null' ),
+			'$content_language' => array( __CLASS__, 'is_string_or_null' )
 		);
 		try {
 			static::validate( $value, $validator_map );
@@ -905,14 +910,25 @@ class SiftObjectValidator {
 	}
 
 	/**
+	 * Returns if the value is a string or null
+	 *
+	 * @param string $value The value.
+	 *
+	 * @returns boolean
+	 */
+	public static function is_string_or_null( mixed $value ): bool {
+		return is_string( $value ) || is_null( $value );
+	}
+
+	/**
 	 * Validate an ISO 3166 language code.
 	 *
 	 * @param string $value The ISO 3166 language code to validate.
 	 *
-	 * @return true
+	 * @return boolean
 	 * @throws \InvalidArgumentException If the ISO 3166 language code is invalid.
 	 */
-	public static function validate_ISO3166_language( $value ) { //phpcs:ignore
+	public static function validate_ISO3166_language( string $value ): bool { //phpcs:ignore
 		// ISO 3166 language code.
 		if ( ! empty( $value ) && ! preg_match( '/^[a-z]{2}-[A-Z]{2}$/', $value ) ) {
 			throw new \InvalidArgumentException( 'must be valid ISO-3166 format' );
@@ -1476,7 +1492,7 @@ class SiftObjectValidator {
 				throw new \Exception( 'missing $user_id or $session_id' );
 			}
 		} catch ( \Exception $e ) {
-			throw new \Exception( 'Invalid $link_session_to_user event: ' . esc_html( $e->getMessage() ) );
+			throw new \Exception( 'Invalid $chargeback event: ' . esc_html( $e->getMessage() ) );
 		}
 		return true;
 	}
