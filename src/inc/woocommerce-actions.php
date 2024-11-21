@@ -669,6 +669,7 @@ class Events {
 
 		$properties = array(
 			'$user_id'            => self::format_user_id( $order->get_user_id() ),
+			'$session_id'         => WC()->session->get_customer_unique_id(),
 			'$amount'             => self::get_transaction_micros( floatval( $order->get_total() ) ), // Gotta multiply it up to give an integer.
 			'$currency_code'      => $order->get_currency(),
 			'$order_id'           => (string) $order->get_id(),
@@ -709,6 +710,7 @@ class Events {
 
 		$properties = array(
 			'$user_id'      => self::format_user_id( $order->get_user_id() ),
+			'$session_id'   => WC()->session->get_customer_unique_id(),
 			'$order_id'     => (string) $order_id,
 			'$source'       => $status_transition['manual'] ? '$manual_review' : '$automated',
 			'$description'  => $status_transition['note'],

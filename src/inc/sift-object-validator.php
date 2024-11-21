@@ -1308,6 +1308,9 @@ class SiftObjectValidator {
 			if( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
+			if( ! isset( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $session_id' );
+			}
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Failed to validate $create_account event: ' . esc_html( $e->getMessage() ) );
 		}
@@ -1624,6 +1627,7 @@ class SiftObjectValidator {
 	public static function validate_order_status( array $data ) {
 		$validator_map = array(
 			'$user_id'      => array( __CLASS__, 'validate_id' ),
+			'$session_id'   => array( __CLASS__, 'validate_id' ),
 			'$order_id'     => 'is_string',
 			'$order_status' => self::ORDER_STATUSES,
 			'$reason'       => self::CANCELLATION_REASONS,
@@ -1643,6 +1647,9 @@ class SiftObjectValidator {
 			// Required fields for order status: $user_id, $order_id, $order_status
 			if ( !isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
+			}
+			if( ! isset( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $session_id' );
 			}
 			if ( empty( $data['$order_id'] ) ) {
 				throw new \Exception( 'missing $order_id' );
@@ -1668,6 +1675,7 @@ class SiftObjectValidator {
 	public static function validate_transaction( array $data ) {
 		$validator_map = array(
 			'$user_id'            => array( __CLASS__, 'validate_id' ),
+			'$session_id'         => array( __CLASS__, 'validate_id' ),
 			'$amount'             => 'is_int',
 			'$currency_code'      => array( __CLASS__, 'validate_currency_code' ),
 			'$order_id'           => 'is_string',
@@ -1680,6 +1688,9 @@ class SiftObjectValidator {
 			// Required fields for order status: $user_id, $order_id, $order_status
 			if( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
+			}
+			if( ! isset( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $session_id' );
 			}
 			if ( empty( $data['$amount'] ) ) {
 				throw new \Exception( 'missing $amount' );
