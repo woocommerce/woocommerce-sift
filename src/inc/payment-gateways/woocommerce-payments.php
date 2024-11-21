@@ -7,7 +7,19 @@ use Sift_For_WooCommerce\WooCommerce_Actions\Events;
 
 add_filter( 'sift_for_woocommerce_woocommerce_payments_payment_gateway_string', fn() => '$stripe' );
 
-add_action( 'woocommerce_payments_before_webhook_delivery', __NAMESPACE__ . '\process_before_event_delivery', 100, 2 );
+add_action(
+	'woocommerce_payments_before_webhook_delivery',
+	function ( $event_type, $event_body ) {
+		// Using a switch case since we'll likely handle more future event types
+		switch ( $event_type ) {
+			case 'charge.dispute.created':
+				send_chargeback_to_sift( $event_body );
+				break;
+		}
+	},
+	10,
+	2
+);
 
 add_filter(
 	'sift_for_woocommerce_woocommerce_payments_payment_method_details_from_order',
@@ -61,23 +73,6 @@ add_filter( 'sift_for_woocommerce_woocommerce_payments_stripe_funding', fn( $val
 add_filter( 'sift_for_woocommerce_woocommerce_payments_stripe_brand', fn( $value, $woocommerce_payments_charge ) => $woocommerce_payments_charge['payment_method_details']['card']['brand'] ?? $value, 10, 2 );
 
 /**
- * Processes events (from Stripe and more) before sending the data elsewhere.
- *
- * @param string $event_type The type of event.
- * @param mixed  $event_body The body of the event.
- *
- * @return void
- */
-function process_before_event_delivery( string $event_type, $event_body ) {
-	// Using a switch case since we'll likely handle more future event types
-	switch ( $event_type ) {
-		case 'charge.dispute.created':
-			send_chargeback_to_sift( $event_body );
-			break;
-	}
-}
-
-/**
  * Send a chargeback event to Sift.
  *
  * @param object $event The Stripe event object.
@@ -85,24 +80,35 @@ function process_before_event_delivery( string $event_type, $event_body ) {
  * @return void
  */
 function send_chargeback_to_sift( $event ): void {
-	$payment_intent_id = $event->payment_intent ?? null;
-	$dispute_reason    = $event->reason ?? null;
+	$payment_intent_id = $event['data']['object']['payment_intent'] ?? null;
+	$dispute_reason    = $event['data']['object']['reason'] ?? null;
+
+	// Log the event using wc_get_logger().
+	wc_get_logger()->info(
+		'SFW: Received a Stripe dispute event.'
+	);
 
 	if ( ! $payment_intent_id || ! $dispute_reason ) {
-		wc_get_logger()->error( 'Missing charge ID or dispute reason in the Stripe dispute event.' );
+		wc_get_logger()->error( 'Missing payment intent ID or dispute reason in the Stripe dispute event.' );
 		return;
 	}
 
 	// Get the order ID from the Stripe charge ID.
 	$api_client     = \WC_Payments::get_payments_api_client();
 	$payment_intent = $api_client->get_intent( $payment_intent_id );
-	$order_id       = $payment_intent->metadata->order_key ?? null;
+	$order_id       = $payment_intent['metadata']['order_id'] ?? null;
+
+	// Log the order ID
+	wc_get_logger()->info( 'SFW: Dispute order_id: ' . $order_id );
+
 	if ( ! $order_id ) {
 		wc_get_logger()->error( 'Order ID not found for the Stripe payment intent ID: ' . esc_html( $payment_intent_id ) );
 		return;
 	}
 
 	$order = wc_get_order( $order_id );
+	wc_get_logger()->info( 'SFW: order: ' . wp_json_encode( $order, JSON_PRETTY_PRINT ) );
+
 	if ( ! $order instanceof \WC_Order ) {
 		wc_get_logger()->error( 'WooCommerce order not found for Order ID: ' . esc_html( $order_id ) );
 		return;
@@ -115,5 +121,7 @@ function send_chargeback_to_sift( $event ): void {
 		return;
 	}
 
+	wc_get_logger()->info( 'Made it to chargeback event' );
 	Events::chargeback( $order_id, $order, $chargeback_reason );
+	wc_get_logger()->info( 'Made it after chargeback event' );
 }
