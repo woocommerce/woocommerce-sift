@@ -84,7 +84,7 @@ class Events {
 		self::add(
 			'$logout',
 			array(
-				'$user_id' => $user_id,
+				'$user_id' => self::format_user_id( intval( $user_id ) ),
 				'$browser' => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$ip'      => self::get_client_ip(),
 				'$time'    => intval( 1000 * microtime( true ) ),
@@ -109,7 +109,7 @@ class Events {
 
 		$user       = wp_get_current_user();
 		$properties = array(
-			'$user_id'    => (string) $user->ID ?? 0,
+			'$user_id'    => self::format_user_id( $user->ID ?? 0 ),
 			'$session_id' => WC()->session->get_customer_unique_id(),
 			'$promotions' => array(
 				array(
@@ -149,7 +149,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'       => (string) $user->ID,
+			'$user_id'       => self::format_user_id( $user->ID ),
 			'$login_status'  => '$success',
 			'$session_id'    => WC()->session->get_customer_unique_id(),
 			'$user_email'    => $user->user_email ?? null,
@@ -191,9 +191,9 @@ class Events {
 		}
 
 		$attempted_user = get_user_by( 'login', $username );
-		$user_id        = null;
+		$user_id        = 0;
 		if ( is_object( $attempted_user ) ) {
-			$user_id = (string) $attempted_user->ID ?? null;
+			$user_id = $attempted_user->ID ?? 0;
 		}
 
 		switch ( $error->get_error_code() ) {
@@ -212,7 +212,7 @@ class Events {
 				$failure_reason = null;
 		}
 		$properties = array(
-			'$user_id'      => $user_id,
+			'$user_id'      => self::format_user_id( $user_id ),
 			'$login_status' => '$failure',
 			'$session_id'   => WC()->session->get_customer_unique_id(),
 			'$browser'      => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
@@ -253,7 +253,7 @@ class Events {
 		$user = get_user_by( 'id', $user_id );
 
 		$properties = array(
-			'$user_id'          => (string) $user->ID,
+			'$user_id'          => self::format_user_id( $user->ID ),
 			'$session_id'       => WC()->session->get_customer_unique_id(),
 			'$user_email'       => $user->user_email ? $user->user_email : null,
 			'$name'             => $user->display_name,
@@ -308,7 +308,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'          => (string) $user->ID,
+			'$user_id'          => self::format_user_id( $user->ID ),
 			'$user_email'       => $user->user_email ? $user->user_email : null,
 			'$name'             => $user->display_name,
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
@@ -357,7 +357,7 @@ class Events {
 		$user = get_user_by( 'id', $user_id );
 
 		$properties = array(
-			'$user_id'      => (string) $user->ID,
+			'$user_id'      => self::format_user_id( $user->ID ),
 			'$reason'       => '$user_update', // Can alternately be `$forgot_password` or `$forced_reset` -- no real way to set those yet.
 			'$status'       => '$success', // This action only fires after the change is done.
 			'$browser'      => self::get_client_browser(),
@@ -394,7 +394,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'    => $user_id,
+			'$user_id'    => self::format_user_id( intval( $user_id ) ),
 			'$session_id' => $session_id,
 			'$ip'         => self::get_client_ip(),
 			'$time'       => intval( 1000 * microtime( true ) ),
@@ -441,7 +441,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'      => (string) $user->ID ?? null,
+			'$user_id'      => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'   => $user->user_email ?? null,
 			'$session_id'   => \WC()->session->get_customer_unique_id(),
 			'$item'         => array(
@@ -495,7 +495,7 @@ class Events {
 		$user      = wp_get_current_user();
 
 		$properties = array(
-			'$user_id'      => (string) $user->ID ?? null,
+			'$user_id'      => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'   => $user->user_email ? $user->user_email : null,
 			'$session_id'   => \WC()->session->get_customer_unique_id(),
 			'$item'         => array(
@@ -611,7 +611,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'         => (string) $user->ID ?? null,
+			'$user_id'         => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'      => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
 			'$session_id'      => \WC()->session->get_customer_unique_id(),
 			'$order_id'        => $order_id,
@@ -668,7 +668,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'            => (string) $order->get_user_id(),
+			'$user_id'            => self::format_user_id( $order->get_user_id() ),
 			'$amount'             => self::get_transaction_micros( floatval( $order->get_total() ) ), // Gotta multiply it up to give an integer.
 			'$currency_code'      => $order->get_currency(),
 			'$order_id'           => (string) $order->get_id(),
@@ -708,7 +708,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'      => (string) $order->get_user_id(),
+			'$user_id'      => self::format_user_id( $order->get_user_id() ),
 			'$order_id'     => (string) $order_id,
 			'$source'       => $status_transition['manual'] ? '$manual_review' : '$automated',
 			'$description'  => $status_transition['note'],
@@ -779,7 +779,7 @@ class Events {
 		// Assemble the properties for the chargeback event.
 		$properties = array(
 			'$order_id'          => $order_id,
-			'$user_id'           => (string) $order->get_user_id(),
+			'$user_id'           => self::format_user_id( $order->get_user_id() ),
 			'$chargeback_reason' => $chargeback_reason,
 			'$ip'                => self::get_client_ip(),
 		);
@@ -1075,5 +1075,21 @@ class Events {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Returns the right user ID.
+	 *
+	 * @param int $user_id Original user ID
+	 *
+	 * @return string Returns an empty string if the user ID is 0
+	 */
+	private static function format_user_id( int $user_id ): string {
+		if( $user_id === 0 ) {
+			// Returns empty string if the user is unknown
+			return "";
+		}
+
+		return (string) $user_id;
 	}
 }

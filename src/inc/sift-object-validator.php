@@ -1305,7 +1305,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// required field: $user_id
-			if ( empty( $data['$user_id'] ) ) {
+			if( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 		} catch ( \Exception $e ) {
@@ -1506,7 +1506,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// required field: $user_id
-			if ( empty( $data['$user_id'] ) ) {
+			if( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 		} catch ( \Exception $e ) {
@@ -1563,7 +1563,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// required field: $user_id
-			if ( empty( $data['$user_id'] ) ) {
+			if( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 		} catch ( \Exception $e ) {
@@ -1598,7 +1598,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for update password: $user_id, $reason, $status
-			if ( empty( $data['$user_id'] ) ) {
+			if( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 			if ( empty( $data['$reason'] ) ) {
@@ -1641,7 +1641,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for order status: $user_id, $order_id, $order_status
-			if ( empty( $data['$user_id'] ) ) {
+			if ( !isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 			if ( empty( $data['$order_id'] ) ) {
@@ -1678,7 +1678,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for order status: $user_id, $order_id, $order_status
-			if ( empty( $data['$user_id'] ) ) {
+			if( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 			if ( empty( $data['$amount'] ) ) {
