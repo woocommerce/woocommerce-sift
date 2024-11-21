@@ -892,14 +892,14 @@ class SiftObjectValidator {
 	 */
 	public static function validate_browser( $value ) {
 
-		if( empty( $value ) ) {
+		if ( empty( $value ) ) {
 			return true;
 		}
 
 		$validator_map = array(
 			'$user_agent'       => 'is_string',
 			'$accept_language'  => array( __CLASS__, 'is_string_or_null' ),
-			'$content_language' => array( __CLASS__, 'is_string_or_null' )
+			'$content_language' => array( __CLASS__, 'is_string_or_null' ),
 		);
 		try {
 			static::validate( $value, $validator_map );
@@ -912,9 +912,9 @@ class SiftObjectValidator {
 	/**
 	 * Returns if the value is a string or null
 	 *
-	 * @param string $value The value.
+	 * @param mixed $value The value.
 	 *
-	 * @returns boolean
+	 * @return boolean
 	 */
 	public static function is_string_or_null( mixed $value ): bool {
 		return is_string( $value ) || is_null( $value );
@@ -1321,10 +1321,10 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// required field: $user_id
-			if( ! isset( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
-			if( ! isset( $data['$session_id'] ) ) {
+			if ( ! isset( $data['$session_id'] ) ) {
 				throw new \Exception( 'missing $session_id' );
 			}
 		} catch ( \Exception $e ) {
@@ -1525,7 +1525,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// required field: $user_id
-			if( ! isset( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 		} catch ( \Exception $e ) {
@@ -1582,7 +1582,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// required field: $user_id
-			if( ! isset( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 		} catch ( \Exception $e ) {
@@ -1617,7 +1617,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for update password: $user_id, $reason, $status
-			if( ! isset( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 			if ( empty( $data['$reason'] ) ) {
@@ -1661,10 +1661,10 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for order status: $user_id, $order_id, $order_status
-			if ( !isset( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
-			if( ! isset( $data['$session_id'] ) ) {
+			if ( ! isset( $data['$session_id'] ) ) {
 				throw new \Exception( 'missing $session_id' );
 			}
 			if ( empty( $data['$order_id'] ) ) {
@@ -1702,10 +1702,10 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for order status: $user_id, $order_id, $order_status
-			if( ! isset( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
-			if( ! isset( $data['$session_id'] ) ) {
+			if ( ! isset( $data['$session_id'] ) ) {
 				throw new \Exception( 'missing $session_id' );
 			}
 			if ( empty( $data['$amount'] ) ) {

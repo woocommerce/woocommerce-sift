@@ -1064,15 +1064,15 @@ class Events {
 	/**
 	 * Returns the right user ID.
 	 *
-	 * @param int $user_id Original user ID
+	 * @param integer $user_id Original user ID.
 	 *
 	 * @return string Returns an empty string if the user ID is 0
 	 */
 	private static function format_user_id( int $user_id ): string {
-		if( $user_id === 0 ) {
+		if ( 0 === $user_id ) {
 			// Returns empty string if the user is unknown
 			// see https://developers.sift.com/tutorials/anonymous-users
-			return "";
+			return '';
 		}
 
 		return (string) $user_id;
@@ -1081,7 +1081,7 @@ class Events {
 	/**
 	 * Return the hierarchy of the product category
 	 *
-	 * @param WC_Product $product
+	 * @param WC_Product $product WooCommerce product.
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/complex-field-types/item
 	 *
@@ -1097,11 +1097,11 @@ class Events {
 		$taxonomy  = 'product_cat'; // Taxonomy for product category
 		$terms_ids = $product->get_category_ids();
 		// Loop though terms ids (product categories)
-		foreach( $terms_ids as $term_id ) {
-			$term_names = []; // Initialising category array
+		foreach ( $terms_ids as $term_id ) {
+			$term_names = array(); // Initialising category array
 
 			// Loop through product category ancestors
-			foreach( get_ancestors( $term_id, $taxonomy ) as $ancestor_id ){
+			foreach ( get_ancestors( $term_id, $taxonomy ) as $ancestor_id ) {
 				// Add the ancestors term names to the category array
 				$term_names[] = get_term( $ancestor_id, $taxonomy )->name;
 			}
@@ -1109,9 +1109,9 @@ class Events {
 			$term_names[] = get_term( $term_id, $taxonomy )->name;
 
 			// Add the formatted ancestors with the product category to main array
-			$output[] = implode(' > ', $term_names);
+			$output[] = implode( ' > ', $term_names );
 		}
 		// Output the formatted product categories with their ancestors
-		return implode(', ', $output );
+		return implode( ', ', $output );
 	}
 }
