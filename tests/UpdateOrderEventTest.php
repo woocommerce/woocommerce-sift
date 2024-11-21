@@ -30,7 +30,7 @@ class UpdateOrderEventTest extends EventTest {
 		add_filter(
 			'woocommerce_checkout_posted_data',
 			function ( $data ) {
-				$data['billing_phone'] = '+1234333';
+				$data['billing_phone'] = '+23 (433) 333-42';
 				return $data;
 			},
 			10,
@@ -48,6 +48,7 @@ class UpdateOrderEventTest extends EventTest {
 		static::fail_on_error_logged();
 		static::assertUpdateOrderEventTriggered();
 		static::assertTrue( array_key_exists( 'properties.$verification_phone_number', $events[0] ) );
+		static::assertEquals( '+2343333342', $events[0]['properties.$verification_phone_number'] );
 
 		// Clean up
 		wp_delete_user( $user_id );
