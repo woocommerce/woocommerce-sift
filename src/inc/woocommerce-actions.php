@@ -9,6 +9,7 @@ use WC_Order_Item_Product;
 
 use Sift_For_WooCommerce\Sift_Order;
 use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+use WC_Product;
 
 
 /**
@@ -427,17 +428,12 @@ class Events {
 
 		$cart_item = \WC()->cart->get_cart_item( $cart_item_key );
 		// phpcs:ignore
-		/** @var \WC_Product $product */
+		/** @var WC_Product $product */
 		$product = $cart_item['data'] ?? null;
 		$user    = wp_get_current_user();
 
 		if ( ! $product ) {
 			return;
-		}
-		// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
-		$category = wc_get_product_category_list( $product->get_id() );
-		if ( is_wp_error( $category ) || ! is_string( $category ) ) {
-			$category = '';
 		}
 
 		$properties = array(
@@ -451,7 +447,7 @@ class Events {
 				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => get_woocommerce_currency(),
 				'$quantity'      => $cart_item['quantity'],
-				'$category'      => $category,
+				'$category'      => self::get_product_category( $product ),
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			),
 			'$browser'      => self::get_client_browser(),
@@ -505,6 +501,7 @@ class Events {
 				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => get_woocommerce_currency(),
 				'$quantity'      => $cart_item['quantity'],
+				'$category'      => self::get_product_category( $product ),
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			),
 			'$browser'      => self::get_client_browser(),
@@ -513,15 +510,6 @@ class Events {
 			'$ip'           => self::get_client_ip(),
 			'$time'         => intval( 1000 * microtime( true ) ),
 		);
-
-		// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
-		$category = wc_get_product_category_list( $product->get_id() );
-		if ( is_wp_error( $category ) || ! is_string( $category ) ) {
-			$category = '';
-		}
-		if ( ! empty( $category ) ) {
-			$properties['$item']['$category'] = $category;
-		}
 
 		self::add( Sift_Event_Types::$remove_item_from_cart, $properties );
 	}
@@ -588,12 +576,6 @@ class Events {
 				continue;
 			}
 
-			// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
-			$category = wc_get_product_category_list( $product->get_id() );
-			if ( is_wp_error( $category ) || ! is_string( $category ) ) {
-				$category = '';
-			}
-
 			$items[] = array(
 				'$item_id'       => (string) $product->get_id(),
 				'$sku'           => $product->get_sku(),
@@ -601,7 +583,7 @@ class Events {
 				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => $order->get_currency(), // For the order specifically, not the whole store.
 				'$quantity'      => $item->get_quantity(),
-				'$category'      => $category,
+				'$category'      => self::get_product_category( $product ),
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			);
 
@@ -1089,9 +1071,47 @@ class Events {
 	private static function format_user_id( int $user_id ): string {
 		if( $user_id === 0 ) {
 			// Returns empty string if the user is unknown
+			// see https://developers.sift.com/tutorials/anonymous-users
 			return "";
 		}
 
 		return (string) $user_id;
+	}
+
+	/**
+	 * Return the hierarchy of the product category
+	 *
+	 * @param WC_Product $product
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/complex-field-types/item
+	 *
+	 * @return string
+	 */
+	private static function get_product_category( WC_Product $product ): string {
+
+		$category_ids = wc_get_product_cat_ids( $product->get_id() );
+		if ( empty( $category_ids ) ) {
+			return '';
+		}
+
+		$taxonomy  = 'product_cat'; // Taxonomy for product category
+		$terms_ids = $product->get_category_ids();
+		// Loop though terms ids (product categories)
+		foreach( $terms_ids as $term_id ) {
+			$term_names = []; // Initialising category array
+
+			// Loop through product category ancestors
+			foreach( get_ancestors( $term_id, $taxonomy ) as $ancestor_id ){
+				// Add the ancestors term names to the category array
+				$term_names[] = get_term( $ancestor_id, $taxonomy )->name;
+			}
+			// Add the product category term name to the category array
+			$term_names[] = get_term( $term_id, $taxonomy )->name;
+
+			// Add the formatted ancestors with the product category to main array
+			$output[] = implode(' > ', $term_names);
+		}
+		// Output the formatted product categories with their ancestors
+		return implode(', ', $output );
 	}
 }
