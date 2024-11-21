@@ -55,4 +55,37 @@ class Validate_CreateOrUpdateOrder_Test extends SiftObjectValidatorTest {
 		);
 	}
 
+	public function test_browser_no_language() {
+		$data = static::modify_data( [
+			'$app'		  => null,
+			'$browser'    => [
+				'$user_agent'       => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+				'$accept_language'  => null,
+				'$content_language' => 'en-GB'
+			]
+		] );
+
+		try {
+			$this->assertTrue( static::validator( $data ) );
+		} catch ( \Exception $e ) {
+			$this->fail( $e->getMessage() );
+		}
+
+		$data = static::modify_data( [
+			'$app'		  => null,
+			'$browser' => [
+				'$user_agent'       => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36',
+				'$accept_language'  => null,
+				'$content_language' => null
+			]
+		] );
+
+		try {
+			$this->assertTrue( static::validator( $data ) );
+		} catch ( \Exception $e ) {
+			$this->fail( $e->getMessage() );
+		}
+
+	}
+
 }
