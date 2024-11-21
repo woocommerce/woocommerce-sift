@@ -2,32 +2,85 @@
 
 namespace Sift_For_WooCommerce\WooCommerce_Actions\Lib;
 
+/**
+ * A simple helper library for E.164 parsing and formatting of phone numbers
+ */
 class E164 {
-
+	/**
+	 * Return an E.164 formatted phone number from a given phone number
+	 *
+	 * @param string $phone_number A phone number which should only contain numbers representing each digit (vanity phone numbers with letters cause issues).
+	 *
+	 * @return string|null An E.164 formatted number or null if the number could not be parsed.
+	 */
 	public static function from_phone_number( string $phone_number ): ?string {
-		$phone_number = static::pre_process( $phone_number );
+		$phone_number        = static::pre_process( $phone_number );
 		$parsed_phone_number = static::parse_phone_number( $phone_number );
+		if ( empty( $parsed_phone_number ) ) {
+			return null;
+		}
 		return static::from_parsed_phone_number( $parsed_phone_number );
 	}
 
+	/**
+	 * Pre-process the phone number. This should at very least trim whitespace at each end of the phone number.
+	 *
+	 * Pre-processing should not remove separating symbols which be helpful later.
+	 *
+	 * @param string $phone_number A phone number which should only contain numbers representing each digit (vanity phone numbers with letters cause issues).
+	 *
+	 * @return string A pre-processed phone number.
+	 */
 	private static function pre_process( string $phone_number ): string {
 		return trim( $phone_number );
 	}
 
+	/**
+	 * Post-process the phone number. This should at very least remove all characters other than digits and the + sign.
+	 *
+	 * @param string $phone_number A phone number which should only contain numbers representing each digit (vanity phone numbers with letters cause issues).
+	 *
+	 * @return string The post-processed phone number
+	 */
 	private static function post_process( string $phone_number ): string {
 		return preg_replace( '/[^0-9\+]/', '', $phone_number );
 	}
 
-	public static function verify_e164_format( string $phone_number ) {
+	/**
+	 * Verify that the phone number is in e164 format
+	 *
+	 * @param string $phone_number A phone number which should only contain numbers representing each digit (vanity phone numbers with letters cause issues).
+	 *
+	 * @return boolean True if the phone number is a valid e.164 formatted phone number, otherwise false.
+	 */
+	public static function verify_e164_format( string $phone_number ): bool {
 		if ( static::looks_like_e164_format( $phone_number ) ) {
-			return true;
+			$country_code = static::get_country_code( $phone_number );
+			if ( empty( $country_code ) ) {
+				return false;
+			}
+			return static::verify_country_code_and_subscriber_length( $country_code, $phone_number );
 		}
 	}
 
+	/**
+	 * Determine if the phone number starts with a plus sign
+	 *
+	 * @param string $phone_number A phone number which should only contain numbers representing each digit (vanity phone numbers with letters cause issues).
+	 *
+	 * @return boolean True if the phone number starts with a plus sign.
+	 */
 	public static function looks_like_e164_format( string $phone_number ): bool {
-		return preg_match( '^\+[1-9]\d{1,14}$', $phone_number ) !== false;
+		return '+' === substr( $phone_number, 0, 1 );
 	}
 
+	/**
+	 * Parse a phone number to determine the country code and subscriber number.
+	 *
+	 * @param string $phone_number A phone number which should only contain numbers representing each digit (vanity phone numbers with letters cause issues).
+	 *
+	 * @return array|null An array with keys `country_code` and `subscriber_number` if a match is found, otherwise null.
+	 */
 	public static function parse_phone_number( string $phone_number ): ?array {
 		$country_code = static::get_country_code( $phone_number );
 		if ( empty( $country_code ) ) {
@@ -36,56 +89,94 @@ class E164 {
 		return static::parse_as_country_code( $country_code, $phone_number );
 	}
 
-	public static function from_parsed_phone_number( array $parsed_phone_number ) {
+	/**
+	 * Return a string by providing an array with keys `country_code` and `subscriber_number`.
+	 *
+	 * @param array $parsed_phone_number An array with keys `country_code` and `subscriber_number`.
+	 *
+	 * @return string The e.164 formatted phone number.
+	 */
+	public static function from_parsed_phone_number( array $parsed_phone_number ): string {
 		return implode(
-			[
+			array(
 				'+',
 				$parsed_phone_number['country_code'],
 				$parsed_phone_number['subscriber_number'],
-			]
+			)
 		);
 	}
 
-	public static function get_country_code( string $phone_number ): string {
+	/**
+	 * Get the country code from the phone number.
+	 *
+	 * @param string $phone_number A phone number which should only contain numbers representing each digit (vanity phone numbers with letters cause issues).
+	 *
+	 * @return string|null The country code of the phone number, or null if one could not be found.
+	 */
+	public static function get_country_code( string $phone_number ): ?string {
 		$offset = static::looks_like_e164_format( $phone_number ) ? 1 : 0;
-		for( $length = 1; $length < 3; $length++ ) {
+		for ( $length = 1; $length < 3; $length++ ) {
 			$possible_country_code = substr( $phone_number, $offset, $length );
-			$possible_match = static::get_country_config( $possible_country_code );
+			$possible_match        = static::get_country_config( $possible_country_code );
 			if ( ! empty( $possible_match ) ) {
 				if ( static::verify_country_code_and_subscriber_length( $possible_country_code, $phone_number ) ) {
 					return $possible_country_code;
 				}
 			}
 		}
+		return null;
 	}
 
+	/**
+	 * Parse a phone number with a known country code.
+	 *
+	 * @param string $country_code The country code present in the phone number.
+	 * @param string $phone_number A phone number which should only contain numbers representing each digit (vanity phone numbers with letters cause issues).
+	 *
+	 * @return array|null An array with keys `country_code` and `subscriber_number` if a match is found, otherwise null.
+	 */
 	public static function parse_as_country_code( string $country_code, string $phone_number ): ?array {
 		$country_config = static::get_country_config( $country_code );
 		if ( empty( $country_config ) ) {
 			return false;
 		}
-		
-		$phone_number = static::post_process( $phone_number );
-		$offset = static::looks_like_e164_format( $phone_number ) ? 1 : 0;
-		$country_code_length = strlen( $country_code );
-		$phone_number_length = strlen( $phone_number );
+
+		$phone_number                = static::post_process( $phone_number );
+		$offset                      = static::looks_like_e164_format( $phone_number ) ? 1 : 0;
+		$country_code_length         = strlen( $country_code );
+		$phone_number_length         = strlen( $phone_number );
 		$international_prefix_length = $offset + $country_code_length;
-		$subscriber_length = $phone_number_length - $international_prefix_length;
-		$subscriber_number = substr( $phone_number, $international_prefix_length );
+		$subscriber_length           = $phone_number_length - $international_prefix_length;
+		$subscriber_number           = substr( $phone_number, $international_prefix_length );
 
 		if ( $subscriber_length >= $country_config['min_subscriber_length'] && $subscriber_length <= $country_config['max_subscriber_length'] ) {
-			return [
-				'country_code' => $country_code,
+			return array(
+				'country_code'      => $country_code,
 				'subscriber_number' => $subscriber_number,
-			];
+			);
 		}
 		return null;
 	}
 
+	/**
+	 * Verify the country code and subscriber length are a match.
+	 *
+	 * @param string $country_code The country code present in the phone number.
+	 * @param string $phone_number A phone number which should only contain numbers representing each digit (vanity phone numbers with letters cause issues).
+	 *
+	 * @return boolean True if this is a valid match, otherwise false.
+	 */
 	public static function verify_country_code_and_subscriber_length( string $country_code, string $phone_number ): bool {
 		return ! empty( static::parse_as_country_code( $country_code, $phone_number ) );
 	}
 
+	/**
+	 * Get the country configuration for a given country code.
+	 *
+	 * @param string $country_code A country code.
+	 *
+	 * @return array|null The country's configuration if a match is found, otherwise null.
+	 */
 	public static function get_country_config( string $country_code ): ?array {
 		return static::COUNTRY_CONFIG[ $country_code ] ?? null;
 	}
