@@ -1,6 +1,6 @@
 {
   "name": "sift-for-woocommerce",
-  "version": "0.0.1-alpha",
+  "version": "1.0.0-beta",
   "description": "A plugin to integrate WooCommerce with Sift Science Fraud Detection",
   "author": {
     "name": "WooCommerce.com",
@@ -52,7 +52,10 @@
     "packages-update": "wp-scripts packages-update --dist-tag=wp-6.2",
     "check-engines": "wp-scripts check-engines",
     "check-licenses": "wp-scripts check-licenses",
-    "start": "npm-run-all --parallel start:**",
+    "start": "wp-env start",
+    "stop": "wp-env destroy",
+    "clean": "wp-env clean development",
+    "destroy": "wp-env destroy",
     "test": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce vendor/bin/phpunit",
     "test:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce bin/test-with-coverage.sh"
   }

@@ -27,8 +27,30 @@ As you develop your plugin, update the README.md file with detailed information 
 
 1. `npm install`
 2. `composer install`
-3. `npx wp-env start` -- This starts a local WordPress environment available at <http://localhost:8888>
-4. `npm test`
+3. `npm start`
+4. See `Test with WooPayments or any other gateway` to test
+
+
+### Run unit tests
+
+Once the local environment is up, simply launch 
+
+1.`npm test`
+
+YOu can select a test with
+
+1.`npm test -- --filter=SOMETEST
+
+### Test with WooPayments or any other gateway
+
+1. Add a link to the gateway in `.wp-env.json` in the "plugins" list (WooPayments is provided by defaut as well as a dummy Simple_Test_Gateway)
+2. Start ngrok with "ngrok http 80 --host-header=rewrite" and grab the new address in https://0000-00-00-00.ngrok-free.app
+3. Modify WP_DOMAIN, WP_SITEURL and WP_HOME with the new URL `0000-00-00-00.ngrok-free.app`
+4. Run `npm start` to reload the config
+5. Go to https://0000-00-00-00.ngrok-free.app/wp-admin/ (don't miss the last /)
+6. Setup WooCommerce 
+7. Set up your gateway
+6. (optional) for WooPayments, you can use the Sandbox mode in the setup with "I'm setting up a store for someone else."
 
 ### Alternative Testing
 
@@ -50,3 +72,12 @@ To get tests working with XDEBUG, it requires a little more work.  Configure you
 #### `Error response from daemon: error while creating mount source path`
 
 Restart docker.
+
+
+### Modify a variable in wp-config
+
+`wp-env run cli wp config set JETPACK_DEV_DEBUG false --raw`
+
+### Access PHP error
+1. `wp-env run cli bash`
+2. `tail -f /var/www/html/wp-content/debug.log`
