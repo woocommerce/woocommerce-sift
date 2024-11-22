@@ -92,6 +92,12 @@ function send_chargeback_to_sift( $event ): void {
 	$api_client     = \WC_Payments::get_payments_api_client();
 	$payment_intent = $api_client->get_intent( $payment_intent_id );
 
+	if ( ! $payment_intent ) {
+		wc_get_logger()->error( 'Payment intent with ID "' . $payment_intent_id . '"not found.' );
+		return;
+	}
+
+
 	$metadata = $payment_intent->get_metadata();
 	$order    = $payment_intent->get_order();
 
