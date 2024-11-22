@@ -23,6 +23,13 @@ sift-for-woocommerce/
 
 As you develop your plugin, update the README.md file with detailed information about your plugin's features, usage, installation, and any other pertinent information.
 
+## Decisions API
+
+Sift should be set to send decisions webhooks towards this endpoint:
+`GET /sift-for-woocommerce/v1/decision/`
+
+You will also need to set a `Signature Key` in your Sift console and save it in your WooCommerce settings under `Sift for WooCommerce > Sift Signature / Webhook Key`.
+
 ## Local Development
 
 1. `npm install`
