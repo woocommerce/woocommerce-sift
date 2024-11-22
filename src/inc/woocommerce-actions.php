@@ -11,7 +11,6 @@ use Sift_For_WooCommerce\Sift_Order;
 use Sift_For_WooCommerce\Sift\SiftObjectValidator;
 use WC_Product;
 
-
 /**
  * Class Events
  */
@@ -598,7 +597,7 @@ class Events {
 			'$session_id'      => \WC()->session->get_customer_unique_id(),
 			'$order_id'        => $order_id,
 			'$verification_phone_number'
-				=> $order->get_billing_phone(),
+				=> '+' === substr( $order->get_billing_phone(), 0, 1 ) ? preg_replace( '/[^0-9\+]/', '', $order->get_billing_phone() ) : null,
 			'$amount'          => self::get_transaction_micros( floatval( $order->get_total() ) ),
 			'$currency_code'   => get_woocommerce_currency(),
 			'$items'           => $items,
