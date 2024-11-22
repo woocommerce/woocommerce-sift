@@ -83,11 +83,6 @@ function send_chargeback_to_sift( $event ): void {
 	$payment_intent_id = $event['data']['object']['payment_intent'] ?? null;
 	$dispute_reason    = $event['data']['object']['reason'] ?? null;
 
-	// Log the event using wc_get_logger().
-	wc_get_logger()->info(
-		'SFW: Received a Stripe dispute event.'
-	);
-
 	if ( ! $payment_intent_id || ! $dispute_reason ) {
 		wc_get_logger()->error( 'Missing payment intent ID or dispute reason in the Stripe dispute event.' );
 		return;
@@ -96,18 +91,21 @@ function send_chargeback_to_sift( $event ): void {
 	// Get the order ID from the Stripe charge ID.
 	$api_client     = \WC_Payments::get_payments_api_client();
 	$payment_intent = $api_client->get_intent( $payment_intent_id );
-	$order_id       = $payment_intent['metadata']['order_id'] ?? null;
 
-	// Log the order ID
-	wc_get_logger()->info( 'SFW: Dispute order_id: ' . $order_id );
+	$metadata = $payment_intent->get_metadata();
+	$order    = $payment_intent->get_order();
 
+	// Resolve the order ID from metadata or order object.
+	$order_id = $metadata['order_id']
+		?? ( isset( $order['number'] ) ? $order['number'] : null );
+
+	// Log the resolved order ID.
 	if ( ! $order_id ) {
-		wc_get_logger()->error( 'Order ID not found for the Stripe payment intent ID: ' . esc_html( $payment_intent_id ) );
+		wc_get_logger()->error( 'Order ID not found in payment intent metadata or order.' );
 		return;
 	}
 
 	$order = wc_get_order( $order_id );
-	wc_get_logger()->info( 'SFW: order: ' . wp_json_encode( $order, JSON_PRETTY_PRINT ) );
 
 	if ( ! $order instanceof \WC_Order ) {
 		wc_get_logger()->error( 'WooCommerce order not found for Order ID: ' . esc_html( $order_id ) );
@@ -121,7 +119,5 @@ function send_chargeback_to_sift( $event ): void {
 		return;
 	}
 
-	wc_get_logger()->info( 'Made it to chargeback event' );
 	Events::chargeback( $order_id, $order, $chargeback_reason );
-	wc_get_logger()->info( 'Made it after chargeback event' );
 }

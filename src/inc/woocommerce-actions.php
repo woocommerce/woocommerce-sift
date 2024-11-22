@@ -763,7 +763,7 @@ class Events {
 		// Assemble the properties for the chargeback event.
 		$properties = array(
 			'$order_id'          => $order_id,
-			'$user_id'           => self::format_user_id( $order->get_user_id() ),
+			'$user_id'           => self::format_user_id( $order->get_customer_id() ),
 			'$chargeback_reason' => $chargeback_reason,
 			'$ip'                => self::get_client_ip(),
 		);
@@ -814,12 +814,18 @@ class Events {
 		if ( self::count() > 0 ) {
 			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
 			if ( empty( $client ) ) {
+				wc_get_logger()->error(
+					'Failed to send events to Sift',
+					array(
+						'source' => 'sift-for-woocommerce',
+						'reason' => 'Failed to get the Sift API client.',
+						'events' => self::$to_send,
+					)
+				);
 				return false;
 			}
 
 			foreach ( self::$to_send as $entry ) {
-				// Add in API calls / batching here.
-
 				$response = $client->track( $entry['event'], $entry['properties'] );
 
 				$log_type  = 'debug';
@@ -893,7 +899,7 @@ class Events {
 	private static function get_client_browser() {
 		$browser = array(
 			'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
-			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'],
+			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US', // default to en-US if not set (i.e., a server action)
 			'$content_language' => get_locale(),
 		);
 
