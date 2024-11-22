@@ -1494,7 +1494,7 @@ class SiftObjectValidator {
 					'Invalid $chargeback event',
 					array(
 						'source' => 'sift-for-woocommerce',
-						'data' => $data,
+						'data'   => $data,
 					)
 				);
 
