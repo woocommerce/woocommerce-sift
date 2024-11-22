@@ -6,7 +6,7 @@ declare( strict_types=1 );
 
 use Sift_For_WooCommerce\Sift_Payment_Gateway;
 
-require_once __DIR__ . '/../src/inc/payment-gateway.php';
+require_once __DIR__ . '/../src/inc/sift-events/normalizers/sift-payment-gateway.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/index.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/lib/stripe.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/stripe.php';

@@ -9,12 +9,11 @@ declare( strict_types=1 );
 use Sift_For_WooCommerce\Sift_Payment_Gateway;
 use Sift_For_WooCommerce\Sift_Payment_Type;
 
-require_once __DIR__ . '/../src/inc/sift-property.php';
-require_once __DIR__ . '/../src/inc/payment-gateway.php';
+require_once __DIR__ . '/../src/inc/sift-events/normalizers/sift-payment-gateway.php';
+require_once __DIR__ . '/../src/inc/sift-events/normalizers/sift-payment-type.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/lib/stripe.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/stripe.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/transact.php';
-require_once __DIR__ . '/../src/inc/payment-type.php';
 
 /**
  * Tests for payment gateway interoperability
@@ -27,9 +26,9 @@ class PaymentTypeTest extends WP_UnitTestCase {
 	 * @dataProvider payment_type_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway      The payment gateway in use.
-	 * @param string          $payment_type The type of payment as it is referred to by the payment gateway.
-	 * @param boolean         $is_valid     True if the expectation is that this payment type is valid, otherwise false.
-	 * @param null|string     $sift_slug    The expected sift slug if available.
+	 * @param string               $payment_type The type of payment as it is referred to by the payment gateway.
+	 * @param boolean              $is_valid     True if the expectation is that this payment type is valid, otherwise false.
+	 * @param null|string          $sift_slug    The expected sift slug if available.
 	 *
 	 * @return void
 	 */

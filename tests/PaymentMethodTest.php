@@ -7,13 +7,12 @@ use Sift_For_WooCommerce\Sift_Payment_Method;
 
 use function Sift_For_WooCommerce\Tests\Mocks\Utils\build_mock_stripe_payment_method_object;
 
-require_once __DIR__ . '/../src/inc/sift-property.php';
-require_once __DIR__ . '/../src/inc/payment-gateway.php';
+require_once __DIR__ . '/../src/inc/sift-events/normalizers/sift-payment-gateway.php';
+require_once __DIR__ . '/../src/inc/sift-events/normalizers/sift-payment-type.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/lib/stripe.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/stripe.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/transact.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/woocommerce-payments.php';
-require_once __DIR__ . '/../src/inc/payment-type.php';
 require_once __DIR__ . '/mocks/utils.php';
 
 /**
@@ -27,8 +26,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_card_last4_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the card_last4 value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the card_last4 value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -93,8 +92,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_card_bin_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the card_bin value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the card_bin value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -151,8 +150,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_cvv_result_code_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the cvv_result_code value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the cvv_result_code value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -200,8 +199,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_sepa_direct_debit_mandate_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the sepa_direct_debit_mandate value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the sepa_direct_debit_mandate value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -249,8 +248,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_wallet_type_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the wallet_type value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the wallet_type value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -298,8 +297,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_stripe_cvc_check_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the stripe_cvc_check value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the stripe_cvc_check value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -347,8 +346,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_stripe_address_line1_check_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the stripe_address_line1_check value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the stripe_address_line1_check value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -396,8 +395,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_stripe_address_zip_check_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the stripe_address_zip_check value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the stripe_address_zip_check value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -445,8 +444,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_stripe_funding_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the stripe_funding value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the stripe_funding value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
@@ -494,8 +493,8 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 * @dataProvider get_stripe_brand_provider
 	 *
 	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
-	 * @param mixed           $data     The data which contains the stripe_brand value.
-	 * @param null|string     $expected The expected result if available.
+	 * @param mixed                $data     The data which contains the stripe_brand value.
+	 * @param null|string          $expected The expected result if available.
 	 *
 	 * @return void
 	 */
