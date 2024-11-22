@@ -1488,15 +1488,16 @@ class SiftObjectValidator {
 
 		try {
 			static::validate( $data, $validator_map );
-			// required field: $user_id, $session_id
-			if ( empty( $data['$user_id'] ) ) {
+			// Required field: $user_id, $order_id
+			if ( empty( $data['$user_id'] ) || empty( $data['$order_id'] ) ) {
 				wc_get_logger()->error(
 					'Invalid $chargeback event',
 					array(
 						'source' => 'sift-for-woocommerce',
-						'data'   => $data,
+						'data' => $data,
 					)
 				);
+
 				throw new \Exception( 'missing $user_id or $session_id' );
 			}
 		} catch ( \Exception $e ) {
