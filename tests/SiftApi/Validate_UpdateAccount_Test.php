@@ -4,7 +4,7 @@
 
 namespace SiftApi;
 
-use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+use Sift_For_WooCommerce\Sift\SiftEventsValidator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,7 +16,7 @@ class Validate_UpdateAccount_Test extends Validate_CreateAccount_Test {
 	protected static ?string $fixture_name = 'create-account.json';
 
 	protected static function validator( $data ) {
-		return SiftObjectValidator::validate_update_account( $data );
+		return SiftEventsValidator::validate_update_account( $data );
 	}
 
 	public function test_changed_password() {

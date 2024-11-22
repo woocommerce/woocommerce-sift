@@ -2,13 +2,21 @@
 
 // phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
 
-namespace Sift_For_WooCommerce\WooCommerce_Actions;
+namespace Sift_For_WooCommerce\Sift_Events;
+
+require_once __DIR__ . '/class-sift-event-types.php';
+require_once __DIR__ . '/normalizers/sift-property.php';
+require_once __DIR__ . '/normalizers/sift-payment-method.php';
+require_once __DIR__ . '/normalizers/sift-verification-status.php';
+require_once __DIR__ . '/normalizers/sift-payment-gateway.php';
+require_once __DIR__ . '/normalizers/sift-order.php';
+require_once __DIR__ . '/sift-events-validator.php';
 
 use Sift_For_WooCommerce\Sift_Events_Types\Sift_Event_Types;
 use WC_Order_Item_Product;
 
 use Sift_For_WooCommerce\Sift_Order;
-use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+use Sift_For_WooCommerce\Sift\SiftEventsValidator;
 use WC_Product;
 
 /**
@@ -123,7 +131,7 @@ class Events {
 		);
 
 		try {
-			SiftObjectValidator::validate_add_promotion( $properties );
+			SiftEventsValidator::validate_add_promotion( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -165,7 +173,7 @@ class Events {
 		}
 
 		try {
-			SiftObjectValidator::validate_login( $properties );
+			SiftEventsValidator::validate_login( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -222,7 +230,7 @@ class Events {
 		);
 
 		try {
-			SiftObjectValidator::validate_login( $properties );
+			SiftEventsValidator::validate_login( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -271,7 +279,7 @@ class Events {
 		);
 
 		try {
-			SiftObjectValidator::validate_create_account( $properties );
+			SiftEventsValidator::validate_create_account( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -326,7 +334,7 @@ class Events {
 		);
 
 		try {
-			SiftObjectValidator::validate_update_account( $properties );
+			SiftEventsValidator::validate_update_account( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -368,7 +376,7 @@ class Events {
 		);
 
 		try {
-			SiftObjectValidator::validate_update_password( $properties );
+			SiftEventsValidator::validate_update_password( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -401,7 +409,7 @@ class Events {
 		);
 
 		try {
-			SiftObjectValidator::validate_link_session_to_user( $properties );
+			SiftEventsValidator::validate_link_session_to_user( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -457,7 +465,7 @@ class Events {
 		);
 
 		try {
-			SiftObjectValidator::validate_add_item_to_cart( $properties );
+			SiftEventsValidator::validate_add_item_to_cart( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -619,7 +627,7 @@ class Events {
 			$properties['$shipping_address'] = $shipping_address;
 		}
 		try {
-			SiftObjectValidator::validate_create_or_update_order( $properties );
+			SiftEventsValidator::validate_create_or_update_order( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -660,7 +668,7 @@ class Events {
 		);
 
 		try {
-			SiftObjectValidator::validate_transaction( $properties );
+			SiftEventsValidator::validate_transaction( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 
@@ -733,7 +741,7 @@ class Events {
 		}
 
 		try {
-			SiftObjectValidator::validate_order_status( $properties );
+			SiftEventsValidator::validate_order_status( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;
@@ -768,7 +776,7 @@ class Events {
 		);
 
 		try {
-			SiftObjectValidator::validate_chargeback( $properties );
+			SiftEventsValidator::validate_chargeback( $properties );
 		} catch ( \Exception $e ) {
 			wc_get_logger()->error( esc_html( $e->getMessage() ) );
 			return;

@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Sift object validator.
  */
-class SiftObjectValidator {
+class SiftEventsValidator {
 
 	const PAYMENT_TYPES = array(
 		'$cash',

@@ -2,8 +2,8 @@
 
 namespace Sift_For_WooCommerce\Tests;
 
-use Sift_For_WooCommerce\Payment_Gateway;
-use Sift_For_WooCommerce\Payment_Method;
+use Sift_For_WooCommerce\Sift_Payment_Gateway;
+use Sift_For_WooCommerce\Sift_Payment_Method;
 
 use function Sift_For_WooCommerce\Tests\Mocks\Utils\build_mock_stripe_payment_method_object;
 
@@ -26,14 +26,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_card_last4_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the card_last4 value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_card_last4( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_card_last4( $gateway, $data );
+	public function test_get_card_last4( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_card_last4( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -65,9 +65,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 			->method( 'get_meta' )
 			->willReturn( $transact_card_last4 );
 
-		$stripe_gateway               = new Payment_Gateway( 'stripe', $mock_order );
-		$transact_gateway             = new Payment_Gateway( 'transact', $mock_order );
-		$woocommerce_payments_gateway = new Payment_Gateway( 'woocommerce_payments', $mock_order );
+		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $mock_order );
+		$transact_gateway             = new Sift_Payment_Gateway( 'transact', $mock_order );
+		$woocommerce_payments_gateway = new Sift_Payment_Gateway( 'woocommerce_payments', $mock_order );
 		return array(
 			'Stripe\'s object returns the card_last4 property' => array(
 				'gateway'  => $stripe_gateway,
@@ -92,14 +92,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_card_bin_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the card_bin value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_card_bin( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_card_bin( $gateway, $data );
+	public function test_get_card_bin( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_card_bin( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -123,9 +123,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 			true
 		);
 		$order                               = new \WC_Order();
-		$stripe_gateway                      = new Payment_Gateway( 'stripe', $order );
-		$transact_gateway                    = new Payment_Gateway( 'transact', $order );
-		$woocommerce_payments_gateway        = new Payment_Gateway( 'woocommerce_payments', $order );
+		$stripe_gateway                      = new Sift_Payment_Gateway( 'stripe', $order );
+		$transact_gateway                    = new Sift_Payment_Gateway( 'transact', $order );
+		$woocommerce_payments_gateway        = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
 		return array(
 			'Stripe\'s object returns the card_bin property' => array(
 				'gateway'  => $stripe_gateway,
@@ -150,14 +150,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_cvv_result_code_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the cvv_result_code value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_cvv_result_code( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_cvv_result_code( $gateway, $data );
+	public function test_get_cvv_result_code( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_cvv_result_code( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -172,9 +172,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$order                        = new \WC_Order();
-		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
-		$transact_gateway             = new Payment_Gateway( 'transact', $order );
-		$woocommerce_payments_gateway = new Payment_Gateway( 'woocommerce_payments', $order );
+		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
+		$transact_gateway             = new Sift_Payment_Gateway( 'transact', $order );
+		$woocommerce_payments_gateway = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
 		return array(
 			'Stripe\'s object returns the cvv_result_code property' => array(
 				'gateway'  => $stripe_gateway,
@@ -199,14 +199,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_sepa_direct_debit_mandate_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the sepa_direct_debit_mandate value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_sepa_direct_debit_mandate( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_sepa_direct_debit_mandate( $gateway, $data );
+	public function test_get_sepa_direct_debit_mandate( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_sepa_direct_debit_mandate( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -221,9 +221,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$order                        = new \WC_Order();
-		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
-		$transact_gateway             = new Payment_Gateway( 'transact', $order );
-		$woocommerce_payments_gateway = new Payment_Gateway( 'woocommerce_payments', $order );
+		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
+		$transact_gateway             = new Sift_Payment_Gateway( 'transact', $order );
+		$woocommerce_payments_gateway = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
 		return array(
 			'Stripe\'s object returns the sepa_direct_debit_mandate property' => array(
 				'gateway'  => $stripe_gateway,
@@ -248,14 +248,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_wallet_type_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the wallet_type value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_wallet_type( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_wallet_type( $gateway, $data );
+	public function test_get_wallet_type( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_wallet_type( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -270,9 +270,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$order                        = new \WC_Order();
-		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
-		$transact_gateway             = new Payment_Gateway( 'transact', $order );
-		$woocommerce_payments_gateway = new Payment_Gateway( 'woocommerce_payments', $order );
+		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
+		$transact_gateway             = new Sift_Payment_Gateway( 'transact', $order );
+		$woocommerce_payments_gateway = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
 		return array(
 			'Stripe\'s object returns the wallet_type property' => array(
 				'gateway'  => $stripe_gateway,
@@ -297,14 +297,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_stripe_cvc_check_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the stripe_cvc_check value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_stripe_cvc_check( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_stripe_cvc_check( $gateway, $data );
+	public function test_get_stripe_cvc_check( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_stripe_cvc_check( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -319,9 +319,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$order                        = new \WC_Order();
-		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
-		$transact_gateway             = new Payment_Gateway( 'transact', $order );
-		$woocommerce_payments_gateway = new Payment_Gateway( 'woocommerce_payments', $order );
+		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
+		$transact_gateway             = new Sift_Payment_Gateway( 'transact', $order );
+		$woocommerce_payments_gateway = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
 		return array(
 			'Stripe\'s object returns the stripe_cvc_check property' => array(
 				'gateway'  => $stripe_gateway,
@@ -346,14 +346,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_stripe_address_line1_check_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the stripe_address_line1_check value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_stripe_address_line1_check( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_stripe_address_line1_check( $gateway, $data );
+	public function test_get_stripe_address_line1_check( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_stripe_address_line1_check( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -368,9 +368,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$order                        = new \WC_Order();
-		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
-		$transact_gateway             = new Payment_Gateway( 'transact', $order );
-		$woocommerce_payments_gateway = new Payment_Gateway( 'woocommerce_payments', $order );
+		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
+		$transact_gateway             = new Sift_Payment_Gateway( 'transact', $order );
+		$woocommerce_payments_gateway = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
 		return array(
 			'Stripe\'s object returns the stripe_address_line1_check property' => array(
 				'gateway'  => $stripe_gateway,
@@ -395,14 +395,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_stripe_address_zip_check_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the stripe_address_zip_check value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_stripe_address_zip_check( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_stripe_address_zip_check( $gateway, $data );
+	public function test_get_stripe_address_zip_check( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_stripe_address_zip_check( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -417,9 +417,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$order                        = new \WC_Order();
-		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
-		$transact_gateway             = new Payment_Gateway( 'transact', $order );
-		$woocommerce_payments_gateway = new Payment_Gateway( 'woocommerce_payments', $order );
+		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
+		$transact_gateway             = new Sift_Payment_Gateway( 'transact', $order );
+		$woocommerce_payments_gateway = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
 		return array(
 			'Stripe\'s object returns the stripe_address_zip_check property' => array(
 				'gateway'  => $stripe_gateway,
@@ -444,14 +444,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_stripe_funding_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the stripe_funding value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_stripe_funding( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_stripe_funding( $gateway, $data );
+	public function test_get_stripe_funding( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_stripe_funding( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -466,9 +466,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$order                        = new \WC_Order();
-		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
-		$transact_gateway             = new Payment_Gateway( 'transact', $order );
-		$woocommerce_payments_gateway = new Payment_Gateway( 'woocommerce_payments', $order );
+		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
+		$transact_gateway             = new Sift_Payment_Gateway( 'transact', $order );
+		$woocommerce_payments_gateway = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
 		return array(
 			'Stripe\'s object returns the stripe_funding property' => array(
 				'gateway'  => $stripe_gateway,
@@ -493,14 +493,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 	 *
 	 * @dataProvider get_stripe_brand_provider
 	 *
-	 * @param Payment_Gateway $gateway  The payment gateway in use.
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
 	 * @param mixed           $data     The data which contains the stripe_brand value.
 	 * @param null|string     $expected The expected result if available.
 	 *
 	 * @return void
 	 */
-	public function test_get_stripe_brand( Payment_Gateway $gateway, mixed $data, ?string $expected ) {
-		$result = Payment_Method::get_stripe_brand( $gateway, $data );
+	public function test_get_stripe_brand( Sift_Payment_Gateway $gateway, mixed $data, ?string $expected ) {
+		$result = Sift_Payment_Method::get_stripe_brand( $gateway, $data );
 		$this->assertEquals( $expected, $result, 'Should return the expected result' );
 	}
 
@@ -515,9 +515,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$order                        = new \WC_Order();
-		$stripe_gateway               = new Payment_Gateway( 'stripe', $order );
-		$transact_gateway             = new Payment_Gateway( 'transact', $order );
-		$woocommerce_payments_gateway = new Payment_Gateway( 'woocommerce_payments', $order );
+		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
+		$transact_gateway             = new Sift_Payment_Gateway( 'transact', $order );
+		$woocommerce_payments_gateway = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
 		return array(
 			'Stripe\'s object returns the stripe_brand property' => array(
 				'gateway'  => $stripe_gateway,

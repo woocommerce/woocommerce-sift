@@ -9,7 +9,7 @@ declare( strict_types=1 );
 // phpcs:disable Universal.Arrays.DisallowShortArraySyntax.Found
 
 use Sift_For_WooCommerce\Sift_Events_Types\Sift_Event_Types;
-use Sift_For_WooCommerce\WooCommerce_Actions\Events;
+use Sift_For_WooCommerce\Sift_Events\Events;
 
 /**
  * Events test case.
@@ -185,7 +185,7 @@ abstract class EventTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public static function reset_events() {
-		Sift_For_WooCommerce\WooCommerce_Actions\Events::$to_send = [];
+		Sift_For_WooCommerce\Sift_Events\Events::$to_send = [];
 	}
 
 	/**

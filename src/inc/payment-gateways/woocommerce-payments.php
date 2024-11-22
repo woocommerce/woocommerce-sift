@@ -3,7 +3,7 @@
 namespace Sift_For_WooCommerce\Gateways\WooPayments;
 
 use Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
-use Sift_For_WooCommerce\WooCommerce_Actions\Events;
+use Sift_For_WooCommerce\Sift_Events\Events;
 
 add_filter( 'sift_for_woocommerce_woocommerce_payments_payment_gateway_string', fn() => '$stripe' );
 

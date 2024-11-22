@@ -2,19 +2,11 @@
 
 namespace Sift_For_WooCommerce;
 
-require_once __DIR__ . '/inc/class-sift-event-types.php';
-require_once __DIR__ . '/inc/wc-settings-tab.php';
-require_once __DIR__ . '/inc/rest-api-webhooks.php';
+require_once __DIR__ . '/inc/wc-admin-settings-tab.php';
 require_once __DIR__ . '/inc/tracking-js.php';
-require_once __DIR__ . '/inc/woocommerce-actions.php';
-require_once __DIR__ . '/inc/sift-property.php';
-require_once __DIR__ . '/inc/payment-method.php';
-require_once __DIR__ . '/inc/verification-status.php';
 require_once __DIR__ . '/inc/payment-gateways/load.php';
-require_once __DIR__ . '/inc/payment-gateway.php';
-require_once __DIR__ . '/inc/sift-order.php';
-require_once __DIR__ . '/inc/sift-object-validator.php';
-require_once __DIR__ . '/inc/abuse-decisions.php';
+require_once __DIR__ . '/inc/sift-events/sift-events.php';
+require_once __DIR__ . '/inc/sift-decisions/abuse-decisions.php';
 
 defined( 'ABSPATH' ) || exit;
 
@@ -50,7 +42,7 @@ class Sift_For_WooCommerce {
 
 		add_action( 'login_header', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Allow Sift tracking of login page visits.
 
-		\Sift_For_WooCommerce\WooCommerce_Actions\Events::hooks();
+		\Sift_For_WooCommerce\Sift_Events\Events::hooks();
 	}
 
 	/**

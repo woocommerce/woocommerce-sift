@@ -5,7 +5,7 @@ namespace Sift_For_WooCommerce;
 /**
  * A class representing a payment gateway plugin which normalizes the payment gateway property according to expectations in the Sift API.
  */
-class Payment_Gateway extends Sift_Property {
+class Sift_Payment_Gateway extends Sift_Property {
 
 	private string $woo_gateway_id;
 

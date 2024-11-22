@@ -2,6 +2,8 @@
 
 namespace Sift_For_WooCommerce\Abuse_Decisions;
 
+include_once __DIR__ . '/sift-decision-rest-api-webhooks.php';
+
 /**
  * Process the Sift decision received.
  *

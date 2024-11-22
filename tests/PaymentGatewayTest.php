@@ -4,7 +4,7 @@
  */
 declare( strict_types=1 );
 
-use Sift_For_WooCommerce\Payment_Gateway;
+use Sift_For_WooCommerce\Sift_Payment_Gateway;
 
 require_once __DIR__ . '/../src/inc/payment-gateway.php';
 require_once __DIR__ . '/../src/inc/payment-gateways/index.php';
@@ -32,7 +32,7 @@ class PaymentGatewayTest extends WP_UnitTestCase {
 	 */
 	public function test_payment_gateway( string $woo_gateway_id, ?string $expected_woo_gateway_id, bool $is_valid, ?string $sift_slug ) {
 		$order = new \WC_Order();
-		$pg    = new Payment_Gateway( $woo_gateway_id, $order );
+		$pg    = new Sift_Payment_Gateway( $woo_gateway_id, $order );
 
 		$this->assertEquals( $expected_woo_gateway_id, $pg->get_woo_gateway_id(), 'Should return the woo gateway id' );
 		if ( $is_valid ) {
