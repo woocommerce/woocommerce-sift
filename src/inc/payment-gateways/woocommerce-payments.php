@@ -97,7 +97,6 @@ function send_chargeback_to_sift( $event ): void {
 		return;
 	}
 
-
 	$metadata = $payment_intent->get_metadata();
 	$order    = $payment_intent->get_order();
 
