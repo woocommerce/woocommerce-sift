@@ -40,7 +40,7 @@ class Sift_Payment_Type extends Sift_Property {
 	 * Create a class to represent the payment type for a given payment gateway.
 	 *
 	 * @param Sift_Payment_Gateway $gateway      The payment gateway abstraction.
-	 * @param string          $payment_type The type of payment as referred to by the given payment gateway abstraction.
+	 * @param string               $payment_type The type of payment as referred to by the given payment gateway abstraction.
 	 */
 	public function __construct( Sift_Payment_Gateway $gateway, string $payment_type ) {
 		$this->gateway   = $gateway;
@@ -53,7 +53,7 @@ class Sift_Payment_Type extends Sift_Property {
 	 * it a 'cc' or 'credit_card'), this function will try to "normalize" the string into a standard string accepted by Sift.
 	 *
 	 * @param Sift_Payment_Gateway $gateway      The payment gateway abstraction.
-	 * @param string          $payment_type The type of payment as referred to by the given payment gateway abstraction.
+	 * @param string               $payment_type The type of payment as referred to by the given payment gateway abstraction.
 	 *
 	 * @return string|null The normalized payment type string if one is available.
 	 */

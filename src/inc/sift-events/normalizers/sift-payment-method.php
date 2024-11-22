@@ -27,7 +27,7 @@ class Sift_Payment_Method {
 	 * is expected to return a valid string from the list of available strings in the Sift API.
 	 *
 	 * @param Sift_Payment_Gateway $gateway              The payment gateway in use.
-	 * @param string|null     $gateway_payment_type The payment type as referred to by the payment gateway plugin.
+	 * @param string|null          $gateway_payment_type The payment type as referred to by the payment gateway plugin.
 	 *
 	 * @return null|string The normalized, sift-valid string value for this property if available.
 	 */
@@ -49,7 +49,7 @@ class Sift_Payment_Method {
 	 * For examples, check out the payment-gateways folder.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$card_last4` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$card_last4` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -61,7 +61,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$card_bin` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$card_bin` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$card_bin` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -73,7 +73,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$avs_result_code` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$avs_result_code` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$avs_result_code` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -85,7 +85,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$cvv_result_code` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$cvv_result_code` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$cvv_result_code` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -97,7 +97,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$verification_status` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$verification_status` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$verification_status` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -110,7 +110,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$routing_number` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$routing_number` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$routing_number` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -122,7 +122,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$shortened_iban_first6` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$shortened_iban_first6` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$shortened_iban_first6` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -134,7 +134,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$shortened_iban_last4` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$shortened_iban_last4` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$shortened_iban_last4` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -146,7 +146,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$sepa_direct_debit_mandate` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$sepa_direct_debit_mandate` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$sepa_direct_debit_mandate` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -158,7 +158,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$decline_reason_code` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$decline_reason_code` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$decline_reason_code` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -170,7 +170,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$wallet_address` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$wallet_address` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$wallet_address` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -182,7 +182,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$wallet_type` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$wallet_type` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$wallet_type` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -194,7 +194,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$paypal_payer_id` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_payer_id` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_payer_id` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -206,7 +206,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$paypal_payer_email` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_payer_email` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_payer_email` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -218,7 +218,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$paypal_payer_status` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_payer_status` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_payer_status` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -230,7 +230,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$paypal_address_status` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_address_status` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_address_status` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -242,7 +242,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$paypal_protection_eligibility` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_protection_eligibility` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_protection_eligibility` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -254,7 +254,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$paypal_payment_status` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_payment_status` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$paypal_payment_status` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -266,7 +266,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$account_holder_name` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$account_holder_name` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$account_holder_name` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -278,7 +278,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$account_number_last5` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$account_number_last5` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$account_number_last5` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -290,7 +290,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$bank_name` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$bank_name` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$bank_name` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -302,7 +302,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$bank_country` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$bank_country` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$bank_country` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -314,7 +314,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$stripe_cvc_check` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_cvc_check` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_cvc_check` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -326,7 +326,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$stripe_address_line1_check` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_address_line1_check` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_address_line1_check` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -338,7 +338,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$stripe_address_line2_check` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_address_line2_check` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_address_line2_check` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -350,7 +350,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$stripe_address_zip_check` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_address_zip_check` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_address_zip_check` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -362,7 +362,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$stripe_funding` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_funding` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_funding` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */
@@ -374,7 +374,7 @@ class Sift_Payment_Method {
 	 * Get the normalized, Sift-valid string value for the `$stripe_brand` property.
 	 *
 	 * @param Sift_Payment_Gateway $gateway The payment gateway in use.
-	 * @param mixed           $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_brand` property.
+	 * @param mixed                $data    A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$stripe_brand` property.
 	 *
 	 * @return string The normalized, sift-valid string value for this property.
 	 */

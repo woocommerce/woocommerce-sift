@@ -19,7 +19,7 @@ class Sift_Verification_Status extends Sift_Property {
 	 * Create a class to represent the verification status for a given payment method.
 	 *
 	 * @param Sift_Payment_Gateway $gateway             The payment gateway abstraction.
-	 * @param string          $verification_status The type of payment as referred to by the given payment gateway abstraction.
+	 * @param string               $verification_status The type of payment as referred to by the given payment gateway abstraction.
 	 */
 	public function __construct( Sift_Payment_Gateway $gateway, string $verification_status ) {
 		$this->gateway   = $gateway;
@@ -30,7 +30,7 @@ class Sift_Verification_Status extends Sift_Property {
 	 * Normalize the verification status string for a specific payment gateway.
 	 *
 	 * @param Sift_Payment_Gateway $gateway             The payment gateway abstraction.
-	 * @param string          $verification_status The verification status as referred to by the given payment gateway abstraction.
+	 * @param string               $verification_status The verification status as referred to by the given payment gateway abstraction.
 	 *
 	 * @return string|null The normalized verification status string if one is available.
 	 */
