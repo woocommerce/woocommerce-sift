@@ -1206,6 +1206,7 @@ class SiftObjectValidator {
 	public static function validate_add_promotion( $data ) {
 		$validator_map = array(
 			'$user_id'    => array( __CLASS__, 'validate_id' ),
+			'$session_id' => array( __CLASS__, 'validate_id' ),
 			'$promotions' => static::validate_array_fn( array( __CLASS__, 'validate_promotion' ) ),
 			'$browser'    => array( __CLASS__, 'validate_browser' ),
 		);

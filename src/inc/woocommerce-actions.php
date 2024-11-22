@@ -43,7 +43,7 @@ class Events {
 		add_action( 'woocommerce_remove_cart_item', array( static::class, 'remove_item_from_cart' ), 100, 2 );
 		add_action( 'woocommerce_new_order', array( static::class, 'create_order' ), 100, 2 );
 		add_action( 'woocommerce_update_order', array( static::class, 'update_or_create_order' ), 100, 2 );
-		add_action( 'woocommerce_order_applied_coupon', array( static::class, 'add_promotion' ), 100, 2 );
+		add_action( 'woocommerce_applied_coupon', array( static::class, 'add_promotion' ), 100, 2 );
 
 		/**
 		 * We need to break this out into separate actions so we have the $status_transition available.
@@ -97,21 +97,25 @@ class Events {
 	 *
 	 * @link https://developers.sift.com/docs/curl/events-api/reserved-events/add-promotion
 	 *
-	 * @param \WC_Coupon $coupon Coupon used.
-	 * @param \WC_Order  $order  Order.
+	 * @param string $coupon_code Coupon used.
 	 *
 	 * @return void
 	 */
-	public static function add_promotion( \WC_Coupon $coupon, \WC_Order $order ): void {
+	public static function add_promotion( string $coupon_code ): void {
 
 		if ( ! Sift_Event_Types::can_event_be_sent( Sift_Event_Types::$add_promotion ) ) {
 			return;
 		}
 
+		$user       = wp_get_current_user();
 		$properties = array(
-			'$user_id'    => $order->get_user_id(),
+			'$user_id'    => (string) $user->ID ?? 0,
+			'$session_id' => WC()->session->get_customer_unique_id(),
 			'$promotions' => array(
-				'$promotion_id' => $coupon->get_id(),
+				array(
+					'$promotion_id' => $coupon_code,
+					'$status'       => '$success',
+				),
 			),
 			'$ip'         => self::get_client_ip(),
 			'$browser'    => self::get_client_browser(),
