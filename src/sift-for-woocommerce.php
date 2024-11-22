@@ -110,8 +110,8 @@ class Sift_For_WooCommerce {
 		static $client = null;
 
 		if ( null === $client ) {
-			$api_key    = get_option( 'wc_sift_for_woocommerce_api_key' );
-			$account_id = get_option( 'wc_sift_for_woocommerce_account_id' );
+			$api_key    = get_option( 'wc_sift_for_woocommerce_sift_api_key' );
+			$account_id = get_option( 'wc_sift_for_woocommerce_sift_account_id' );
 
 			if ( ! $account_id || ! $api_key ) {
 				wc_get_logger()->log(

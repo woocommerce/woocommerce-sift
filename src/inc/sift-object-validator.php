@@ -891,10 +891,15 @@ class SiftObjectValidator {
 	 * @throws \Exception If the browser is invalid.
 	 */
 	public static function validate_browser( $value ) {
+
+		if ( empty( $value ) ) {
+			return true;
+		}
+
 		$validator_map = array(
 			'$user_agent'       => 'is_string',
-			'$accept_language'  => 'is_string',
-			'$content_language' => 'is_string',
+			'$accept_language'  => array( __CLASS__, 'is_string_or_null' ),
+			'$content_language' => array( __CLASS__, 'is_string_or_null' ),
 		);
 		try {
 			static::validate( $value, $validator_map );
@@ -905,14 +910,25 @@ class SiftObjectValidator {
 	}
 
 	/**
+	 * Returns if the value is a string or null
+	 *
+	 * @param mixed $value The value.
+	 *
+	 * @return boolean
+	 */
+	public static function is_string_or_null( mixed $value ): bool {
+		return is_string( $value ) || is_null( $value );
+	}
+
+	/**
 	 * Validate an ISO 3166 language code.
 	 *
 	 * @param string $value The ISO 3166 language code to validate.
 	 *
-	 * @return true
+	 * @return boolean
 	 * @throws \InvalidArgumentException If the ISO 3166 language code is invalid.
 	 */
-	public static function validate_ISO3166_language( $value ) { //phpcs:ignore
+	public static function validate_ISO3166_language( string $value ): bool { //phpcs:ignore
 		// ISO 3166 language code.
 		if ( ! empty( $value ) && ! preg_match( '/^[a-z]{2}-[A-Z]{2}$/', $value ) ) {
 			throw new \InvalidArgumentException( 'must be valid ISO-3166 format' );
@@ -1305,8 +1321,11 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// required field: $user_id
-			if ( empty( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
+			}
+			if ( ! isset( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $session_id' );
 			}
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Failed to validate $create_account event: ' . esc_html( $e->getMessage() ) );
@@ -1466,14 +1485,23 @@ class SiftObjectValidator {
 			'$user_id'           => array( __CLASS__, 'validate_id' ),
 			'$chargeback_reason' => 'is_string',
 		);
+
 		try {
 			static::validate( $data, $validator_map );
-			// required field: $user_id, $session_id
-			if ( empty( $data['$user_id'] ) || empty( $data['$session_id'] ) ) {
+			// Required field: $user_id, $order_id
+			if ( empty( $data['$user_id'] ) || empty( $data['$order_id'] ) ) {
+				wc_get_logger()->error(
+					'Invalid $chargeback event',
+					array(
+						'source' => 'sift-for-woocommerce',
+						'data'   => $data,
+					)
+				);
+
 				throw new \Exception( 'missing $user_id or $session_id' );
 			}
 		} catch ( \Exception $e ) {
-			throw new \Exception( 'Invalid $link_session_to_user event: ' . esc_html( $e->getMessage() ) );
+			throw new \Exception( 'Invalid $chargeback event: ' . esc_html( $e->getMessage() ) );
 		}
 		return true;
 	}
@@ -1506,7 +1534,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// required field: $user_id
-			if ( empty( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 		} catch ( \Exception $e ) {
@@ -1563,7 +1591,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// required field: $user_id
-			if ( empty( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 		} catch ( \Exception $e ) {
@@ -1598,7 +1626,7 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for update password: $user_id, $reason, $status
-			if ( empty( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
 			}
 			if ( empty( $data['$reason'] ) ) {
@@ -1624,6 +1652,7 @@ class SiftObjectValidator {
 	public static function validate_order_status( array $data ) {
 		$validator_map = array(
 			'$user_id'      => array( __CLASS__, 'validate_id' ),
+			'$session_id'   => array( __CLASS__, 'validate_id' ),
 			'$order_id'     => 'is_string',
 			'$order_status' => self::ORDER_STATUSES,
 			'$reason'       => self::CANCELLATION_REASONS,
@@ -1641,8 +1670,11 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for order status: $user_id, $order_id, $order_status
-			if ( empty( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
+			}
+			if ( ! isset( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $session_id' );
 			}
 			if ( empty( $data['$order_id'] ) ) {
 				throw new \Exception( 'missing $order_id' );
@@ -1668,6 +1700,7 @@ class SiftObjectValidator {
 	public static function validate_transaction( array $data ) {
 		$validator_map = array(
 			'$user_id'            => array( __CLASS__, 'validate_id' ),
+			'$session_id'         => array( __CLASS__, 'validate_id' ),
 			'$amount'             => 'is_int',
 			'$currency_code'      => array( __CLASS__, 'validate_currency_code' ),
 			'$order_id'           => 'is_string',
@@ -1678,8 +1711,11 @@ class SiftObjectValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for order status: $user_id, $order_id, $order_status
-			if ( empty( $data['$user_id'] ) ) {
+			if ( ! isset( $data['$user_id'] ) ) {
 				throw new \Exception( 'missing $user_id' );
+			}
+			if ( ! isset( $data['$session_id'] ) ) {
+				throw new \Exception( 'missing $session_id' );
 			}
 			if ( empty( $data['$amount'] ) ) {
 				throw new \Exception( 'missing $amount' );

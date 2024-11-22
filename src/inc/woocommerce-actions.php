@@ -9,6 +9,7 @@ use WC_Order_Item_Product;
 
 use Sift_For_WooCommerce\Sift_Order;
 use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+use WC_Product;
 
 
 /**
@@ -84,7 +85,7 @@ class Events {
 		self::add(
 			'$logout',
 			array(
-				'$user_id' => $user_id,
+				'$user_id' => self::format_user_id( intval( $user_id ) ),
 				'$browser' => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 				'$ip'      => self::get_client_ip(),
 				'$time'    => intval( 1000 * microtime( true ) ),
@@ -109,7 +110,7 @@ class Events {
 
 		$user       = wp_get_current_user();
 		$properties = array(
-			'$user_id'    => (string) $user->ID ?? 0,
+			'$user_id'    => self::format_user_id( $user->ID ?? 0 ),
 			'$session_id' => WC()->session->get_customer_unique_id(),
 			'$promotions' => array(
 				array(
@@ -149,7 +150,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'       => (string) $user->ID,
+			'$user_id'       => self::format_user_id( $user->ID ),
 			'$login_status'  => '$success',
 			'$session_id'    => WC()->session->get_customer_unique_id(),
 			'$user_email'    => $user->user_email ?? null,
@@ -191,9 +192,9 @@ class Events {
 		}
 
 		$attempted_user = get_user_by( 'login', $username );
-		$user_id        = null;
+		$user_id        = 0;
 		if ( is_object( $attempted_user ) ) {
-			$user_id = (string) $attempted_user->ID ?? null;
+			$user_id = $attempted_user->ID ?? 0;
 		}
 
 		switch ( $error->get_error_code() ) {
@@ -212,7 +213,7 @@ class Events {
 				$failure_reason = null;
 		}
 		$properties = array(
-			'$user_id'      => $user_id,
+			'$user_id'      => self::format_user_id( $user_id ),
 			'$login_status' => '$failure',
 			'$session_id'   => WC()->session->get_customer_unique_id(),
 			'$browser'      => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
@@ -253,7 +254,7 @@ class Events {
 		$user = get_user_by( 'id', $user_id );
 
 		$properties = array(
-			'$user_id'          => (string) $user->ID,
+			'$user_id'          => self::format_user_id( $user->ID ),
 			'$session_id'       => WC()->session->get_customer_unique_id(),
 			'$user_email'       => $user->user_email ? $user->user_email : null,
 			'$name'             => $user->display_name,
@@ -308,7 +309,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'          => (string) $user->ID,
+			'$user_id'          => self::format_user_id( $user->ID ),
 			'$user_email'       => $user->user_email ? $user->user_email : null,
 			'$name'             => $user->display_name,
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
@@ -357,7 +358,7 @@ class Events {
 		$user = get_user_by( 'id', $user_id );
 
 		$properties = array(
-			'$user_id'      => (string) $user->ID,
+			'$user_id'      => self::format_user_id( $user->ID ),
 			'$reason'       => '$user_update', // Can alternately be `$forgot_password` or `$forced_reset` -- no real way to set those yet.
 			'$status'       => '$success', // This action only fires after the change is done.
 			'$browser'      => self::get_client_browser(),
@@ -394,7 +395,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'    => $user_id,
+			'$user_id'    => self::format_user_id( intval( $user_id ) ),
 			'$session_id' => $session_id,
 			'$ip'         => self::get_client_ip(),
 			'$time'       => intval( 1000 * microtime( true ) ),
@@ -427,21 +428,16 @@ class Events {
 
 		$cart_item = \WC()->cart->get_cart_item( $cart_item_key );
 		// phpcs:ignore
-		/** @var \WC_Product $product */
+		/** @var WC_Product $product */
 		$product = $cart_item['data'] ?? null;
 		$user    = wp_get_current_user();
 
 		if ( ! $product ) {
 			return;
 		}
-		// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
-		$category = wc_get_product_category_list( $product->get_id() );
-		if ( is_wp_error( $category ) || ! is_string( $category ) ) {
-			$category = '';
-		}
 
 		$properties = array(
-			'$user_id'      => (string) $user->ID ?? null,
+			'$user_id'      => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'   => $user->user_email ?? null,
 			'$session_id'   => \WC()->session->get_customer_unique_id(),
 			'$item'         => array(
@@ -451,7 +447,7 @@ class Events {
 				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => get_woocommerce_currency(),
 				'$quantity'      => $cart_item['quantity'],
-				'$category'      => $category,
+				'$category'      => self::get_product_category( $product ),
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			),
 			'$browser'      => self::get_client_browser(),
@@ -495,7 +491,7 @@ class Events {
 		$user      = wp_get_current_user();
 
 		$properties = array(
-			'$user_id'      => (string) $user->ID ?? null,
+			'$user_id'      => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'   => $user->user_email ? $user->user_email : null,
 			'$session_id'   => \WC()->session->get_customer_unique_id(),
 			'$item'         => array(
@@ -505,6 +501,7 @@ class Events {
 				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => get_woocommerce_currency(),
 				'$quantity'      => $cart_item['quantity'],
+				'$category'      => self::get_product_category( $product ),
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			),
 			'$browser'      => self::get_client_browser(),
@@ -513,15 +510,6 @@ class Events {
 			'$ip'           => self::get_client_ip(),
 			'$time'         => intval( 1000 * microtime( true ) ),
 		);
-
-		// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
-		$category = wc_get_product_category_list( $product->get_id() );
-		if ( is_wp_error( $category ) || ! is_string( $category ) ) {
-			$category = '';
-		}
-		if ( ! empty( $category ) ) {
-			$properties['$item']['$category'] = $category;
-		}
 
 		self::add( Sift_Event_Types::$remove_item_from_cart, $properties );
 	}
@@ -588,12 +576,6 @@ class Events {
 				continue;
 			}
 
-			// wc_get_product_category_list() lies it can return a boolean or WP_Error in addition to a string.
-			$category = wc_get_product_category_list( $product->get_id() );
-			if ( is_wp_error( $category ) || ! is_string( $category ) ) {
-				$category = '';
-			}
-
 			$items[] = array(
 				'$item_id'       => (string) $product->get_id(),
 				'$sku'           => $product->get_sku(),
@@ -601,7 +583,7 @@ class Events {
 				'$price'         => self::get_transaction_micros( floatval( $product->get_price() ) ),
 				'$currency_code' => $order->get_currency(), // For the order specifically, not the whole store.
 				'$quantity'      => $item->get_quantity(),
-				'$category'      => $category,
+				'$category'      => self::get_product_category( $product ),
 				'$tags'          => wp_list_pluck( get_the_terms( $product->get_id(), 'product_tag' ), 'name' ),
 			);
 
@@ -611,7 +593,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'         => (string) $user->ID ?? null,
+			'$user_id'         => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'      => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
 			'$session_id'      => \WC()->session->get_customer_unique_id(),
 			'$order_id'        => $order_id,
@@ -668,7 +650,8 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'            => (string) $order->get_user_id(),
+			'$user_id'            => self::format_user_id( $order->get_user_id() ),
+			'$session_id'         => WC()->session->get_customer_unique_id(),
 			'$amount'             => self::get_transaction_micros( floatval( $order->get_total() ) ), // Gotta multiply it up to give an integer.
 			'$currency_code'      => $order->get_currency(),
 			'$order_id'           => (string) $order->get_id(),
@@ -708,7 +691,8 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'      => (string) $order->get_user_id(),
+			'$user_id'      => self::format_user_id( $order->get_user_id() ),
+			'$session_id'   => WC()->session->get_customer_unique_id(),
 			'$order_id'     => (string) $order_id,
 			'$source'       => $status_transition['manual'] ? '$manual_review' : '$automated',
 			'$description'  => $status_transition['note'],
@@ -779,7 +763,7 @@ class Events {
 		// Assemble the properties for the chargeback event.
 		$properties = array(
 			'$order_id'          => $order_id,
-			'$user_id'           => (string) $order->get_user_id(),
+			'$user_id'           => self::format_user_id( $order->get_customer_id() ),
 			'$chargeback_reason' => $chargeback_reason,
 			'$ip'                => self::get_client_ip(),
 		);
@@ -830,12 +814,18 @@ class Events {
 		if ( self::count() > 0 ) {
 			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
 			if ( empty( $client ) ) {
+				wc_get_logger()->error(
+					'Failed to send events to Sift',
+					array(
+						'source' => 'sift-for-woocommerce',
+						'reason' => 'Failed to get the Sift API client.',
+						'events' => self::$to_send,
+					)
+				);
 				return false;
 			}
 
 			foreach ( self::$to_send as $entry ) {
-				// Add in API calls / batching here.
-
 				$response = $client->track( $entry['event'], $entry['properties'] );
 
 				$log_type  = 'debug';
@@ -909,7 +899,7 @@ class Events {
 	private static function get_client_browser() {
 		$browser = array(
 			'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
-			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'],
+			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US', // default to en-US if not set (i.e., a server action)
 			'$content_language' => get_locale(),
 		);
 
@@ -1075,5 +1065,59 @@ class Events {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Returns the right user ID.
+	 *
+	 * @param integer $user_id Original user ID.
+	 *
+	 * @return string Returns an empty string if the user ID is 0
+	 */
+	private static function format_user_id( int $user_id ): string {
+		if ( 0 === $user_id ) {
+			// Returns empty string if the user is unknown
+			// see https://developers.sift.com/tutorials/anonymous-users
+			return '';
+		}
+
+		return (string) $user_id;
+	}
+
+	/**
+	 * Return the hierarchy of the product category
+	 *
+	 * @param WC_Product $product WooCommerce product.
+	 *
+	 * @link https://developers.sift.com/docs/curl/events-api/complex-field-types/item
+	 *
+	 * @return string
+	 */
+	private static function get_product_category( WC_Product $product ): string {
+
+		$category_ids = wc_get_product_cat_ids( $product->get_id() );
+		if ( empty( $category_ids ) ) {
+			return '';
+		}
+
+		$taxonomy  = 'product_cat'; // Taxonomy for product category
+		$terms_ids = $product->get_category_ids();
+		// Loop though terms ids (product categories)
+		foreach ( $terms_ids as $term_id ) {
+			$term_names = array(); // Initialising category array
+
+			// Loop through product category ancestors
+			foreach ( get_ancestors( $term_id, $taxonomy ) as $ancestor_id ) {
+				// Add the ancestors term names to the category array
+				$term_names[] = get_term( $ancestor_id, $taxonomy )->name;
+			}
+			// Add the product category term name to the category array
+			$term_names[] = get_term( $term_id, $taxonomy )->name;
+
+			// Add the formatted ancestors with the product category to main array
+			$output[] = implode( ' > ', $term_names );
+		}
+		// Output the formatted product categories with their ancestors
+		return implode( ', ', $output );
 	}
 }

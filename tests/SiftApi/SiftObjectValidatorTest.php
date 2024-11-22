@@ -42,7 +42,6 @@ abstract class SiftObjectValidatorTest extends \WP_UnitTestCase {
 
 	public static function modify_data( $change_data ) {
 		$data = static::load_json();
-		unset( $data['$browser'] ); // remove the $browser key (broken by default)
 		$recursively_fix = function ( $data, $change_data ) use ( &$recursively_fix ) {
 			foreach ( $change_data as $key => $value ) {
 				if ( is_array( $value ) ) {
@@ -56,6 +55,11 @@ abstract class SiftObjectValidatorTest extends \WP_UnitTestCase {
 			return $data;
 		};
 		$data            = $recursively_fix( $data, $change_data );
+
+		if( isset( $data['$browser'] ) && isset( $data['$app'] ) ) {
+			unset( $data['$browser'] );
+		}
+
 		return $data;
 	}
 
