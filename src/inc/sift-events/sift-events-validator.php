@@ -1711,7 +1711,7 @@ class SiftEventsValidator {
 		try {
 			static::validate( $data, $validator_map );
 			// Required fields for order status: $user_id, $order_id, $order_status
-			if ( ! isset( $data['$user_id'] ) ) {
+			if ( ! array_key_exists( '$user_id', $data ) ) { // Might be an empty string if no user_id is present yet.
 				throw new \Exception( 'missing $user_id' );
 			}
 			if ( ! isset( $data['$session_id'] ) ) {

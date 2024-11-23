@@ -446,7 +446,7 @@ class Events {
 		$properties = array(
 			'$user_id'      => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'   => $user->user_email ?? null,
-			'$session_id'   => \WC()->session->get_customer_unique_id(),
+			'$session_id'   => WC()->session->get_customer_unique_id(),
 			'$item'         => array(
 				'$item_id'       => (string) $cart_item_key,
 				'$sku'           => $product->get_sku(),
@@ -565,7 +565,16 @@ class Events {
 			return;
 		}
 
-		$user = wp_get_current_user();
+		// Determine user and session context.
+		$user_id   = wp_get_current_user()->ID ?? null; // Check first for logged-in user.
+		$is_system = ! $create_order && str_starts_with( $_SERVER['HTTP_USER_AGENT'] ?? '', 'WordPress' ); // Check if this is an order update via system action.
+
+		// Figure out if it should use the session ID if no logged-in user exists.
+		if ( ! $user_id ) {
+			$user_id = $is_system ? $order->get_user_id() : null; // Use order user ID only for system actions.
+		}
+
+		$user = $user_id ? get_userdata( $user_id ) : null;
 
 		$physical_or_electronic = '$electronic';
 		$items                  = array();
@@ -600,7 +609,7 @@ class Events {
 		}
 
 		$properties = array(
-			'$user_id'         => self::format_user_id( $user->ID ?? 0 ),
+			'$user_id'         => '',
 			'$user_email'      => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
 			'$session_id'      => \WC()->session->get_customer_unique_id(),
 			'$order_id'        => $order_id,
@@ -617,15 +626,24 @@ class Events {
 			'$ip'              => self::get_client_ip(),
 			'$time'            => intval( 1000 * microtime( true ) ),
 		);
+
+		// Add the user_id only if a user exists, otherwise, let it remain empty.
+		// Ref: https://developers.sift.com/docs/php/apis-overview/core-topics/faq/tracking-users
+		if ( $user ) {
+			$properties['$user_id'] = self::format_user_id( $user->ID );
+		}
+
 		// Add in the address information if it's available.
-		$billing_address = self::get_order_address( $user->ID, 'billing' );
+		$billing_address = self::get_order_address( $order_id, 'billing' );
 		if ( ! empty( $billing_address ) ) {
 			$properties['$billing_address'] = $billing_address;
 		}
-		$shipping_address = self::get_order_address( $user->ID, 'shipping' );
+
+		$shipping_address = self::get_order_address( $order_id, 'shipping' );
 		if ( ! empty( $shipping_address ) ) {
 			$properties['$shipping_address'] = $shipping_address;
 		}
+
 		try {
 			SiftEventsValidator::validate_create_or_update_order( $properties );
 		} catch ( \Exception $e ) {
@@ -936,7 +954,6 @@ class Events {
 				return null;
 		}
 
-		// Missing parameters -- company, email (For billing, not shipping)
 		return array(
 			'$name'      => $address['first_name'] . ' ' . $address['last_name'],
 			'$phone'     => $address['phone'],
@@ -952,12 +969,12 @@ class Events {
 	/**
 	 * Get the address details in the format that Sift expects.
 	 *
-	 * @param integer $order_id The User / Customer ID.
-	 * @param string  $type     Either `billing` or `shipping`.
+	 * @param string $order_id The User / Customer ID.
+	 * @param string $type     Either `billing` or `shipping`.
 	 *
 	 * @return array|null
 	 */
-	private static function get_order_address( int $order_id, string $type = 'billing' ) {
+	private static function get_order_address( string $order_id, string $type = 'billing' ) {
 		$order = wc_get_order( $order_id );
 
 		if ( empty( $order ) ) {
@@ -977,10 +994,8 @@ class Events {
 				return null;
 		}
 
-		// Missing parameters -- company, email (For billing, not shipping)
 		return array(
 			'$name'      => $address['first_name'] . ' ' . $address['last_name'],
-			'$company'   => $address['company'],
 			'$phone'     => $address['phone'],
 			'$address_1' => $address['address_1'],
 			'$address_2' => $address['address_2'],
