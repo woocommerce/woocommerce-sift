@@ -881,17 +881,6 @@ class Events {
 	}
 
 	/**
-	 * Sanitize a comma-separated list of IP addresses or hostnames in a string.
-	 *
-	 * @param string $ip_csv A CSV delimited string of IP addresses.
-	 *
-	 * @return string A sanitized string.
-	 */
-	private static function sanitize_list_of_internet_address( string $ip_csv ): string {
-		return preg_replace( '/[^0-9a-z\-\.,]/i', '', $ip_csv );
-	}
-
-	/**
 	 * Taken from core `get_unsafe_client_ip()` method.
 	 *
 	 * @return string The detected IP address of the user.
@@ -917,7 +906,7 @@ class Events {
 				 * addresses. The first one is the original client. It can't be
 				 * trusted for authenticity, but we don't need to for this purpose.
 				 */
-				$address_chain = explode( ',', static::sanitize_list_of_internet_address( wp_unslash( $_SERVER[ $header ] ) ) );
+				$address_chain = explode( ',', sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) ) );
 				$client_ip     = trim( $address_chain[0] );
 
 				break;
