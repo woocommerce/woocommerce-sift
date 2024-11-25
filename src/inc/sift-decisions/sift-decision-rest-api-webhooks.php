@@ -29,7 +29,7 @@ function register_routes() {
 function decision_webhook_auth( \WP_REST_Request $request ) {
 	$key = $request->get_header( 'X-Sift-Science-Signature' );
 
-	if ( $key && hash_equals( get_option( 'wc_sift_for_woocommerce_webhook_key', '' ), $key ) ) {
+	if ( $key && hash_equals( get_option( 'wc_sift_for_woocommerce_sift_webhook_key', '' ), $key ) ) {
 		return true;
 	}
 

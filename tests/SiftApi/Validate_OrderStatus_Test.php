@@ -4,7 +4,7 @@
 
 namespace SiftApi;
 
-use Sift_For_WooCommerce\Sift\SiftObjectValidator;
+use Sift_For_WooCommerce\Sift\SiftEventsValidator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -16,7 +16,7 @@ class Validate_OrderStatus_Test extends SiftObjectValidatorTest {
 	protected static ?string $fixture_name = 'order-status.json';
 
 	protected static function validator( $data ) {
-		return SiftObjectValidator::validate_order_status( $data );
+		return SiftEventsValidator::validate_order_status( $data );
 	}
 
 	public function test_user_id_required() {

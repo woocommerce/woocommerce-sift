@@ -5,9 +5,9 @@ namespace Sift_For_WooCommerce;
 /**
  * A class representing a payment type which normalizes the payment type property according to expectations in the Sift API.
  */
-class Payment_Type extends Sift_Property {
+class Sift_Payment_Type extends Sift_Property {
 
-	private Payment_Gateway $gateway;
+	private Sift_Payment_Gateway $gateway;
 
 	protected static array $valid_sift_slugs = array(
 		'$cash',
@@ -39,10 +39,10 @@ class Payment_Type extends Sift_Property {
 	/**
 	 * Create a class to represent the payment type for a given payment gateway.
 	 *
-	 * @param Payment_Gateway $gateway      The payment gateway abstraction.
-	 * @param string          $payment_type The type of payment as referred to by the given payment gateway abstraction.
+	 * @param Sift_Payment_Gateway $gateway      The payment gateway abstraction.
+	 * @param string               $payment_type The type of payment as referred to by the given payment gateway abstraction.
 	 */
-	public function __construct( Payment_Gateway $gateway, string $payment_type ) {
+	public function __construct( Sift_Payment_Gateway $gateway, string $payment_type ) {
 		$this->gateway   = $gateway;
 		$this->sift_slug = static::normalize_payment_type_string( $this->gateway, $payment_type );
 	}
@@ -52,12 +52,12 @@ class Payment_Type extends Sift_Property {
 	 * type of payment used in their own way (e.g., for credit cards, one gateway may call it 'card', while another may call
 	 * it a 'cc' or 'credit_card'), this function will try to "normalize" the string into a standard string accepted by Sift.
 	 *
-	 * @param Payment_Gateway $gateway      The payment gateway abstraction.
-	 * @param string          $payment_type The type of payment as referred to by the given payment gateway abstraction.
+	 * @param Sift_Payment_Gateway $gateway      The payment gateway abstraction.
+	 * @param string               $payment_type The type of payment as referred to by the given payment gateway abstraction.
 	 *
 	 * @return string|null The normalized payment type string if one is available.
 	 */
-	public static function normalize_payment_type_string( Payment_Gateway $gateway, string $payment_type ): ?string {
+	public static function normalize_payment_type_string( Sift_Payment_Gateway $gateway, string $payment_type ): ?string {
 		$sift_slug = apply_filters( sprintf( 'sift_for_woocommerce_%s_payment_type_string', $gateway->get_woo_gateway_id() ), $payment_type ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 		if ( static::is_valid_sift_slug( $sift_slug ) ) {
 			return $sift_slug;
