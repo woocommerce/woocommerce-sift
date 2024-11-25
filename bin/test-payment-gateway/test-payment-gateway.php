@@ -38,10 +38,13 @@ function init_simple_test_gateway() {
 			$this->enabled     = $this->get_option( 'enabled' );
 
 			// Actions
-			add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array(
-				$this,
-				'process_admin_options',
-			) );
+			add_action(
+				'woocommerce_update_options_payment_gateways_' . $this->id,
+				array(
+					$this,
+					'process_admin_options',
+				)
+			);
 		}
 
 		public function init_form_fields() {
