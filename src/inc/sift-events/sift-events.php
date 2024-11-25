@@ -906,7 +906,7 @@ class Events {
 				 * addresses. The first one is the original client. It can't be
 				 * trusted for authenticity, but we don't need to for this purpose.
 				 */
-				$address_chain = explode( ',', sanitize_url( wp_unslash( $_SERVER[ $header ] ) ) );
+				$address_chain = explode( ',', preg_replace( '/[^0-9a-z\.]/i', '', wp_unslash( $_SERVER[ $header ] ) ) );
 				$client_ip     = trim( $address_chain[0] );
 
 				break;
