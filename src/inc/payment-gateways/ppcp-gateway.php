@@ -15,9 +15,10 @@ add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_gateway_string', fn() => 
 function get_from_order( $value, \WC_Order $order ) {
 	try {
 		$container = \WooCommerce\PayPalCommerce\PPCP::container();
+
 		return array(
 			'wc_order'      => $order,
-			'order'         => $container->get( 'api.repository.order' )->from_wc_order( $order ),
+			'order'         => $container->get( 'api.repository.order' )->for_wc_order( $order ),
 			'purchase-unit' => $container->get( 'api.factory.purchase-unit' )->from_wc_order( $order ),
 		);
 	} catch ( \Exception ) {
