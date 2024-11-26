@@ -811,6 +811,10 @@ class Events {
 	 * @return void
 	 */
 	public static function add( string $event, array $properties ) {
+
+		// Give a chance for the platform to modify the data (and add potentially new custom data)
+		$properties = apply_filters( 'sift_for_woocommerce_pre_send_event_properties', $properties, $event );
+
 		array_push(
 			self::$to_send,
 			array(
