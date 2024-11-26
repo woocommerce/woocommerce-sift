@@ -321,7 +321,6 @@ class Events {
 			'$name'             => $user->display_name,
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
 			'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
 			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
