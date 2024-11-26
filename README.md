@@ -6,7 +6,7 @@ This plugin will integrate with Sift Science's fraud detection suite and WooComm
 
 This plugin has the following folder structure:
 
-```
+```ignorelang
 sift-for-woocommerce/
 ├── languages/
 ├── src/
@@ -51,13 +51,13 @@ You can select a test with:
 ### Test with WooPayments or any other gateway
 
 1. Add a link to the gateway in `.wp-env.json` in the "plugins" list (WooPayments is provided by default as well as a dummy Simple_Test_Gateway)
-2. Start ngrok with "ngrok http 80 --host-header=rewrite" and grab the new address in https://0000-00-00-00.ngrok-free.app
+2. Start ngrok with "ngrok http 80 --host-header=rewrite" and grab the new address in `https://0000-00-00-00.ngrok-free.app`
 3. Copy the .wp-env.json file and paste it as .wp-env.override.json. Modify WP_DOMAIN, WP_SITEURL and WP_HOME with the new URL 0000-00-00-00.ngrok-free.app. You can leave the other values as they are, or if you are comfortable with editing JSON, remove everything aside from the "config" key and the three modified keys within.
 4. Run `npm start` to reload the config
-5. Go to https://0000-00-00-00.ngrok-free.app/wp-admin/ (don't miss the last /)
+5. Go to `https://0000-00-00-00.ngrok-free.app/wp-admin/` (don't miss the last /)
 6. Setup WooCommerce 
 7. Set up your gateway
-6. (optional) for WooPayments, you can use the Sandbox mode in the setup with "I'm setting up a store for someone else."
+8. (optional) for WooPayments, you can use the Sandbox mode in the setup with "I'm setting up a store for someone else."
 
 Note: Remember to modify the URLs and run a `npm start` everytime you restart ngrok.
 
@@ -76,7 +76,7 @@ Start environment with XDEBUG enabled: `npx wp-env start --xdebug`.  Configure y
 
 To get tests working with XDEBUG, it requires a little more work.  Configure your IDE server name to be something like `XDEBUG_OMATTIC` and then launch the tests by running `npx wp-env run tests-cli --env-cwd=wp-content/plugins/sift-for-woocommerce bash`. At the new prompt you need to run: `PHP_IDE_CONFIG=serverName=XDEBUG_OMATTIC vendor/bin/phpunit`.
 
-### Troubleshooting:
+### Troubleshooting
 
 #### `Error response from daemon: error while creating mount source path`
 
@@ -86,12 +86,13 @@ Restart docker.
 
 Add this line (substituting your own public URL) to your `wp-config.php`:
 
-`$_SERVER['HTTP_HOST'] = 'bf6e-99-38-238-95.ngrok-free.app';`
+`$_SERVER['HTTP_HOST'] = '0000-00-00-00.ngrok-free.app';`
 
 ### Modify a variable in wp-config
 
 `wp-env run cli wp config set JETPACK_DEV_DEBUG false --raw`
 
 ### Access PHP error
+
 1. `wp-env run cli bash`
 2. `tail -f /var/www/html/wp-content/debug.log`
