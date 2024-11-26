@@ -40,7 +40,7 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function hooks() {
+	public static function init_hooks() {
 		add_action( 'wp_logout', array( static::class, 'logout' ), 100 );
 		add_action( 'wp_login', array( static::class, 'login_success' ), 100, 2 );
 		add_action( 'wp_login_failed', array( static::class, 'login_failure' ), 100, 2 );

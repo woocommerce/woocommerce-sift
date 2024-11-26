@@ -2,6 +2,8 @@
 
 namespace Sift_For_WooCommerce;
 
+use Sift_For_WooCommerce\Sift_Events\Events;
+
 require_once __DIR__ . '/inc/wc-admin-settings-tab.php';
 require_once __DIR__ . '/inc/tracking-js.php';
 require_once __DIR__ . '/inc/payment-gateways/load.php';
@@ -42,7 +44,7 @@ class Sift_For_WooCommerce {
 
 		add_action( 'login_header', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Allow Sift tracking of login page visits.
 
-		\Sift_For_WooCommerce\Sift_Events\Events::hooks();
+		Events::init_hooks();
 	}
 
 	/**
