@@ -1,6 +1,6 @@
 <?php declare( strict_types=1 );
 
-namespace Sift_For_WooCommerce\PaymentGateways;
+namespace Sift_For_WooCommerce\PaymentGateways\Stripe;
 
 use Sift_For_WooCommerce\PaymentGateways\Lib\Stripe;
 
