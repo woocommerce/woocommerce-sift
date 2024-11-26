@@ -82,6 +82,11 @@ To get tests working with XDEBUG, it requires a little more work.  Configure you
 
 Restart docker.
 
+### Pagination issues (page links different than site)
+
+Add this line (substituting your own public URL) to your `wp-config.php`:
+
+`$_SERVER['HTTP_HOST'] = 'bf6e-99-38-238-95.ngrok-free.app';`
 
 ### Modify a variable in wp-config
 
