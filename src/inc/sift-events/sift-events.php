@@ -567,7 +567,7 @@ class Events {
 
 		// Determine user and session context.
 		$user_id   = wp_get_current_user()->ID ?? null; // Check first for logged-in user.
-		$is_system = ! $create_order && str_starts_with( $_SERVER['HTTP_USER_AGENT'] ?? '', 'WordPress' ); // Check if this is an order update via system action.
+		$is_system = ! $create_order && str_starts_with( sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 'WordPress' ); // Check if this is an order update via system action.
 
 		// Figure out if it should use the session ID if no logged-in user exists.
 		if ( ! $user_id ) {
@@ -906,7 +906,7 @@ class Events {
 				 * addresses. The first one is the original client. It can't be
 				 * trusted for authenticity, but we don't need to for this purpose.
 				 */
-				$address_chain = explode( ',', $_SERVER[ $header ] );
+				$address_chain = explode( ',', sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) ) );
 				$client_ip     = trim( $address_chain[0] );
 
 				break;
@@ -923,8 +923,8 @@ class Events {
 	 */
 	private static function get_client_browser() {
 		$browser = array(
-			'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
-			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US', // default to en-US if not set (i.e., a server action)
+			'$user_agent'       => sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ),
+			'$accept_language'  => sanitize_key( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US' ) ), // default to en-US if not set (i.e., a server action)
 			'$content_language' => get_locale(),
 		);
 
