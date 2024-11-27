@@ -804,6 +804,53 @@ class Events {
 	}
 
 	/**
+	 * Get any new abuse decisions for a user, and apply it if needed.
+	 *
+	 * @param string $sift_user_id  The user ID sent to Sift, usually the WPCOM user ID.
+	 * @param string $wccom_user_id The WooCommerce user ID.
+	 *
+	 * @return string|null
+	 */
+	public static function get_decision( string $sift_user_id, string $wccom_user_id ): ?string {
+		$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
+		if ( empty( $client ) ) {
+			wc_get_logger()->error(
+				'Failed to get the Sift API client.',
+				array(
+					'source' => 'sift-events',
+				)
+			);
+			return null;
+		}
+
+		// Get the abuse decision from Sift.
+		$user_decisions_response = $client->getUserDecisions( $sift_user_id );
+
+		$decision_id = null;
+
+		// Extract the decision ID for payment abuse if it exists.
+		if ( isset( $user_decisions_response->body['decisions']['payment_abuse']['decision']['id'] ) ) {
+			$decision_id = $user_decisions_response->body['decisions']['payment_abuse']['decision']['id'];
+		}
+
+		return self::apply_decision( $decision_id, $wccom_user_id );
+	}
+
+	/**
+	 * Apply the decision to the filter.
+	 * This is a helper function to apply the decision to the filter.
+	 *
+	 * @param string $decision_id The decision ID.
+	 * @param string $user_id     The user ID.
+	 *
+	 * @return void
+	 */
+	public static function apply_decision( string $decision_id, string $user_id ) {
+		\apply_filters( 'sift_decision_received', null, $decision_id, $user_id );
+	}
+
+
+	/**
 	 * Enqueue an event to send.  This will enable sending them all at shutdown.
 	 *
 	 * @param string $event      The event we're recording -- generally will start with a $.
@@ -851,7 +898,22 @@ class Events {
 			}
 
 			foreach ( self::$to_send as $entry ) {
+				// We need the original WC user ID to handle the decision locally.
+				$wccom_user_id = $entry['properties']['$user_id'] ?? null;
+
+				// Apply the filter to update from the WCCOM to the WPCOM user_id just before sending the event.
+				$entry['properties'] = apply_filters( 'sift_for_woocommerce_pre_send_event_properties', $entry['properties'] );
+
 				$response = $client->track( $entry['event'], $entry['properties'] );
+
+				// Get the user ID we send Sift (probably WPCOM) from the properties.
+				$sift_user_id = $entry['properties']['$user_id'] ?? null;
+
+				// If there's no WPCOM user_id, Sift cannot deliver a decision.
+				if ( $sift_user_id ) {
+					// Get the decision for the user and apply if needed.
+					self::get_decision( $sift_user_id, $wccom_user_id );
+				}
 
 				$log_type  = 'debug';
 				$log_title = sprintf( 'Sent `%s`', $entry['event'] );

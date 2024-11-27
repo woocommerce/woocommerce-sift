@@ -16,7 +16,6 @@ require_once __DIR__ . '/sift-decision-rest-api-webhooks.php';
  * @return mixed
  */
 function process_sift_decision_received( $return_value, $decision_id, $entity_id ) {
-	// We can rename once we have a final name.
 	switch ( $decision_id ) {
 		case 'trust_list_payment_abuse':
 			do_action( 'sift_for_woocommerce_trust_list_payment_abuse', $entity_id );
