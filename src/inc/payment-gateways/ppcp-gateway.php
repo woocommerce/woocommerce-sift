@@ -3,6 +3,7 @@
 namespace Sift_For_WooCommerce\PaymentGateways\PPCP;
 
 use WooCommerce\PayPalCommerce\PPCP;
+use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_gateway_string', fn() => '$paypal' );
 
@@ -37,7 +38,7 @@ add_filter( 'sift_for_woocommerce_ppcp-gateway_charge_details_from_order', __NAM
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_type_string', fn( $value, $ppcp_gateway_payment_type ) => 'ppcp' === $ppcp_gateway_payment_type ? '$third_party_processor' : $value );
 
-add_filter( 'sift_for_woocommerce_ppcp-gateway_card_last4', fn( $value, $ppcp_data ) => $ppcp_data['wc_order']?->get_meta_data( \WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway::FRAUD_RESULT_META_KEY )['card_last_digits'] ?? $value, 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_card_last4', fn( $value, $ppcp_data ) => $ppcp_data['wc_order']?->get_meta_data( PayPalGateway::FRAUD_RESULT_META_KEY )['card_last_digits'] ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_avs_result_code', fn( $value, $ppcp_data ) => $ppcp_data['purchase-unit']?->payments()?->authorizations()[0]?->fraud_processor_response()->avs_code() ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_cvv_result_code', fn( $value, $ppcp_data ) => $ppcp_data['purchase-unit']?->payments()?->authorizations()[0]?->fraud_processor_response()->cvv_code() ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_verification_status', fn( $value, $ppcp_data ) => $ppcp_data['purchase-unit']?->payments()?->authorizations()[0]?->status() ?? $value, 10, 2 );
