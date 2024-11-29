@@ -209,6 +209,6 @@ class Sift_Event_Types {
 		if ( ! $enabled ) {
 			return false;
 		}
-		return "yes" === get_option( self::get_option_for_event_type( $event_type ), "no" );
+		return 'yes' === get_option( self::get_option_for_event_type( $event_type ), 'no' );
 	}
 }

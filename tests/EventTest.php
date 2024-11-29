@@ -51,20 +51,20 @@ abstract class EventTest extends WP_UnitTestCase {
 		add_filter( 'woocommerce_logger_log_message', array( __CLASS__, 'log_watcher' ), 10, 2 );
 
 		// We enable all the event types by default
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$add_item_to_cart ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$remove_item_from_cart ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$link_session_to_user ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$create_order ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$update_order ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$update_password ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$chargeback ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$transaction ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$order_status ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$create_account ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$update_account ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$add_promotion ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$login ), "yes" );
-		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$logout ), "yes" );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$add_item_to_cart ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$remove_item_from_cart ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$link_session_to_user ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$create_order ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$update_order ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$update_password ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$chargeback ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$transaction ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$order_status ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$create_account ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$update_account ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$add_promotion ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$login ), 'yes' );
+		update_option( Sift_Event_Types::get_option_for_event_type( Sift_Event_Types::$logout ), 'yes' );
 	}
 
 	/**
