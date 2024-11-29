@@ -18,14 +18,19 @@ add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_gateway_string', fn() => 
 function get_from_order( $value, \WC_Order $order ) {
 	$container = PPCP::container();
 
-	$paypal_order = null;
+	$paypal_order  = null;
 	$purchase_unit = null;
 	try {
 		$paypal_order = $container->get( 'api.repository.order' )->for_wc_order( $order );
-	} catch ( \Exception $e ) {}
+	} catch ( \Exception ) {
+		wc_get_logger()->debug( 'Could not find the Paypal order' );
+	}
+
 	try {
 		$purchase_unit = $container->get( 'api.factory.purchase-unit' )->from_wc_order( $order );
-	} catch ( \Exception $e ) {}
+	} catch ( \Exception ) {
+		wc_get_logger()->debug( 'Could not find the purchase unit' );
+	}
 
 	return array(
 		'wc_order'      => $order,
