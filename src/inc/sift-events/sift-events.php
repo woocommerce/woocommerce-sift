@@ -611,7 +611,7 @@ class Events {
 		$properties = array(
 			'$user_id'         => '',
 			'$user_email'      => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
-			'$session_id'      => \WC()->session->get_customer_unique_id(),
+			'$session_id'      => \WC()->session?->get_customer_unique_id() ?? '',
 			'$order_id'        => $order_id,
 			'$verification_phone_number'
 				=> '+' === substr( $order->get_billing_phone(), 0, 1 ) ? preg_replace( '/[^0-9\+]/', '', $order->get_billing_phone() ) : null,
@@ -676,7 +676,7 @@ class Events {
 
 		$properties = array(
 			'$user_id'            => self::format_user_id( $order->get_user_id() ),
-			'$session_id'         => WC()->session->get_customer_unique_id(),
+			'$session_id'         => \WC()->session?->get_customer_unique_id() ?? '',
 			'$amount'             => self::get_transaction_micros( floatval( $order->get_total() ) ), // Gotta multiply it up to give an integer.
 			'$currency_code'      => $order->get_currency(),
 			'$order_id'           => (string) $order->get_id(),
