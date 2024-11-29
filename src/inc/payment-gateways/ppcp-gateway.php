@@ -25,8 +25,8 @@ function get_from_order( $value, \WC_Order $order ) {
 		return $value;
 	}
 }
-add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_method_details_from_order', 'get_from_order', 10, 2 );
-add_filter( 'sift_for_woocommerce_ppcp-gateway_charge_details_from_order', 'get_from_order', 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_method_details_from_order', __NAMESPACE__ . '\get_from_order', 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_charge_details_from_order', __NAMESPACE__ . '\get_from_order', 10, 2 );
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_type_string', fn( $value, $ppcp_gateway_payment_type ) => 'ppcp' === $ppcp_gateway_payment_type ? '$third_party_processor' : $value );
 
