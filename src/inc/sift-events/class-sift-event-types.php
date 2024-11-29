@@ -190,7 +190,7 @@ class Sift_Event_Types {
 	 *
 	 * @return string
 	 */
-	public static function get_filter_for_enabled_event_type( string $event_type ): string {
+	public static function get_filter_for_disabled_event_type( string $event_type ): string {
 		return self::get_option_for_event_type( $event_type );
 	}
 
@@ -202,11 +202,11 @@ class Sift_Event_Types {
 	 * @return boolean
 	 */
 	public static function can_event_be_sent( string $event_type ) {
-		$event_enabled_filter = self::get_filter_for_enabled_event_type( $event_type );
+		$event_disabled_filter = self::get_filter_for_disabled_event_type( $event_type );
 
-		$enabled = apply_filters( $event_enabled_filter, true ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
+		$disabled = apply_filters( $event_disabled_filter, false ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 
-		if ( ! $enabled ) {
+		if ( $disabled ) {
 			return false;
 		}
 		return 'yes' === get_option( self::get_option_for_event_type( $event_type ), 'no' );
