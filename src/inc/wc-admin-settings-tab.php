@@ -377,7 +377,6 @@ function test_api_credentials_result( $api_key = null, $account_id = null ) {
 
 	$code   = $response->httpStatusCode;
 	$data   = $response->body;
-	$return = null;
 
 	if ( 200 === $code ) {
 		$return = sprintf( '<h4>%s</h4>', __( 'Credentials are valid!', 'sift-for-woocommerce' ) );
