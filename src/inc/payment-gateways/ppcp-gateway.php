@@ -2,6 +2,8 @@
 
 namespace Sift_For_WooCommerce\PaymentGateways\PPCP;
 
+use WooCommerce\PayPalCommerce\PPCP;
+
 add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_gateway_string', fn() => '$paypal' );
 
 /**
@@ -10,11 +12,11 @@ add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_gateway_string', fn() => 
  * @param mixed     $value The initial value to be returned if an exception is encountered.
  * @param \WC_Order $order The WC Order object.
  *
- * @return An array of 'wc_order', 'order', and 'purchase-unit' or $value if an exception was encountered.
+ * @return array An array of 'wc_order', 'order', and 'purchase-unit' or $value if an exception was encountered.
  */
 function get_from_order( $value, \WC_Order $order ) {
 	try {
-		$container = \WooCommerce\PayPalCommerce\PPCP::container();
+		$container = PPCP::container();
 
 		return array(
 			'wc_order'      => $order,
