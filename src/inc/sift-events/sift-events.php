@@ -118,7 +118,7 @@ class Events {
 		$user       = wp_get_current_user();
 		$properties = array(
 			'$user_id'    => self::format_user_id( $user->ID ?? 0 ),
-			'$session_id' => WC()->session->get_customer_unique_id(),
+			'$session_id' => \WC()->session?->get_customer_unique_id() ?? '',
 			'$promotions' => array(
 				array(
 					'$promotion_id' => $coupon_code,
@@ -159,7 +159,7 @@ class Events {
 		$properties = array(
 			'$user_id'       => self::format_user_id( $user->ID ),
 			'$login_status'  => '$success',
-			'$session_id'    => WC()->session->get_customer_unique_id(),
+			'$session_id'    => \WC()->session?->get_customer_unique_id() ?? '',
 			'$user_email'    => $user->user_email ?? null,
 			'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 			'$username'      => $username,
@@ -222,7 +222,7 @@ class Events {
 		$properties = array(
 			'$user_id'      => self::format_user_id( $user_id ),
 			'$login_status' => '$failure',
-			'$session_id'   => WC()->session->get_customer_unique_id(),
+			'$session_id'   => \WC()->session?->get_customer_unique_id() ?? '',
 			'$browser'      => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 			'$username'     => $username,
 			'$ip'           => self::get_client_ip(),
@@ -262,7 +262,7 @@ class Events {
 
 		$properties = array(
 			'$user_id'          => self::format_user_id( $user->ID ),
-			'$session_id'       => WC()->session->get_customer_unique_id(),
+			'$session_id'       => \WC()->session?->get_customer_unique_id() ?? '',
 			'$user_email'       => $user->user_email ? $user->user_email : null,
 			'$name'             => $user->display_name,
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
@@ -446,7 +446,7 @@ class Events {
 		$properties = array(
 			'$user_id'      => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'   => $user->user_email ?? null,
-			'$session_id'   => WC()->session->get_customer_unique_id(),
+			'$session_id'   => \WC()->session?->get_customer_unique_id() ?? '',
 			'$item'         => array(
 				'$item_id'       => (string) $cart_item_key,
 				'$sku'           => $product->get_sku(),
@@ -500,7 +500,7 @@ class Events {
 		$properties = array(
 			'$user_id'      => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'   => $user->user_email ? $user->user_email : null,
-			'$session_id'   => \WC()->session->get_customer_unique_id(),
+			'$session_id'   => \WC()->session?->get_customer_unique_id() ?? '',
 			'$item'         => array(
 				'$item_id'       => (string) $product->get_id(),
 				'$sku'           => $product->get_sku(),
@@ -717,8 +717,8 @@ class Events {
 
 		$properties = array(
 			'$user_id'      => self::format_user_id( $order->get_user_id() ),
-			'$session_id'   => WC()->session->get_customer_unique_id(),
-			'$order_id'     => (string) $order_id,
+			'$session_id'   => \WC()->session?->get_customer_unique_id() ?? '',
+			'$order_id'     => $order_id,
 			'$source'       => $status_transition['manual'] ? '$manual_review' : '$automated',
 			'$description'  => $status_transition['note'],
 			'$browser'      => self::get_client_browser(),
