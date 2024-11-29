@@ -50,7 +50,7 @@ class DisabledEventTest extends EventTest {
 		self::reset_events();
 
 		// Uncheck the event from the admin
-		update_option( Sift_Event_Types::get_option_for_event_type( $event_type ), false );
+		update_option( Sift_Event_Types::get_option_for_event_type( $event_type ), "no" );
 		$callback();
 		self::fail_on_error_logged();
 		self::assertNoEventSent( $event_type );
