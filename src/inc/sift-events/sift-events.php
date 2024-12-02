@@ -40,7 +40,7 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function hooks() {
+	public static function init_hooks() {
 		add_action( 'wp_logout', array( static::class, 'logout' ), 100 );
 		add_action( 'wp_login', array( static::class, 'login_success' ), 100, 2 );
 		add_action( 'wp_login_failed', array( static::class, 'login_failure' ), 100, 2 );
@@ -321,7 +321,6 @@ class Events {
 			'$name'             => $user->display_name,
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
 			'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
 			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
@@ -812,6 +811,10 @@ class Events {
 	 * @return void
 	 */
 	public static function add( string $event, array $properties ) {
+
+		// Give a chance for the platform to modify the data (and add potentially new custom data)
+		$properties = apply_filters( 'sift_for_woocommerce_pre_send_event_properties', $properties, $event );
+
 		array_push(
 			self::$to_send,
 			array(
