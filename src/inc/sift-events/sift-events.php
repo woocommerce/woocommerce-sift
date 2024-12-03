@@ -1061,7 +1061,7 @@ class Events {
 
 		$payment_methods = array_reduce( $payment_methods, fn( $payment_method ) => ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) );
 
-		return $payment_methods ?? [];
+		return $payment_methods ?? array();
 	}
 
 	/**
