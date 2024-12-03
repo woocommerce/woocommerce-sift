@@ -1017,27 +1017,39 @@ class Events {
 	 *
 	 * @param integer $user_id The User / Customer ID.
 	 *
-	 * @return array|null
+	 * @return array
 	 */
 	private static function get_customer_payment_methods( int $user_id ) {
 		$payment_methods = array();
 
-		$customer_orders = wc_get_orders(
-			array(
-				'limit'    => -1,
-				'customer' => $user_id,
-				'status'   => wc_get_is_paid_statuses(),
-			)
-		);
+		/**
+		 * Allow / disallow customer payment method lookup via looping over all customer orders and extracting the payment method from each order.
+		 *
+		 * If this filter returns false, the sift_for_woocommerce_get_customer_payment_methods filter should be implemented so that some payment methods are returned.
+		 *
+		 * Otherwise, no customer payment methods will be returned.
+		 *
+		 * @param boolean $allow True if this method of payment method lookup should be used, otherwise false.
+		 * @param integer $user_id The User / Customer ID.
+		 *
+		 * @return boolean True if this method of payment method lookup should be used, otherwise false.
+		 */
+		if ( apply_filters( 'sift_for_woocommerce_get_customer_payment_methods_via_order_enumeration', false, $user_id ) ) {
+			$customer_orders = wc_get_orders(
+				array(
+					'limit'    => -1,
+					'customer' => $user_id,
+					'status'   => wc_get_is_paid_statuses(),
+				)
+			);
 
-		$payment_methods = array_map(
-			function ( $order ) {
-				return $this->get_order_payment_methods( $order )[0] ?? null;
-			},
-			$customer_orders
-		);
-
-		$payment_methods = array_reduce( $payment_methods, fn( $payment_method ) => ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) );
+			$payment_methods = array_map(
+				function ( $order ) {
+					return static::get_order_payment_methods( $order )[0] ?? null;
+				},
+				$customer_orders
+			);
+		}
 
 		/**
 		 * Include a filter here for unexpected payment providers to be able to add their results in as well.
@@ -1047,7 +1059,9 @@ class Events {
 		 */
 		$payment_methods = apply_filters( 'sift_for_woocommerce_get_customer_payment_methods', $payment_methods, $user_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
-		return $payment_methods ?? null;
+		$payment_methods = array_reduce( $payment_methods, fn( $payment_method ) => ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) );
+
+		return $payment_methods ?? [];
 	}
 
 	/**
