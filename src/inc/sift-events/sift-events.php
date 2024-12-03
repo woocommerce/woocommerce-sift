@@ -1022,6 +1022,23 @@ class Events {
 	private static function get_customer_payment_methods( int $user_id ) {
 		$payment_methods = array();
 
+		$customer_orders = wc_get_orders(
+			array(
+				'limit'    => -1,
+				'customer' => $user_id,
+				'status'   => wc_get_is_paid_statuses(),
+			)
+		);
+
+		$payment_methods = array_map(
+			function ( $order ) {
+				return $this->get_order_payment_methods( $order );
+			},
+			$customer_orders
+		);
+
+		$payment_methods = array_reduce( $payment_methods, fn( $payment_method ) => ! in_array( $payment_method, $payment_methods, true ) );
+
 		/**
 		 * Include a filter here for unexpected payment providers to be able to add their results in as well.
 		 *
