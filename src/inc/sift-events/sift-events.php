@@ -1034,7 +1034,7 @@ class Events {
 		 *
 		 * @return boolean True if this method of payment method lookup should be used, otherwise false.
 		 */
-		if ( apply_filters( 'sift_for_woocommerce_get_customer_payment_methods_via_order_enumeration', false, $user_id ) ) {
+		if ( apply_filters( 'sift_for_woocommerce_get_customer_payment_methods_via_order_enumeration', true, $user_id ) ) {
 			$customer_orders = wc_get_orders(
 				array(
 					'limit'    => -1,
