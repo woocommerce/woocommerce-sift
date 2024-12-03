@@ -1032,12 +1032,12 @@ class Events {
 
 		$payment_methods = array_map(
 			function ( $order ) {
-				return $this->get_order_payment_methods( $order );
+				return $this->get_order_payment_methods( $order )[0] ?? null;
 			},
 			$customer_orders
 		);
 
-		$payment_methods = array_reduce( $payment_methods, fn( $payment_method ) => ! in_array( $payment_method, $payment_methods, true ) );
+		$payment_methods = array_reduce( $payment_methods, fn( $payment_method ) => ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) );
 
 		/**
 		 * Include a filter here for unexpected payment providers to be able to add their results in as well.
