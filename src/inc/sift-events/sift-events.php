@@ -575,7 +575,7 @@ class Events {
 
 		// Figure out if it should use the session ID if no logged-in user exists.
 		if ( ! $user_id || $is_admin ) {
-			$user_id = $is_system ? $order->get_user_id() : null; // Use order user ID only for system actions.
+			$user_id = $is_system || $is_admin ? $order->get_user_id() : null; // Use order user ID only for system actions.
 		}
 
 		$user = $user_id ? get_userdata( $user_id ) : null;
