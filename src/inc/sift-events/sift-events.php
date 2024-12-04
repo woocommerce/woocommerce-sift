@@ -571,9 +571,10 @@ class Events {
 		// Determine user and session context.
 		$user_id   = get_current_user_id() ?? wp_get_current_user()->ID ?? null; // Check first for logged-in user.
 		$is_system = ! $create_order && str_starts_with( sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 'WordPress' ); // Check if this is an order update via system action.
+		$is_admin  = 1 === $user_id;
 
 		// Figure out if it should use the session ID if no logged-in user exists.
-		if ( ! $user_id ) {
+		if ( ! $user_id || $is_admin ) {
 			$user_id = $is_system ? $order->get_user_id() : null; // Use order user ID only for system actions.
 		}
 
