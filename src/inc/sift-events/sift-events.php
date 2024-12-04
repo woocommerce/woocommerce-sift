@@ -332,6 +332,10 @@ class Events {
 			'$time'             => intval( 1000 * microtime( true ) ),
 		);
 
+		if ( empty( $properties['$payment_methods'] ) ) {
+			unset( $properties['$payment_methods'] );
+		}
+
 		try {
 			SiftEventsValidator::validate_update_account( $properties );
 		} catch ( \Exception $e ) {
