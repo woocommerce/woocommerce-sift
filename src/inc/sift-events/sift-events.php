@@ -578,6 +578,10 @@ class Events {
 			$user_id = $is_system || $is_admin ? $order->get_user_id() : null; // Use order user ID only for system actions.
 		}
 
+		if ( ! $user_id ) {
+			$user_id = \WC()->session->get_customer_unique_id();
+		}
+
 		$user = $user_id ? get_userdata( $user_id ) : null;
 
 		$physical_or_electronic = '$electronic';
