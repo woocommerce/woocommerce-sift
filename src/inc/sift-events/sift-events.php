@@ -25,6 +25,8 @@ use WC_Product;
 class Events {
 	public static $to_send = array();
 
+	private static $sift_orders = array();
+
 	const SUPPORTED_WOO_ORDER_STATUS_CHANGES = array(
 		'pending',
 		'processing',
@@ -1126,8 +1128,10 @@ class Events {
 	 */
 	private static function get_order_payment_methods( \WC_Order $order ) {
 		error_log( '[sift-for-woocommerce] getting order payment methods' );
-		$sift_order = new Sift_Order( $order );
-		return $sift_order->get_payment_methods();
+		if ( ! array_key_exists( $order->get_order_key(), static::$sift_orders ) ) {
+			static::$sift_orders[ $order->get_order_key() ] = new Sift_Order( $order );
+		}
+		return static::$sift_orders[ $order->get_order_key() ]->get_payment_methods();
 	}
 
 	/**
