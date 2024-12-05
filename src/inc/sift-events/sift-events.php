@@ -586,7 +586,7 @@ class Events {
 
 		// Figure out if it should use the session ID if no logged-in user exists.
 		if ( ! $user_id || $is_admin ) {
-			$user_id = $is_system || $is_admin ? $order->get_user_id() : null; // Use order user ID only for system actions.
+			$user_id = $order->get_user_id() ?? null; // Use order user ID if it isn't available otherwise
 			error_log( '[sift-for-woocommerce] user_id (from order) ' . $user_id );
 		}
 
