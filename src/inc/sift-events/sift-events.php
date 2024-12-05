@@ -1069,6 +1069,7 @@ class Events {
 		 * @return boolean True if this method of payment method lookup should be used, otherwise false.
 		 */
 		if ( apply_filters( 'sift_for_woocommerce_get_customer_payment_methods_via_order_enumeration', true, $user_id ) ) {
+			error_log( '[sift-for-woocommerce] will enumerate orders while getting customer payment methods' );
 			$customer_orders = wc_get_orders(
 				array(
 					'limit'    => -1,
@@ -1083,6 +1084,8 @@ class Events {
 				},
 				$customer_orders
 			);
+			error_log( '[sift-for-woocommerce] got payment methods from enumerate orders while getting customer payment methods:' );
+			error_log( print_r( $payment_methods, true ) );
 		}
 
 		/**
@@ -1092,8 +1095,12 @@ class Events {
 		 * @param integer $user_id         The User / Customer ID.
 		 */
 		$payment_methods = apply_filters( 'sift_for_woocommerce_get_customer_payment_methods', $payment_methods, $user_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
+		error_log( '[sift-for-woocommerce] filtered payment methods while getting customer payment methods:' );
+		error_log( print_r( $payment_methods, true ) );
 
 		$payment_methods = array_reduce( $payment_methods, fn( $payment_method ) => ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) );
+		error_log( '[sift-for-woocommerce] reduced filtered payment methods while getting customer payment methods:' );
+		error_log( print_r( $payment_methods, true ) );
 
 		return $payment_methods ?? array();
 	}
