@@ -559,6 +559,11 @@ class Events {
 	 * @return void
 	 */
 	public static function update_or_create_order( string $order_id, \WC_Order $order, bool $create_order = false ) {
+		if ( $create_order ) {
+			error_log( '[sift-for-woocommerce] creating order' );
+		} else {
+			error_log( '[sift-for-woocommerce] updating order' );
+		}
 
 		if ( ! in_array( $order->get_status(), self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
 			return;
@@ -572,15 +577,22 @@ class Events {
 		$user_id   = get_current_user_id() ?? wp_get_current_user()->ID ?? null; // Check first for logged-in user.
 		$is_system = ! $create_order && str_starts_with( sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 'WordPress' ); // Check if this is an order update via system action.
 		$is_admin  = 1 === $user_id;
+		error_log( '[sift-for-woocommerce] get_current_user_id() ' . get_current_user_id() );
+		error_log( '[sift-for-woocommerce] wp_get_current_user()->ID ' . wp_get_current_user()->ID );
+		error_log( '[sift-for-woocommerce] user_id ' . $user_id );
+		error_log( '[sift-for-woocommerce] is_system ' . $is_system );
+		error_log( '[sift-for-woocommerce] is_admin ' . $is_admin );
 
 		// Figure out if it should use the session ID if no logged-in user exists.
 		if ( ! $user_id || $is_admin ) {
 			$user_id = $is_system || $is_admin ? $order->get_user_id() : null; // Use order user ID only for system actions.
 		}
+		error_log( '[sift-for-woocommerce] user_id (from order) ' . $user_id );
 
 		if ( ! $user_id ) {
 			$user_id = \WC()->session->get_customer_unique_id();
 		}
+		error_log( '[sift-for-woocommerce] user_id (from customer unique id) ' . $user_id );
 
 		$user = $user_id ? get_userdata( $user_id ) : null;
 
@@ -1029,6 +1041,7 @@ class Events {
 	 * @return array
 	 */
 	private static function get_customer_payment_methods( int $user_id ) {
+		error_log( '[sift-for-woocommerce] getting customer payment methods' );
 		$payment_methods = array();
 
 		/**
@@ -1084,6 +1097,7 @@ class Events {
 	 * @return array
 	 */
 	private static function get_order_payment_methods( \WC_Order $order ) {
+		error_log( '[sift-for-woocommerce] getting order payment methods' );
 		$sift_order = new Sift_Order( $order );
 		return $sift_order->get_payment_methods();
 	}
