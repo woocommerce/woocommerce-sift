@@ -1098,7 +1098,7 @@ class Events {
 		error_log( '[sift-for-woocommerce] filtered payment methods while getting customer payment methods:' );
 		error_log( print_r( $payment_methods, true ) );
 
-		$payment_methods = array_reduce( $payment_methods, fn( $payment_method ) => ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) );
+		$payment_methods = array_filter( $payment_methods, fn( $payment_method ) => ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) );
 		error_log( '[sift-for-woocommerce] reduced filtered payment methods while getting customer payment methods:' );
 		error_log( print_r( $payment_methods, true ) );
 
