@@ -561,13 +561,6 @@ class Events {
 	 * @return void
 	 */
 	public static function update_or_create_order( string $order_id, \WC_Order $order, bool $create_order = false ) {
-		if ( $create_order ) {
-			error_log( '[sift-for-woocommerce] creating order ' . $order_id );
-		} else {
-			error_log( '[sift-for-woocommerce] updating order ' . $order_id );
-		}
-		error_log( '[sift-for-woocommerce] order number ' . $order->get_order_number() );
-
 		if ( ! in_array( $order->get_status(), self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
 			return;
 		}
@@ -580,21 +573,14 @@ class Events {
 		$user_id   = get_current_user_id() ?? wp_get_current_user()->ID ?? null; // Check first for logged-in user.
 		$is_system = ! $create_order && str_starts_with( sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 'WordPress' ); // Check if this is an order update via system action.
 		$is_admin  = 1 === $user_id;
-		error_log( '[sift-for-woocommerce] 1: get_current_user_id() ' . get_current_user_id() );
-		error_log( '[sift-for-woocommerce] 2: wp_get_current_user()->ID ' . wp_get_current_user()->ID );
-		error_log( '[sift-for-woocommerce] user_id (from 1 or 2) ' . $user_id );
-		error_log( '[sift-for-woocommerce] is_system ' . $is_system );
-		error_log( '[sift-for-woocommerce] is_admin ' . $is_admin );
 
 		// Figure out if it should use the session ID if no logged-in user exists.
 		if ( ! $user_id || $is_admin ) {
 			$user_id = $order->get_user_id() ?? null; // Use order user ID if it isn't available otherwise
-			error_log( '[sift-for-woocommerce] user_id (from order) ' . $user_id );
 		}
 
 		if ( ! $user_id ) {
 			$user_id = \WC()->session->get_customer_unique_id();
-			error_log( '[sift-for-woocommerce] user_id (from customer unique id) ' . $user_id );
 		}
 
 		$user = $user_id ? get_userdata( $user_id ) : null;
@@ -649,9 +635,6 @@ class Events {
 			'$ip'              => self::get_client_ip(),
 			'$time'            => intval( 1000 * microtime( true ) ),
 		);
-
-		error_log( '[sift-for-woocommerce] $payment_methods: ' );
-		error_log( print_r( $properties['$payment_methods'], true ) );
 
 		// Add the user_id only if a user exists, otherwise, let it remain empty.
 		// Ref: https://developers.sift.com/docs/php/apis-overview/core-topics/faq/tracking-users
@@ -838,12 +821,8 @@ class Events {
 	 * @return void
 	 */
 	public static function add( string $event, array $properties ) {
-		error_log( '[sift-for-woocommerce] add ' . $event . ' with properties:' );
-		error_log( print_r( $properties, true ) );
 		// Give a chance for the platform to modify the data (and add potentially new custom data)
 		$properties = apply_filters( 'sift_for_woocommerce_pre_send_event_properties', $properties, $event );
-		error_log( '[sift-for-woocommerce] add ' . $event . ' with filtered properties:' );
-		error_log( print_r( $properties, true ) );
 
 		array_push(
 			self::$to_send,
@@ -869,11 +848,9 @@ class Events {
 	 * @return boolean
 	 */
 	public static function send() {
-		error_log( '[sift-for-woocommerce] send called with ' . static::count() . ' events to send' );
 		if ( self::count() > 0 ) {
 			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
 			if ( empty( $client ) ) {
-				error_log( '[sift-for-woocommerce] send failed to send events to Sift (no client)' );
 				wc_get_logger()->error(
 					'Failed to send events to Sift',
 					array(
@@ -905,16 +882,13 @@ class Events {
 						'response'   => $response,
 					)
 				);
-				error_log( '[sift-for-woocommerce] send ' . $log_title );
 			}
 
 			// Now that it's sent, clear the $to_send static in case it was run manually.
 			self::$to_send = array();
 
-			error_log( '[sift-for-woocommerce] send finished, returning true' );
 			return true;
 		}
-		error_log( '[sift-for-woocommerce] send finished, returning false' );
 		return false;
 	}
 
@@ -1055,7 +1029,6 @@ class Events {
 	 * @return array
 	 */
 	private static function get_customer_payment_methods( int $user_id ) {
-		error_log( '[sift-for-woocommerce] getting customer payment methods' );
 		$payment_methods = array();
 
 		/**
@@ -1071,7 +1044,6 @@ class Events {
 		 * @return boolean True if this method of payment method lookup should be used, otherwise false.
 		 */
 		if ( apply_filters( 'sift_for_woocommerce_get_customer_payment_methods_via_order_enumeration', true, $user_id ) ) {
-			error_log( '[sift-for-woocommerce] will enumerate orders while getting customer payment methods' );
 			$customer_orders = wc_get_orders(
 				array(
 					'limit'    => -1,
@@ -1086,8 +1058,6 @@ class Events {
 				},
 				$customer_orders
 			);
-			error_log( '[sift-for-woocommerce] got payment methods from enumerate orders while getting customer payment methods:' );
-			error_log( print_r( $payment_methods, true ) );
 		}
 
 		/**
@@ -1097,8 +1067,6 @@ class Events {
 		 * @param integer $user_id         The User / Customer ID.
 		 */
 		$payment_methods = apply_filters( 'sift_for_woocommerce_get_customer_payment_methods', $payment_methods, $user_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
-		error_log( '[sift-for-woocommerce] filtered payment methods while getting customer payment methods:' );
-		error_log( print_r( $payment_methods, true ) );
 
 		$payment_methods = array_reduce(
 			$payment_methods,
@@ -1110,8 +1078,6 @@ class Events {
 			},
 			array()
 		);
-		error_log( '[sift-for-woocommerce] reduced filtered payment methods while getting customer payment methods:' );
-		error_log( print_r( $payment_methods, true ) );
 
 		return $payment_methods ?? array();
 	}
@@ -1127,7 +1093,6 @@ class Events {
 	 * @return array
 	 */
 	private static function get_order_payment_methods( \WC_Order $order ) {
-		error_log( '[sift-for-woocommerce] getting order payment methods' );
 		if ( ! array_key_exists( $order->get_order_key(), static::$sift_orders ) ) {
 			static::$sift_orders[ $order->get_order_key() ] = new Sift_Order( $order );
 		}
