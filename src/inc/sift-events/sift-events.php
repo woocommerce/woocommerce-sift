@@ -564,7 +564,7 @@ class Events {
 		} else {
 			error_log( '[sift-for-woocommerce] updating order ' . $order_id );
 		}
-		error_log( '[sift-for-woocommerce] order number '. $order->get_order_number() );
+		error_log( '[sift-for-woocommerce] order number ' . $order->get_order_number() );
 
 		if ( ! in_array( $order->get_status(), self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
 			return;
@@ -1098,7 +1098,15 @@ class Events {
 		error_log( '[sift-for-woocommerce] filtered payment methods while getting customer payment methods:' );
 		error_log( print_r( $payment_methods, true ) );
 
-		$payment_methods = array_filter( $payment_methods, fn( $payment_method ) => ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) );
+		$payment_methods = array_reduce(
+			$payment_methods,
+			function ( $payment_methods, $payment_method ) {
+				if ( ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) ) {
+					$payment_methods[] = $payment_method;
+				}
+				return $payment_methods;
+			}
+		);
 		error_log( '[sift-for-woocommerce] reduced filtered payment methods while getting customer payment methods:' );
 		error_log( print_r( $payment_methods, true ) );
 
