@@ -27,14 +27,12 @@ add_filter(
 		try {
 			$charge_id = \WC_Payments::get_order_service()->get_charge_id_for_order( $order );
 			if ( empty( $charge_id ) ) {
-				error_log( '[sift-for-woocommerce] woocommerce-payments - Could not get charge_id from order, could not obtain payment method details.' );
 				return $value;
 			}
 			$api_client = \WC_Payments::get_payments_api_client();
 			$charge     = $api_client->get_charge( $charge_id );
 			return $charge['payment_method_details'];
 		} catch ( \Exception $e ) {
-			error_log( '[sift-for-woocommerce] woocommerce-payments - Caught exception when getting payment method details from order: ' . $e->getMessage() );
 			return $value;
 		}
 	},
@@ -48,13 +46,11 @@ add_filter(
 		try {
 			$charge_id = \WC_Payments::get_order_service()->get_charge_id_for_order( $order );
 			if ( empty( $charge_id ) ) {
-				error_log( '[sift-for-woocommerce] woocommerce-payments - could not get charge_id from order, could not obtain charge details.' );
 				return $value;
 			}
 			$api_client = \WC_Payments::get_payments_api_client();
 			return $api_client->get_charge( $charge_id );
 		} catch ( \Exception $e ) {
-			error_log( '[sift-for-woocommerce] woocommerce-payments - Caught exception when getting charge details from order: ' . $e->getMessage() );
 			return $value;
 		}
 	},
