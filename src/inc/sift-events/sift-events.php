@@ -867,6 +867,7 @@ class Events {
 	 * @return boolean
 	 */
 	public static function send() {
+		error_log( '[sift-for-woocommerce] send called with ' . static::count() . ' events to send' );
 		if ( self::count() > 0 ) {
 			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
 			if ( empty( $client ) ) {
@@ -908,8 +909,10 @@ class Events {
 			// Now that it's sent, clear the $to_send static in case it was run manually.
 			self::$to_send = array();
 
+			error_log( '[sift-for-woocommerce] send finished, returning true' );
 			return true;
 		}
+		error_log( '[sift-for-woocommerce] send finished, returning false' );
 		return false;
 	}
 
