@@ -836,9 +836,12 @@ class Events {
 	 * @return void
 	 */
 	public static function add( string $event, array $properties ) {
-
+		error_log( '[sift-for-woocommerce] add ' . $event . ' with properties:' );
+		error_log( print_r( $properties, true ) );
 		// Give a chance for the platform to modify the data (and add potentially new custom data)
 		$properties = apply_filters( 'sift_for_woocommerce_pre_send_event_properties', $properties, $event );
+		error_log( '[sift-for-woocommerce] add ' . $event . ' with filtered properties:' );
+		error_log( print_r( $properties, true ) );
 
 		array_push(
 			self::$to_send,
@@ -867,6 +870,7 @@ class Events {
 		if ( self::count() > 0 ) {
 			$client = \Sift_For_WooCommerce\Sift_For_WooCommerce::get_api_client();
 			if ( empty( $client ) ) {
+				error_log( '[sift-for-woocommerce] send failed to send events to Sift (no client)' );
 				wc_get_logger()->error(
 					'Failed to send events to Sift',
 					array(
@@ -898,6 +902,7 @@ class Events {
 						'response'   => $response,
 					)
 				);
+				error_log( '[sift-for-woocommerce] send ' . $log_title );
 			}
 
 			// Now that it's sent, clear the $to_send static in case it was run manually.
