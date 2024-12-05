@@ -1105,7 +1105,8 @@ class Events {
 					$payment_methods[] = $payment_method;
 				}
 				return $payment_methods;
-			}
+			},
+			array()
 		);
 		error_log( '[sift-for-woocommerce] reduced filtered payment methods while getting customer payment methods:' );
 		error_log( print_r( $payment_methods, true ) );
