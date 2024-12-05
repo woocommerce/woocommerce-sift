@@ -898,22 +898,13 @@ class Events {
 			}
 
 			foreach ( self::$to_send as $entry ) {
-				// We need the original WC user ID to handle the decision locally.
-				$wccom_user_id = $entry['properties']['$user_id'] ?? null;
+				// We need the original user ID to handle the decision locally after events are sent.
+				$user_id = $entry['properties']['$user_id'] ?? null;
 
-				// Apply the filter to update from the WCCOM to the WPCOM user_id just before sending the event.
+				// Apply the filter to possibly update from the stored user_id to the WPCOM user_id just before sending the event.
 				$entry['properties'] = apply_filters( 'sift_for_woocommerce_pre_send_event_properties', $entry['properties'] );
 
 				$response = $client->track( $entry['event'], $entry['properties'] );
-
-				// Get the user ID we send Sift (probably WPCOM) from the properties.
-				$sift_user_id = $entry['properties']['$user_id'] ?? null;
-
-				// If there's no WPCOM user_id, Sift cannot deliver a decision.
-				if ( $sift_user_id ) {
-					// Get the decision for the user and apply if needed.
-					self::get_decision( $sift_user_id, $wccom_user_id );
-				}
 
 				$log_type  = 'debug';
 				$log_title = sprintf( 'Sent `%s`', $entry['event'] );
@@ -936,6 +927,16 @@ class Events {
 
 			// Now that it's sent, clear the $to_send static in case it was run manually.
 			self::$to_send = array();
+
+			// Get the user ID we sent to Sift from the properties.
+			$sift_user_id = $entry['properties']['$user_id'] ?? null;
+
+			// Get the current decision since events have been sent and could have changed the decision.
+			// This is only done if the user ID is set.
+			if ( $sift_user_id ) {
+				// Get the decision for the user and apply if needed.
+				self::get_decision( $sift_user_id, $user_id );
+			}
 
 			return true;
 		}
