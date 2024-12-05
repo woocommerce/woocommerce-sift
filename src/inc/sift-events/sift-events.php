@@ -560,10 +560,11 @@ class Events {
 	 */
 	public static function update_or_create_order( string $order_id, \WC_Order $order, bool $create_order = false ) {
 		if ( $create_order ) {
-			error_log( '[sift-for-woocommerce] creating order' );
+			error_log( '[sift-for-woocommerce] creating order ' . $order_id );
 		} else {
-			error_log( '[sift-for-woocommerce] updating order' );
+			error_log( '[sift-for-woocommerce] updating order ' . $order_id );
 		}
+		error_log( '[sift-for-woocommerce] order number '. $order->get_order_number() );
 
 		if ( ! in_array( $order->get_status(), self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
 			return;
@@ -577,22 +578,22 @@ class Events {
 		$user_id   = get_current_user_id() ?? wp_get_current_user()->ID ?? null; // Check first for logged-in user.
 		$is_system = ! $create_order && str_starts_with( sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 'WordPress' ); // Check if this is an order update via system action.
 		$is_admin  = 1 === $user_id;
-		error_log( '[sift-for-woocommerce] get_current_user_id() ' . get_current_user_id() );
-		error_log( '[sift-for-woocommerce] wp_get_current_user()->ID ' . wp_get_current_user()->ID );
-		error_log( '[sift-for-woocommerce] user_id ' . $user_id );
+		error_log( '[sift-for-woocommerce] 1: get_current_user_id() ' . get_current_user_id() );
+		error_log( '[sift-for-woocommerce] 2: wp_get_current_user()->ID ' . wp_get_current_user()->ID );
+		error_log( '[sift-for-woocommerce] user_id (from 1 or 2) ' . $user_id );
 		error_log( '[sift-for-woocommerce] is_system ' . $is_system );
 		error_log( '[sift-for-woocommerce] is_admin ' . $is_admin );
 
 		// Figure out if it should use the session ID if no logged-in user exists.
 		if ( ! $user_id || $is_admin ) {
 			$user_id = $is_system || $is_admin ? $order->get_user_id() : null; // Use order user ID only for system actions.
+			error_log( '[sift-for-woocommerce] user_id (from order) ' . $user_id );
 		}
-		error_log( '[sift-for-woocommerce] user_id (from order) ' . $user_id );
 
 		if ( ! $user_id ) {
 			$user_id = \WC()->session->get_customer_unique_id();
+			error_log( '[sift-for-woocommerce] user_id (from customer unique id) ' . $user_id );
 		}
-		error_log( '[sift-for-woocommerce] user_id (from customer unique id) ' . $user_id );
 
 		$user = $user_id ? get_userdata( $user_id ) : null;
 
@@ -646,6 +647,9 @@ class Events {
 			'$ip'              => self::get_client_ip(),
 			'$time'            => intval( 1000 * microtime( true ) ),
 		);
+
+		error_log( '[sift-for-woocommerce] $payment_methods: ' );
+		error_log( print_r( $properties['$payment_methods'] ) );
 
 		// Add the user_id only if a user exists, otherwise, let it remain empty.
 		// Ref: https://developers.sift.com/docs/php/apis-overview/core-topics/faq/tracking-users
