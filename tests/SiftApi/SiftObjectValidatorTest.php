@@ -4,8 +4,6 @@
 
 namespace SiftApi;
 
-use Sift_For_WooCommerce\Sift\SiftEventsValidator;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

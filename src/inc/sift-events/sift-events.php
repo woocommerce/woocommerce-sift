@@ -40,7 +40,7 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public static function hooks() {
+	public static function init_hooks() {
 		add_action( 'wp_logout', array( static::class, 'logout' ), 100 );
 		add_action( 'wp_login', array( static::class, 'login_success' ), 100, 2 );
 		add_action( 'wp_login_failed', array( static::class, 'login_failure' ), 100, 2 );
@@ -118,7 +118,7 @@ class Events {
 		$user       = wp_get_current_user();
 		$properties = array(
 			'$user_id'    => self::format_user_id( $user->ID ?? 0 ),
-			'$session_id' => WC()->session->get_customer_unique_id(),
+			'$session_id' => \WC()->session?->get_customer_unique_id() ?? '',
 			'$promotions' => array(
 				array(
 					'$promotion_id' => $coupon_code,
@@ -159,7 +159,7 @@ class Events {
 		$properties = array(
 			'$user_id'       => self::format_user_id( $user->ID ),
 			'$login_status'  => '$success',
-			'$session_id'    => WC()->session->get_customer_unique_id(),
+			'$session_id'    => \WC()->session?->get_customer_unique_id() ?? '',
 			'$user_email'    => $user->user_email ?? null,
 			'$browser'       => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 			'$username'      => $username,
@@ -222,7 +222,7 @@ class Events {
 		$properties = array(
 			'$user_id'      => self::format_user_id( $user_id ),
 			'$login_status' => '$failure',
-			'$session_id'   => WC()->session->get_customer_unique_id(),
+			'$session_id'   => \WC()->session?->get_customer_unique_id() ?? '',
 			'$browser'      => self::get_client_browser(), // alternately, `$app` for details of the app if not a browser.
 			'$username'     => $username,
 			'$ip'           => self::get_client_ip(),
@@ -262,7 +262,7 @@ class Events {
 
 		$properties = array(
 			'$user_id'          => self::format_user_id( $user->ID ),
-			'$session_id'       => WC()->session->get_customer_unique_id(),
+			'$session_id'       => \WC()->session?->get_customer_unique_id() ?? '',
 			'$user_email'       => $user->user_email ? $user->user_email : null,
 			'$name'             => $user->display_name,
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
@@ -321,7 +321,6 @@ class Events {
 			'$name'             => $user->display_name,
 			'$phone'            => $user ? get_user_meta( $user->ID, 'billing_phone', true ) : null,
 			// '$referrer_user_id' => ??? -- required for detecting referral fraud, but non-standard to woocommerce.
-			// '$payment_methods' => self::get_customer_payment_methods( $user->ID ),
 			'$payment_methods'  => self::get_customer_payment_methods( $user->ID ),
 			'$billing_address'  => self::get_customer_address( $user->ID, 'billing' ),
 			'$shipping_address' => self::get_customer_address( $user->ID, 'shipping' ),
@@ -446,7 +445,7 @@ class Events {
 		$properties = array(
 			'$user_id'      => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'   => $user->user_email ?? null,
-			'$session_id'   => WC()->session->get_customer_unique_id(),
+			'$session_id'   => \WC()->session?->get_customer_unique_id() ?? '',
 			'$item'         => array(
 				'$item_id'       => (string) $cart_item_key,
 				'$sku'           => $product->get_sku(),
@@ -500,7 +499,7 @@ class Events {
 		$properties = array(
 			'$user_id'      => self::format_user_id( $user->ID ?? 0 ),
 			'$user_email'   => $user->user_email ? $user->user_email : null,
-			'$session_id'   => \WC()->session->get_customer_unique_id(),
+			'$session_id'   => \WC()->session?->get_customer_unique_id() ?? '',
 			'$item'         => array(
 				'$item_id'       => (string) $product->get_id(),
 				'$sku'           => $product->get_sku(),
@@ -567,7 +566,7 @@ class Events {
 
 		// Determine user and session context.
 		$user_id   = wp_get_current_user()->ID ?? null; // Check first for logged-in user.
-		$is_system = ! $create_order && str_starts_with( $_SERVER['HTTP_USER_AGENT'] ?? '', 'WordPress' ); // Check if this is an order update via system action.
+		$is_system = ! $create_order && str_starts_with( sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 'WordPress' ); // Check if this is an order update via system action.
 
 		// Figure out if it should use the session ID if no logged-in user exists.
 		if ( ! $user_id ) {
@@ -611,7 +610,7 @@ class Events {
 		$properties = array(
 			'$user_id'         => '',
 			'$user_email'      => $order->get_billing_email() ? $order->get_billing_email() : null, // pulling the billing email for the order, NOT customer email
-			'$session_id'      => \WC()->session->get_customer_unique_id(),
+			'$session_id'      => \WC()->session?->get_customer_unique_id() ?? '',
 			'$order_id'        => $order_id,
 			'$verification_phone_number'
 				=> '+' === substr( $order->get_billing_phone(), 0, 1 ) ? preg_replace( '/[^0-9\+]/', '', $order->get_billing_phone() ) : null,
@@ -676,7 +675,7 @@ class Events {
 
 		$properties = array(
 			'$user_id'            => self::format_user_id( $order->get_user_id() ),
-			'$session_id'         => WC()->session->get_customer_unique_id(),
+			'$session_id'         => \WC()->session?->get_customer_unique_id() ?? '',
 			'$amount'             => self::get_transaction_micros( floatval( $order->get_total() ) ), // Gotta multiply it up to give an integer.
 			'$currency_code'      => $order->get_currency(),
 			'$order_id'           => (string) $order->get_id(),
@@ -717,8 +716,8 @@ class Events {
 
 		$properties = array(
 			'$user_id'      => self::format_user_id( $order->get_user_id() ),
-			'$session_id'   => WC()->session->get_customer_unique_id(),
-			'$order_id'     => (string) $order_id,
+			'$session_id'   => \WC()->session?->get_customer_unique_id() ?? '',
+			'$order_id'     => $order_id,
 			'$source'       => $status_transition['manual'] ? '$manual_review' : '$automated',
 			'$description'  => $status_transition['note'],
 			'$browser'      => self::get_client_browser(),
@@ -859,6 +858,10 @@ class Events {
 	 * @return void
 	 */
 	public static function add( string $event, array $properties ) {
+
+		// Give a chance for the platform to modify the data (and add potentially new custom data)
+		$properties = apply_filters( 'sift_for_woocommerce_pre_send_event_properties', $properties, $event );
+
 		array_push(
 			self::$to_send,
 			array(
@@ -969,7 +972,7 @@ class Events {
 				 * addresses. The first one is the original client. It can't be
 				 * trusted for authenticity, but we don't need to for this purpose.
 				 */
-				$address_chain = explode( ',', $_SERVER[ $header ] );
+				$address_chain = explode( ',', sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) ) );
 				$client_ip     = trim( $address_chain[0] );
 
 				break;
@@ -986,8 +989,8 @@ class Events {
 	 */
 	private static function get_client_browser() {
 		$browser = array(
-			'$user_agent'       => $_SERVER['HTTP_USER_AGENT'],
-			'$accept_language'  => $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US', // default to en-US if not set (i.e., a server action)
+			'$user_agent'       => sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ),
+			'$accept_language'  => sanitize_key( wp_unslash( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? 'en-US' ) ), // default to en-US if not set (i.e., a server action)
 			'$content_language' => get_locale(),
 		);
 

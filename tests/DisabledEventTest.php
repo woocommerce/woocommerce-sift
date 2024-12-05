@@ -36,13 +36,13 @@ class DisabledEventTest extends EventTest {
 		self::reset_events();
 
 		// Disable the event
-		add_filter( Sift_Event_Types::get_filter_for_enabled_event_type( $event_type ), '__return_false' );
+		add_filter( Sift_Event_Types::get_filter_for_disabled_event_type( $event_type ), '__return_true' );
 		$callback();
 		self::fail_on_error_logged();
 		self::assertNoEventSent( $event_type );
 
 		// Enable the event
-		remove_filter( Sift_Event_Types::get_filter_for_enabled_event_type( $event_type ), '__return_false' );
+		remove_filter( Sift_Event_Types::get_filter_for_disabled_event_type( $event_type ), '__return_true' );
 		$callback();
 		self::fail_on_error_logged();
 		self::assertEventSent( $event_type );
@@ -50,7 +50,7 @@ class DisabledEventTest extends EventTest {
 		self::reset_events();
 
 		// Uncheck the event from the admin
-		update_option( Sift_Event_Types::get_option_for_event_type( $event_type ), false );
+		update_option( Sift_Event_Types::get_option_for_event_type( $event_type ), 'no' );
 		$callback();
 		self::fail_on_error_logged();
 		self::assertNoEventSent( $event_type );

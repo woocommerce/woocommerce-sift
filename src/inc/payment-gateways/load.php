@@ -12,6 +12,9 @@ add_action(
 					require_once __DIR__ . '/lib/stripe.php';
 					require_once __DIR__ . '/stripe.php';
 					break;
+				case 'ppcp-gateway':
+					require_once __DIR__ . '/ppcp-gateway.php';
+					break;
 				case 'woopayments':
 					require_once __DIR__ . '/transact.php';
 					break;
