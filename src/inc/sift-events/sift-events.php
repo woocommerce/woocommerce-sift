@@ -649,7 +649,7 @@ class Events {
 		);
 
 		error_log( '[sift-for-woocommerce] $payment_methods: ' );
-		error_log( print_r( $properties['$payment_methods'] ) );
+		error_log( print_r( $properties['$payment_methods'], true ) );
 
 		// Add the user_id only if a user exists, otherwise, let it remain empty.
 		// Ref: https://developers.sift.com/docs/php/apis-overview/core-topics/faq/tracking-users
