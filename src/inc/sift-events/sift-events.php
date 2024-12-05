@@ -17,6 +17,7 @@ use WC_Order_Item_Product;
 
 use Sift_For_WooCommerce\Sift_Order;
 use Sift_For_WooCommerce\Sift\SiftEventsValidator;
+use Sift_For_WooCommerce\Sift_For_WooCommerce;
 use WC_Product;
 
 /**
@@ -24,8 +25,6 @@ use WC_Product;
  */
 class Events {
 	public static $to_send = array();
-
-	private static $sift_orders = array();
 
 	const SUPPORTED_WOO_ORDER_STATUS_CHANGES = array(
 		'pending',
@@ -1093,10 +1092,7 @@ class Events {
 	 * @return array
 	 */
 	private static function get_order_payment_methods( \WC_Order $order ) {
-		if ( ! array_key_exists( $order->get_order_key(), static::$sift_orders ) ) {
-			static::$sift_orders[ $order->get_order_key() ] = new Sift_Order( $order );
-		}
-		return static::$sift_orders[ $order->get_order_key() ]->get_payment_methods();
+		return Sift_For_WooCommerce::get_instance()->get_sift_order_from_wc_order( $order )->get_payment_methods();
 	}
 
 	/**

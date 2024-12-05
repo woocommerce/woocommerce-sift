@@ -20,6 +20,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class Sift_For_WooCommerce {
 
+	private static $sift_orders = array();
+
 	// region MAGIC METHODS
 
 	/**
@@ -130,6 +132,21 @@ class Sift_For_WooCommerce {
 		}
 
 		return $client;
+	}
+
+	/**
+	 * Get a Sift_Order object from a WC_Order object.
+	 * Allows a small speed up in performance due to caching the orders.
+	 *
+	 * @param \WC_Order $order The WC_Order object.
+	 *
+	 * @return Sift_Order The Sift_Order object.
+	 */
+	public static function get_sift_order_from_wc_order( \WC_Order $order ): Sift_Order {
+		if ( ! array_key_exists( $order->get_order_key(), static::$sift_orders ) ) {
+			static::$sift_orders[ $order->get_order_key() ] = new Sift_Order( $order );
+		}
+		return static::$sift_orders[ $order->get_order_key() ];
 	}
 
 	// endregion
