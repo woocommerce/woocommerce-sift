@@ -52,5 +52,5 @@ add_filter( 'sift_for_woocommerce_ppcp-gateway_decline_reason_code', fn( $value,
 add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payer_id', fn( $value, $ppcp_data ) => $ppcp_data['order']?->payer()?->payer_id() ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payer_email', fn( $value, $ppcp_data ) => $ppcp_data['order']?->payer()?->email_address() ?? $value, 10, 2 );
 
-add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_protection_eligibility', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->captures()[0]?->seller_protection()->name() ?? $value, 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_protection_eligibility', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->captures()[0]?->seller_protection() ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payment_status', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->captures()[0]->status()->name() ?? $value, 10, 2 );
