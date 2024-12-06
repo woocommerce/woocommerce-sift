@@ -4,9 +4,23 @@ namespace Sift_For_WooCommerce\PaymentGateways\PPCP;
 
 use WooCommerce\PayPalCommerce\PPCP;
 use WooCommerce\PayPalCommerce\WcGateway\Gateway\PayPalGateway;
+use Sift_For_WooCommerce\Sift_Events\Events;
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_gateway_string', fn() => '$paypal' );
 
+add_action(
+	'woocommerce_payments_before_webhook_delivery',
+	function ( $event_type, $event_body ) {
+		// Using a switch case since we'll likely handle more future event types
+		switch ( $event_type ) {
+			case 'CUSTOMER.DISPUTE.CREATED':
+				send_chargeback_to_sift( $event_body );
+				break;
+		}
+	},
+	10,
+	2
+);
 /**
  * Get relevant information from the order.
  *
@@ -54,3 +68,61 @@ add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payer_email', fn( $value, 
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_protection_eligibility', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->captures()[0]?->seller_protection()?->status ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payment_status', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->captures()[0]->status()->name() ?? $value, 10, 2 );
+
+/**
+ * Send a chargeback event to Sift.
+ *
+ * @param object $event The Stripe event object.
+ *
+ * @return void
+ */
+function send_chargeback_to_sift( $event ): void {
+	$order_id = $event['data']['object']['resource']['disputed_transactions'][0]['seller_transaction_id'];
+	// Log the resolved order ID.
+	if ( ! $order_id ) {
+		wc_get_logger()->error( 'Order ID not found in event.' );
+		return;
+	}
+	$order = wc_get_order( $order_id );
+
+	if ( ! $order instanceof \WC_Order ) {
+		wc_get_logger()->error( 'WooCommerce order not found for Order ID: ' . esc_html( $order_id ) );
+		return;
+	}
+
+	$chargeback_reason = convert_dispute_reason_to_sift_chargeback_reason( $event['data']['object']['resource']['reason'] );
+
+	Events::chargeback( $order_id, $order, $chargeback_reason );
+}
+
+/**
+ * Convert a dispute reason from a string that PayPal would use to a string that Sift would use.
+ *
+ * @param string $dispute_reason A dispute reason string that PayPal would use.
+ *
+ * @return string|null A dispute reason string that Sift would use.
+ */
+function convert_dispute_reason_to_sift_chargeback_reason( string $dispute_reason ): ?string {
+	switch ( $dispute_reason ) {
+		case 'MERCHANDISE_OR_SERVICE_NOT_RECEIVED':
+			return '$product_not_received';
+		case 'MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED':
+			return '$product_unacceptable';
+		case 'UNAUTHORIZED':
+			return '$authorization';
+		case 'PROBLEM_WITH_REMITTANCE':
+			return '$processing_errors';
+		case 'DUPLICATE_TRANSACTION':
+			return '$duplicate';
+		case 'INCORRECT_AMOUNT':
+		case 'CREDIT_NOT_PROCESSED':
+		case 'PAYMENT_BY_OTHER_MEANS':
+			return '$customer_disputes';
+		case 'CANCELED_RECURRING_BILLING':
+			return '$cancel_subscription';
+		case 'OTHER':
+			return '$other';
+		default:
+			return null;
+	}
+}
