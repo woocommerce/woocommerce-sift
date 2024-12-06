@@ -32,7 +32,7 @@ add_filter(
 			$api_client = \WC_Payments::get_payments_api_client();
 			$charge     = $api_client->get_charge( $charge_id );
 			return $charge['payment_method_details'];
-		} catch ( \Exception $e ) {
+		} catch ( \Exception ) {
 			return $value;
 		}
 	},
@@ -50,7 +50,7 @@ add_filter(
 			}
 			$api_client = \WC_Payments::get_payments_api_client();
 			return $api_client->get_charge( $charge_id );
-		} catch ( \Exception $e ) {
+		} catch ( \Exception ) {
 			return $value;
 		}
 	},
