@@ -16,17 +16,6 @@ require_once __DIR__ . '/sift-decision-rest-api-webhooks.php';
  * @return mixed
  */
 function process_sift_decision_received( $return_value, $decision_id, $user_id ) {
-	// Log the decision.
-	wc_get_logger()->log(
-		'debug',
-		'Sift Decision Filter Applied',
-		array(
-			'source'      => 'sift-for-woocommerce',
-			'decision_id' => $decision_id,
-			'user_id'     => $user_id,
-		)
-	);
-
 	// Apply a filter to get the correct user ID.
 	$woocommerce_user_id = apply_filters( 'sift_for_woocommerce_pre_sift_decision', $user_id );
 
@@ -75,6 +64,18 @@ function process_sift_decision_received( $return_value, $decision_id, $user_id )
 			);
 			break;
 	}
+
+	// Log the decision.
+	wc_get_logger()->log(
+		'debug',
+		'Sift Decision Filter Applied',
+		array(
+			'source'              => 'sift-for-woocommerce',
+			'decision_id'         => $decision_id,
+			'sift_user_id'        => $user_id,
+			'woocommerce_user_id' => $woocommerce_user_id,
+		)
+	);
 
 	return $return_value;
 }
