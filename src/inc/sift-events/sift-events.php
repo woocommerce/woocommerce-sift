@@ -574,12 +574,12 @@ class Events {
 		$is_admin  = 1 === $user_id;
 
 		// Figure out if it should use the session ID if no logged-in user exists.
-		if ( ! $user_id || $is_admin ) {
-			$user_id = $order->get_user_id() ?? null; // Use order user ID if it isn't available otherwise
+		if ( ! $user_id && $is_system ) {
+			$user_id = $order->get_user_id() ?? null; // Use order user ID if is a system update
 		}
 
-		if ( ! $user_id ) {
-			$user_id = \WC()->session->get_customer_unique_id();
+		if ( ! $user_id || $is_admin ) {
+			$user_id = $order->get_user_id() ?? null; // Use order user ID if it isn't available otherwise
 		}
 
 		$user = $user_id ? get_userdata( $user_id ) : null;
