@@ -77,7 +77,7 @@ add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payment_status', fn( $valu
  * @return void
  */
 function send_chargeback_to_sift( $event ): void {
-	$order_id = $event['data']['object']['resource']['disputed_transactions'][0]['seller_transaction_id'];
+	$order_id = $event['data']['object']['resource']['disputed_transactions'][0]['seller_transaction_id'] ?? null;
 	// Log the resolved order ID.
 	if ( ! $order_id ) {
 		wc_get_logger()->error( 'Order ID not found in event.' );
@@ -90,7 +90,7 @@ function send_chargeback_to_sift( $event ): void {
 		return;
 	}
 
-	$chargeback_reason = convert_dispute_reason_to_sift_chargeback_reason( $event['data']['object']['resource']['reason'] );
+	$chargeback_reason = convert_dispute_reason_to_sift_chargeback_reason( $event['data']['object']['resource']['reason'] ?? '' );
 
 	Events::chargeback( $order_id, $order, $chargeback_reason );
 }
