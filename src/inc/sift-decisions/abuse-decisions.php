@@ -57,9 +57,10 @@ function process_sift_decision_received( $return_value, $decision_id, $user_id )
 				'info',
 				"Decision ID '{$decision_id}' not handled.",
 				array(
-					'source'      => 'sift-for-woocommerce',
-					'decision_id' => $decision_id,
-					'user_id'     => $user_id,
+					'source'              => 'sift-for-woocommerce',
+					'decision_id'         => $decision_id,
+					'sift_user_id'        => $user_id,
+					'woocommerce_user_id' => $woocommerce_user_id,
 				)
 			);
 			break;
