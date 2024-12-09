@@ -569,20 +569,13 @@ class Events {
 		}
 
 		// Determine user and session context.
-		$user_id   = get_current_user_id() ?? wp_get_current_user()->ID ?? null; // Check first for logged-in user.
-		$is_system = ! $create_order && str_starts_with( sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 'WordPress' ); // Check if this is an order update via system action.
+		$user_id   = wp_get_current_user()->ID ?? null; // Check first for logged-in user.
 		$is_admin  = 1 === $user_id;
 
 		// Figure out if it should use the session ID if no logged-in user exists.
-		if ( ! $user_id && $is_system ) {
-			$user_id = $order->get_user_id() ?? null; // Use order user ID if is a system update
-		}
-
 		if ( ! $user_id || $is_admin ) {
 			$user_id = $order->get_user_id() ?? null; // Use order user ID if it isn't available otherwise
 		}
-
-		$user = $user_id ? get_userdata( $user_id ) : null;
 
 		$physical_or_electronic = '$electronic';
 		$items                  = array();
@@ -637,8 +630,8 @@ class Events {
 
 		// Add the user_id only if a user exists, otherwise, let it remain empty.
 		// Ref: https://developers.sift.com/docs/php/apis-overview/core-topics/faq/tracking-users
-		if ( $user ) {
-			$properties['$user_id'] = self::format_user_id( $user->ID );
+		if ( $user_id && ! $is_admin ) {
+			$properties['$user_id'] = self::format_user_id( $user_id );
 		}
 
 		// Add in the address information if it's available.

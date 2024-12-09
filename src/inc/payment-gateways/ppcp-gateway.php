@@ -8,19 +8,6 @@ use Sift_For_WooCommerce\Sift_Events\Events;
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_gateway_string', fn() => '$paypal' );
 
-add_action(
-	'woocommerce_payments_before_webhook_delivery',
-	function ( $event_type, $event_body ) {
-		// Using a switch case since we'll likely handle more future event types
-		switch ( $event_type ) {
-			case 'CUSTOMER.DISPUTE.CREATED':
-				send_chargeback_to_sift( $event_body );
-				break;
-		}
-	},
-	10,
-	2
-);
 /**
  * Get relevant information from the order.
  *
