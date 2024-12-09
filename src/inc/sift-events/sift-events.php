@@ -569,8 +569,8 @@ class Events {
 		}
 
 		// Determine user and session context.
-		$user_id   = wp_get_current_user()->ID ?? null; // Check first for logged-in user.
-		$is_admin  = 1 === $user_id;
+		$user_id  = wp_get_current_user()->ID ?? null; // Check first for logged-in user.
+		$is_admin = 1 === $user_id;
 
 		// Figure out if it should use the session ID if no logged-in user exists.
 		if ( ! $user_id || $is_admin ) {
