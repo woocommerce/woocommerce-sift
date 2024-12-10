@@ -17,6 +17,7 @@ use WC_Order_Item_Product;
 
 use Sift_For_WooCommerce\Sift_Order;
 use Sift_For_WooCommerce\Sift\SiftEventsValidator;
+use Sift_For_WooCommerce\Sift_For_WooCommerce;
 use WC_Product;
 
 /**
@@ -332,6 +333,10 @@ class Events {
 			'$time'             => intval( 1000 * microtime( true ) ),
 		);
 
+		if ( empty( $properties['$payment_methods'] ) ) {
+			unset( $properties['$payment_methods'] );
+		}
+
 		try {
 			SiftEventsValidator::validate_update_account( $properties );
 		} catch ( \Exception $e ) {
@@ -555,7 +560,6 @@ class Events {
 	 * @return void
 	 */
 	public static function update_or_create_order( string $order_id, \WC_Order $order, bool $create_order = false ) {
-
 		if ( ! in_array( $order->get_status(), self::SUPPORTED_WOO_ORDER_STATUS_CHANGES, true ) ) {
 			return;
 		}
@@ -565,15 +569,13 @@ class Events {
 		}
 
 		// Determine user and session context.
-		$user_id   = wp_get_current_user()->ID ?? null; // Check first for logged-in user.
-		$is_system = ! $create_order && str_starts_with( sanitize_title( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 'WordPress' ); // Check if this is an order update via system action.
+		$user_id  = wp_get_current_user()->ID ?? null; // Check first for logged-in user.
+		$is_admin = 1 === $user_id;
 
 		// Figure out if it should use the session ID if no logged-in user exists.
-		if ( ! $user_id ) {
-			$user_id = $is_system ? $order->get_user_id() : null; // Use order user ID only for system actions.
+		if ( ! $user_id || $is_admin ) {
+			$user_id = $order->get_user_id() ?? null; // Use order user ID if it isn't available otherwise
 		}
-
-		$user = $user_id ? get_userdata( $user_id ) : null;
 
 		$physical_or_electronic = '$electronic';
 		$items                  = array();
@@ -628,8 +630,8 @@ class Events {
 
 		// Add the user_id only if a user exists, otherwise, let it remain empty.
 		// Ref: https://developers.sift.com/docs/php/apis-overview/core-topics/faq/tracking-users
-		if ( $user ) {
-			$properties['$user_id'] = self::format_user_id( $user->ID );
+		if ( $user_id && ! $is_admin ) {
+			$properties['$user_id'] = self::format_user_id( $user_id );
 		}
 
 		// Add in the address information if it's available.
@@ -858,7 +860,6 @@ class Events {
 	 * @return void
 	 */
 	public static function add( string $event, array $properties ) {
-
 		// Give a chance for the platform to modify the data (and add potentially new custom data)
 		$properties = apply_filters( 'sift_for_woocommerce_pre_send_event_properties', $properties, $event );
 
@@ -1080,10 +1081,39 @@ class Events {
 	 *
 	 * @param integer $user_id The User / Customer ID.
 	 *
-	 * @return array|null
+	 * @return array
 	 */
 	private static function get_customer_payment_methods( int $user_id ) {
 		$payment_methods = array();
+
+		/**
+		 * Allow / disallow customer payment method lookup via looping over all customer orders and extracting the payment method from each order.
+		 *
+		 * If this filter returns false, the sift_for_woocommerce_get_customer_payment_methods filter should be implemented so that some payment methods are returned.
+		 *
+		 * Otherwise, no customer payment methods will be returned.
+		 *
+		 * @param boolean $allow True if this method of payment method lookup should be used, otherwise false.
+		 * @param integer $user_id The User / Customer ID.
+		 *
+		 * @return boolean True if this method of payment method lookup should be used, otherwise false.
+		 */
+		if ( apply_filters( 'sift_for_woocommerce_get_customer_payment_methods_via_order_enumeration', true, $user_id ) ) {
+			$customer_orders = wc_get_orders(
+				array(
+					'limit'    => -1,
+					'customer' => $user_id,
+					'status'   => wc_get_is_paid_statuses(),
+				)
+			);
+
+			$payment_methods = array_map(
+				function ( $order ) {
+					return static::get_order_payment_methods( $order )[0] ?? null;
+				},
+				$customer_orders
+			);
+		}
 
 		/**
 		 * Include a filter here for unexpected payment providers to be able to add their results in as well.
@@ -1093,7 +1123,18 @@ class Events {
 		 */
 		$payment_methods = apply_filters( 'sift_for_woocommerce_get_customer_payment_methods', $payment_methods, $user_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
-		return $payment_methods ?? null;
+		$payment_methods = array_reduce(
+			$payment_methods,
+			function ( $payment_methods, $payment_method ) {
+				if ( ! empty( $payment_method ) && ! in_array( $payment_method, $payment_methods, true ) ) {
+					$payment_methods[] = $payment_method;
+				}
+				return $payment_methods;
+			},
+			array()
+		);
+
+		return $payment_methods ?? array();
 	}
 
 	/**
@@ -1107,8 +1148,7 @@ class Events {
 	 * @return array
 	 */
 	private static function get_order_payment_methods( \WC_Order $order ) {
-		$sift_order = new Sift_Order( $order );
-		return $sift_order->get_payment_methods();
+		return Sift_For_WooCommerce::get_instance()->get_sift_order_from_wc_order( $order )->get_payment_methods();
 	}
 
 	/**
