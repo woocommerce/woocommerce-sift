@@ -48,6 +48,10 @@ function process_sift_decision_received( $return_value, $decision_id, $user_id )
 			do_action( 'sift_for_woocommerce_block_wo_review_payment_abuse', $woocommerce_user_id );
 			break;
 
+		case 'fraud_no_review_ticket_payment_abuse':
+			do_action( 'sift_for_woocommerce_fraud_no_review_ticket_payment_abuse', $woocommerce_user_id );
+			break;
+
 		case 'looks_ok_payment_abuse':
 		case 'looks_suspicious_payment_abuse':
 		case 'order_looks_ok_payment_abuse':
