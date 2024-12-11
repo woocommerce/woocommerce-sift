@@ -829,6 +829,18 @@ class Events {
 
 		$decision_id = null;
 
+		// If $user_decisions_response->body['decisions'] is empty, log the info.
+		if ( empty( $user_decisions_response->body['decisions'] ) ) {
+			wc_get_logger()->info(
+				'No decisions found for user',
+				array(
+					'source'       => 'sift-events',
+					'sift_user_id' => $sift_user_id,
+				)
+			);
+			return null;
+		}
+
 		// Extract the decision ID for payment abuse if it exists.
 		if ( isset( $user_decisions_response->body['decisions']['payment_abuse']['decision']['id'] ) ) {
 			$decision_id = $user_decisions_response->body['decisions']['payment_abuse']['decision']['id'];
@@ -904,9 +916,6 @@ class Events {
 			foreach ( self::$to_send as $entry ) {
 				// We need the original user ID to handle the decision locally after events are sent.
 				$user_id = $entry['properties']['$user_id'] ?? null;
-
-				// Apply the filter to possibly update from the stored user_id to the WPCOM user_id just before sending the event.
-				$entry['properties'] = apply_filters( 'sift_for_woocommerce_pre_send_event_properties', $entry['properties'] );
 
 				$response = $client->track( $entry['event'], $entry['properties'] );
 
