@@ -47,6 +47,11 @@ class Sift_For_WooCommerce {
 		add_action( 'login_header', __NAMESPACE__ . '\Tracking_Js\print_sift_tracking_js' ); // Allow Sift tracking of login page visits.
 
 		Events::init_hooks();
+
+		/**
+		 * Action to load the sidecar plugin.
+		 */
+		do_action( 'sift_for_woocommerce_load_sidecar_plugin' );
 	}
 
 	/**
