@@ -56,4 +56,9 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 require_once __DIR__ . '/src/sift-for-woocommerce.php';
 
-\Sift_For_WooCommerce\Sift_For_WooCommerce::get_instance();
+add_action(
+	'plugins_loaded',
+	function () {
+		\Sift_For_WooCommerce\Sift_For_WooCommerce::get_instance();
+	}
+);
