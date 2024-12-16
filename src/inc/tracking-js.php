@@ -14,7 +14,7 @@ function print_sift_tracking_js() {
 		return null;
 	}
 
-	$beacon_key = get_option( 'wc_sift_for_woocommerce_beacon_key' );
+	$beacon_key = get_option( 'wc_sift_for_woocommerce_sift_beacon_key' );
 	if ( ! $beacon_key ) {
 		return null;
 	}
