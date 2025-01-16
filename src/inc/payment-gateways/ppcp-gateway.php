@@ -39,22 +39,94 @@ function get_from_order( $value, \WC_Order $order ) {
 		'purchase-unit' => $purchase_unit,
 	);
 }
+
+/**
+ * This function allows working around a case that seems like it could be handled by PHP's nullsafe and/or null coalescing operators
+ * but would actually result in a PHP warning, like in the following example:
+ *
+ * $a = $b->c()[0]?->d() ?? $e;
+ *
+ * In the case where `c()` returns `null`, a PHP warning would be returned because we can't get the value `[0]` from `null`.
+ *
+ * To remedy this, this function will select the first item if it is an array, or will return the item if it isn't empty.
+ *
+ * The above example would look like the following:
+ *
+ * $a = select_first( $b, fn( $o ) => $o->c() )?->d();
+ *
+ * @param mixed $selectable  The thing to be selected from. Usually this would be an object or array but it could be anything.
+ * @param function $selector The function which takes `$selectable` as its input, performs an operation and returns the result.
+ */
+function select_first( $selectable, $selector ) {
+	try {
+		$arr = $selector( $selectable );
+	} catch ( \Throwable $t ) {
+		return null;
+	}
+	if ( is_array( $arr ) && count( $arr ) > 0 ) {
+		return reset( $arr );
+	}
+	if ( ! empty( $arr ) ) {
+		return $arr;
+	}
+	return null;
+}
+
+/**
+ * Select the first purchase unit or null if it could not be selected.
+ *
+ * @param WooCommerce\PayPalCommerce\ApiClient\Entity\Order $ppcp_data_order The PayPal Order object
+ * @return WooCommerce\PayPalCommerce\ApiClient\Entity\PurchaseUnit|null The resulting PurchaseUnit if one is found
+ */
+function select_first_purchase_unit( $ppcp_data_order ) {
+	return select_first(
+		$ppcp_data_order,
+		fn( $obj ) => $obj?->purchase_units()
+	);
+}
+
+/**
+ * Select the first payments authorization or null if it could not be selected.
+ *
+ * @param WooCommerce\PayPalCommerce\ApiClient\Entity\Order $ppcp_data_order The PayPal Order object
+ * @return WooCommerce\PayPalCommerce\ApiClient\Entity\Authorization|null The resulting Authorization if one is found
+ */
+function select_first_payments_authorization( $ppcp_data_order ) {
+	return select_first(
+		select_first_purchase_unit( $ppcp_data_order ),
+		fn( $obj ) => $obj?->payments()?->authorizations()
+	);
+}
+
+/**
+ * Select the first payments caputure or null if it could not be selected.
+ *
+ * @param WooCommerce\PayPalCommerce\ApiClient\Entity\Order $ppcp_data_order The PayPal Order object
+ * @return WooCommerce\PayPalCommerce\ApiClient\Entity\Capture|null The resulting Capture if one is found
+ */
+function select_first_payments_capture( $ppcp_data_order ) {
+	return select_first(
+		select_first_purchase_unit( $ppcp_data_order ),
+		fn( $obj ) => $obj?->payments()?->captures()
+	);
+}
+
 add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_method_details_from_order', __NAMESPACE__ . '\get_from_order', 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_charge_details_from_order', __NAMESPACE__ . '\get_from_order', 10, 2 );
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_type_string', fn( $value, $ppcp_gateway_payment_type ) => 'ppcp' === $ppcp_gateway_payment_type ? '$third_party_processor' : $value );
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_card_last4', fn( $value, $ppcp_data ) => $ppcp_data['wc_order']?->get_meta_data( PayPalGateway::FRAUD_RESULT_META_KEY )['card_last_digits'] ?? $value, 10, 2 );
-add_filter( 'sift_for_woocommerce_ppcp-gateway_avs_result_code', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->authorizations()[0]?->fraud_processor_response()->avs_code() ?? $value, 10, 2 );
-add_filter( 'sift_for_woocommerce_ppcp-gateway_cvv_result_code', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->authorizations()[0]?->fraud_processor_response()->cvv_code() ?? $value, 10, 2 );
-add_filter( 'sift_for_woocommerce_ppcp-gateway_verification_status', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->authorizations()[0]?->status()->name() ?? $value, 10, 2 );
-add_filter( 'sift_for_woocommerce_ppcp-gateway_decline_reason_code', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->authorizations()[0]?->to_array()['reason_code'] ?? $value, 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_avs_result_code', fn( $value, $ppcp_data ) => select_first_payments_authorization( $ppcp_data['order'] )?->fraud_processor_response()->avs_code() ?? $value, 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_cvv_result_code', fn( $value, $ppcp_data ) => select_first_payments_authorization( $ppcp_data['order'] )?->fraud_processor_response()->cvv_code() ?? $value, 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_verification_status', fn( $value, $ppcp_data ) => select_first_payments_authorization( $ppcp_data['order'] )?->status()->name() ?? $value, 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_decline_reason_code', fn( $value, $ppcp_data ) => select_first_payments_authorization( $ppcp_data['order'] )?->to_array()['reason_code'] ?? $value, 10, 2 );
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payer_id', fn( $value, $ppcp_data ) => $ppcp_data['order']?->payer()?->payer_id() ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payer_email', fn( $value, $ppcp_data ) => $ppcp_data['order']?->payer()?->email_address() ?? $value, 10, 2 );
 
-add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_protection_eligibility', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->captures()[0]?->seller_protection()?->status ?? $value, 10, 2 );
-add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payment_status', fn( $value, $ppcp_data ) => $ppcp_data['order']?->purchase_units()[0]?->payments()?->captures()[0]->status()->name() ?? $value, 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_protection_eligibility', fn( $value, $ppcp_data ) => select_first_payments_capture( $ppcp_data['order'] )?->seller_protection()?->status ?? $value, 10, 2 );
+add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payment_status', fn( $value, $ppcp_data ) => select_first_payments_capture( $ppcp_data['order'] )->status()->name() ?? $value, 10, 2 );
 
 /**
  * Send a chargeback event to Sift.
