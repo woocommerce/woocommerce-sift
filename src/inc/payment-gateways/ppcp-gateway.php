@@ -56,6 +56,7 @@ function get_from_order( $value, \WC_Order $order ) {
  *
  * @param mixed    $selectable The thing to be selected from. Usually this would be an object or array but it could be anything.
  * @param function $selector   The function which takes `$selectable` as its input, performs an operation and returns the result.
+ *
  * @return mixed|null
  */
 function select_first( $selectable, $selector ) {
@@ -77,6 +78,7 @@ function select_first( $selectable, $selector ) {
  * Select the first purchase unit or null if it could not be selected.
  *
  * @param WooCommerce\PayPalCommerce\ApiClient\Entity\Order $ppcp_data_order The PayPal Order object.
+ *
  * @return WooCommerce\PayPalCommerce\ApiClient\Entity\PurchaseUnit|null The resulting PurchaseUnit if one is found.
  */
 function select_first_purchase_unit( $ppcp_data_order ) {
@@ -90,6 +92,7 @@ function select_first_purchase_unit( $ppcp_data_order ) {
  * Select the first payments authorization or null if it could not be selected.
  *
  * @param WooCommerce\PayPalCommerce\ApiClient\Entity\Order $ppcp_data_order The PayPal Order object.
+ *
  * @return WooCommerce\PayPalCommerce\ApiClient\Entity\Authorization|null The resulting Authorization if one is found.
  */
 function select_first_payments_authorization( $ppcp_data_order ) {
@@ -102,7 +105,8 @@ function select_first_payments_authorization( $ppcp_data_order ) {
 /**
  * Select the first payments caputure or null if it could not be selected.
  *
- * @param WooCommerce\PayPalCommerce\ApiClient\Entity\Order $ppcp_data_order The PayPal Order object.
+ * @param WooCommerce\PayPalCommerce\ApiClient\Entity\Order $ppcp_data_order The PayPal Order object
+ *
  * @return WooCommerce\PayPalCommerce\ApiClient\Entity\Capture|null The resulting Capture if one is found.
  */
 function select_first_payments_capture( $ppcp_data_order ) {
