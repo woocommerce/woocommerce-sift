@@ -105,7 +105,7 @@ function select_first_payments_authorization( $ppcp_data_order ) {
 /**
  * Select the first payments caputure or null if it could not be selected.
  *
- * @param WooCommerce\PayPalCommerce\ApiClient\Entity\Order $ppcp_data_order The PayPal Order object
+ * @param WooCommerce\PayPalCommerce\ApiClient\Entity\Order $ppcp_data_order The PayPal Order object.
  *
  * @return WooCommerce\PayPalCommerce\ApiClient\Entity\Capture|null The resulting Capture if one is found.
  */
