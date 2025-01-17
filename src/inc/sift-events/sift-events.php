@@ -626,6 +626,7 @@ class Events {
 			'$site_country'    => wc_get_base_location()['country'],
 			'$ip'              => self::get_client_ip(),
 			'$time'            => intval( 1000 * microtime( true ) ),
+			'product_channel'  => 'woocommerce-com',
 		);
 
 		// Add the user_id only if a user exists, otherwise, let it remain empty.
