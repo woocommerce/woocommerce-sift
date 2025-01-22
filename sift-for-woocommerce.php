@@ -3,7 +3,7 @@
  * Sift for WooCommerce
  *
  * @since       1.0.0
- * @version     1.0.0
+ * @version     1.0.1
  * @author      WooCommerce
  * @license     GPL-3.0-or-later
  *

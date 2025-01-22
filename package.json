@@ -1,6 +1,6 @@
 {
   "name": "sift-for-woocommerce",
-  "version": "1.0.0-beta",
+  "version": "1.0.1",
   "description": "A plugin to integrate WooCommerce with Sift Science Fraud Detection",
   "author": {
     "name": "WooCommerce.com",
