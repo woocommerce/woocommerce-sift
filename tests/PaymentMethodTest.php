@@ -124,14 +124,14 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 			true
 		);
 		$order                               = new \WC_Order();
-		$ppcp_order_data = array(
+		$ppcp_order_data                     = array(
 			'wc_order' => $order,
-			'order' => build_mock_ppcp_order_object(),
+			'order'    => build_mock_ppcp_order_object(),
 		);
 		$stripe_gateway                      = new Sift_Payment_Gateway( 'stripe', $order );
 		$transact_gateway                    = new Sift_Payment_Gateway( 'transact', $order );
 		$woocommerce_payments_gateway        = new Sift_Payment_Gateway( 'woocommerce_payments', $order );
-		$ppcp_gateway                 = new Sift_Payment_Gateway( 'ppcp-gateway', $order );
+		$ppcp_gateway                        = new Sift_Payment_Gateway( 'ppcp-gateway', $order );
 		return array(
 			'Stripe\'s object returns the card_bin property' => array(
 				'gateway'  => $stripe_gateway,
@@ -152,7 +152,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 				'gateway'  => $ppcp_gateway,
 				'data'     => $ppcp_order_data,
 				'expected' => '',
-			)
+			),
 		);
 	}
 
@@ -182,9 +182,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$ppcp_order_data = array(
+		$ppcp_order_data              = array(
 			'wc_order' => $order,
-			'order' => build_mock_ppcp_order_object(),
+			'order'    => build_mock_ppcp_order_object(),
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
@@ -211,7 +211,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 				'gateway'  => $ppcp_gateway,
 				'data'     => $ppcp_order_data,
 				'expected' => 'AVS-OK',
-			)
+			),
 		);
 	}
 
@@ -241,9 +241,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$ppcp_order_data = array(
+		$ppcp_order_data              = array(
 			'wc_order' => $order,
-			'order' => build_mock_ppcp_order_object(),
+			'order'    => build_mock_ppcp_order_object(),
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
@@ -270,7 +270,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 				'gateway'  => $ppcp_gateway,
 				'data'     => $ppcp_order_data,
 				'expected' => 'CVV-OK',
-			)
+			),
 		);
 	}
 
@@ -300,9 +300,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$ppcp_order_data = array(
+		$ppcp_order_data              = array(
 			'wc_order' => $order,
-			'order' => build_mock_ppcp_order_object(),
+			'order'    => build_mock_ppcp_order_object(),
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
@@ -329,7 +329,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 				'gateway'  => $ppcp_gateway,
 				'data'     => $ppcp_order_data,
 				'expected' => 'PPCP-decline-reason-code',
-			)
+			),
 		);
 	}
 
@@ -359,9 +359,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$ppcp_order_data = array(
+		$ppcp_order_data              = array(
 			'wc_order' => $order,
-			'order' => build_mock_ppcp_order_object(),
+			'order'    => build_mock_ppcp_order_object(),
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
@@ -388,7 +388,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 				'gateway'  => $ppcp_gateway,
 				'data'     => $ppcp_order_data,
 				'expected' => 'PPCP-Payer-ID',
-			)
+			),
 		);
 	}
 
@@ -418,9 +418,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$ppcp_order_data = array(
+		$ppcp_order_data              = array(
 			'wc_order' => $order,
-			'order' => build_mock_ppcp_order_object(),
+			'order'    => build_mock_ppcp_order_object(),
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
@@ -447,7 +447,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 				'gateway'  => $ppcp_gateway,
 				'data'     => $ppcp_order_data,
 				'expected' => 'payer@example.org',
-			)
+			),
 		);
 	}
 
@@ -477,9 +477,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$ppcp_order_data = array(
+		$ppcp_order_data              = array(
 			'wc_order' => $order,
-			'order' => build_mock_ppcp_order_object(),
+			'order'    => build_mock_ppcp_order_object(),
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
@@ -506,7 +506,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 				'gateway'  => $ppcp_gateway,
 				'data'     => $ppcp_order_data,
 				'expected' => 'PPCP-seller-protection-status',
-			)
+			),
 		);
 	}
 
@@ -536,9 +536,9 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 		$stripe_charge                = (object) array(
 			'payment_method_details' => build_mock_stripe_payment_method_object( array() ),
 		);
-		$ppcp_order_data = array(
+		$ppcp_order_data              = array(
 			'wc_order' => $order,
-			'order' => build_mock_ppcp_order_object(),
+			'order'    => build_mock_ppcp_order_object(),
 		);
 		$woocommerce_payments_charge  = array( 'payment_method_details' => build_mock_stripe_payment_method_object( array(), true ) );
 		$stripe_gateway               = new Sift_Payment_Gateway( 'stripe', $order );
@@ -565,7 +565,7 @@ class PaymentMethodTest extends \WP_UnitTestCase {
 				'gateway'  => $ppcp_gateway,
 				'data'     => $ppcp_order_data,
 				'expected' => 'PPCP-capture-status',
-			)
+			),
 		);
 	}
 

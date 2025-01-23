@@ -66,6 +66,11 @@ function build_mock_stripe_payment_method_object( array $config, bool $as_array 
 	);
 }
 
+/**
+ * Build a mock order object from PPCP-Gateway
+ *
+ * @return PPCP_Mock_Order
+ */
 function build_mock_ppcp_order_object(): object {
 	return new PPCP_Mock_Order();
 }
