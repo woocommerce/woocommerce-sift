@@ -9,7 +9,7 @@ class PPCP_Mock_Authorization {
 	/**
 	 * Provide the fraud processor response.
 	 *
-	 * @return PPCP_Mock_Fraud_Processor_Response 
+	 * @return PPCP_Mock_Fraud_Processor_Response
 	 */
 	public function fraud_processor_response() {
 		return new PPCP_Mock_Fraud_Processor_Response();

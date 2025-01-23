@@ -17,7 +17,7 @@ class PPCP_Mock_Fraud_Processor_Response {
 
 	/**
 	 * Get the CVV code.
-	 * 
+	 *
 	 * @return string
 	 */
 	public function cvv_code() {
