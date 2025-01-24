@@ -124,7 +124,6 @@ add_filter( 'sift_for_woocommerce_ppcp-gateway_payment_type_string', fn( $value,
 add_filter( 'sift_for_woocommerce_ppcp-gateway_card_last4', fn( $value, $ppcp_data ) => $ppcp_data['wc_order']?->get_meta_data( PayPalGateway::FRAUD_RESULT_META_KEY )['card_last_digits'] ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_avs_result_code', fn( $value, $ppcp_data ) => select_first_payments_authorization( $ppcp_data['order'] )?->fraud_processor_response()->avs_code() ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_cvv_result_code', fn( $value, $ppcp_data ) => select_first_payments_authorization( $ppcp_data['order'] )?->fraud_processor_response()->cvv_code() ?? $value, 10, 2 );
-add_filter( 'sift_for_woocommerce_ppcp-gateway_verification_status', fn( $value, $ppcp_data ) => select_first_payments_authorization( $ppcp_data['order'] )?->status()->name() ?? $value, 10, 2 );
 add_filter( 'sift_for_woocommerce_ppcp-gateway_decline_reason_code', fn( $value, $ppcp_data ) => select_first_payments_authorization( $ppcp_data['order'] )?->to_array()['reason_code'] ?? $value, 10, 2 );
 
 add_filter( 'sift_for_woocommerce_ppcp-gateway_paypal_payer_id', fn( $value, $ppcp_data ) => $ppcp_data['order']?->payer()?->payer_id() ?? $value, 10, 2 );
