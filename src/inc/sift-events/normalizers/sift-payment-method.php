@@ -214,7 +214,6 @@ class Sift_Payment_Method {
 	 */
 	public static function get_wallet_type( Sift_Payment_Gateway $gateway, mixed $data ): string {
 		return static::get_value_from_filter( $gateway, 'wallet_type', $data );
-		return apply_filters( sprintf( 'sift_for_woocommerce_%s_wallet_type', $gateway->get_woo_gateway_id() ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
 	}
 
 	/**
