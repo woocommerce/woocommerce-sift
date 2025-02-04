@@ -40,6 +40,17 @@ class Sift_Payment_Method {
 		return Sift_Payment_Type::normalize_payment_type_string( $gateway, $gateway_payment_type );
 	}
 
+	/**
+	 * Get the normalized, Sift-valid string value for a property.
+	 *
+	 * For examples, check out the payment-gateways folder.
+	 *
+	 * @param Sift_Payment_Gateway $gateway  The payment gateway in use.
+	 * @param string               $property The name of the property to get.
+	 * @param mixed                $data     A value in a format specific to the payment gateway plugin which will be passed to a filter that will return a value representing the `$card_last4` property.
+	 *
+	 * @return string The normalized, sift-valid string value for this property.
+	 */
 	public static function get_value_from_filter( Sift_Payment_Gateway $gateway, string $property, mixed $data ): string {
 		try {
 			return apply_filters( sprintf( 'sift_for_woocommerce_%s_%s', $gateway->get_woo_gateway_id(), $property ), '', $data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound
